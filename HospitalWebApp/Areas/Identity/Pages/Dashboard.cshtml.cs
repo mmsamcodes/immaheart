@@ -2,13 +2,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
 using HospitalWebApp.Models;
+using HospitalWebApp.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalWebApp.Areas.Identity.Pages
 {
     public class DashboardModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public DashboardModel(UserManager<ApplicationUser> userManager) => _userManager = userManager;
+        private readonly ApplicationDbContext _context;
+
+        public DashboardModel(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        {
+            _userManager = userManager;
+            _context = context;
+        }
 
         public string FullName { get; set; } = "";
         public double BMI { get; set; }
@@ -17,6 +25,11 @@ namespace HospitalWebApp.Areas.Identity.Pages
         // Cycle tracker fields for display.
         public int DayOfCycle { get; set; }
         public string CyclePhase { get; set; } = "Log data to see phase";
+
+        // Payment verification
+        public decimal PaidAmount { get; set; }
+        public decimal TotalAmount { get; set; }
+        public bool HasPaidInvoices => PaidAmount > 0;
 
         // Lists used to render tips and FAQ content.
         public List<NutritionTip> NutritionTips { get; set; } = new();
@@ -67,6 +80,14 @@ namespace HospitalWebApp.Areas.Identity.Pages
                     _ => "Obese"
                 };
             }
+
+            // Get payment status from invoices
+            var invoices = await _context.BillingInvoices
+                .Where(i => i.PatientId == user.Id)
+                .ToListAsync();
+            
+            PaidAmount = invoices.Sum(i => i.PaidAmount);
+            TotalAmount = invoices.Sum(i => i.TotalAmount);
 
             // Set a sample cycle phase for the dashboard display.
             DayOfCycle = 14; 

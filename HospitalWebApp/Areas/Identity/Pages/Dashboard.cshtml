@@ -7,33 +7,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
-    /* Pulsing Animation */
     @@keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-        }
-        50% {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.9; transform: scale(1.02); }
     }
 
     @@keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @@keyframes colorShift {
-        0% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        50% { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
-        100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .dashboard-container {
@@ -42,17 +23,8 @@
         padding-bottom: 3rem;
     }
 
-    .card-pulse {
-        animation: pulse 3s ease-in-out infinite;
-    }
-
-    .card-slide {
-        animation: slideIn 0.6s ease-out;
-    }
-
-    .card-colorshift {
-        animation: colorShift 6s ease-in-out infinite;
-    }
+    .card-pulse { animation: pulse 3s ease-in-out infinite; }
+    .card-slide { animation: slideIn 0.6s ease-out; }
 
     .greeting-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -76,68 +48,19 @@
         box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
     }
 
-    .nutrition-card {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    }
-
-    .wellness-card {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    }
-
-    .consultation-card {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    }
-
-    .faq-item {
-        border-left: 4px solid #667eea;
-        padding-left: 1rem;
-        margin-bottom: 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .faq-item:hover {
-        border-left-color: #764ba2;
-        transform: translateX(5px);
-    }
-
-    .accordion-button:not(.collapsed) {
-        background-color: #f5f7fa;
-        color: #667eea;
-        font-weight: 600;
-    }
-
-    .accordion-button:focus {
-        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
-        border-color: #667eea;
-    }
-
-    .nutrition-item {
-        background: white;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 0.75rem;
-        border-left: 4px solid #f093fb;
-        transition: all 0.3s ease;
-    }
-
-    .nutrition-item:hover {
-        box-shadow: 0 4px 12px rgba(240, 147, 251, 0.2);
-        transform: translateX(3px);
-    }
+    /* Vibrant Card Colors */
+    .card-rose { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .card-cyan { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .card-sunset { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .card-emerald { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+    .card-ocean { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .card-flame { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); }
+    .card-grape { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
 
     .icon-large {
         font-size: 3rem;
         margin-bottom: 1rem;
         display: inline-block;
-        width: auto;
-        height: auto;
-    }
-
-    .icon-large i,
-    .icon-large svg {
-        font-size: 3rem;
-        width: auto !important;
-        height: auto !important;
     }
 
     .text-gradient {
@@ -149,217 +72,335 @@
 </style>
 
 <div class="dashboard-container">
-<div class="container py-5">
-    <div class="greeting-header">
-        <h1 class="fw-bold mb-2">Welcome back, <span class="text-light">@Model.FullName</span>! 👋</h1>
-        <p class="mb-0 fs-6">Immaculate Heart Hospital - Your Health Journey Starts Here</p>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card stat-card card-pulse card-slide h-100 border-0 shadow text-white nutrition-card">
-                <div class="card-body text-center">
-                    <div class="icon-large"><i class="bi bi-heart"></i></div>
-                    <h5 class="mb-3">Your BMI Status</h5>
-                    <div class="display-3 fw-bold">@Model.BMI.ToString("F1")</div>
-                    <div class="badge bg-white text-dark mb-3 mt-2">@Model.BMICategory</div>
-                    <div class="progress" style="height: 10px; background: rgba(255,255,255,0.3);">
-                        <div class="progress-bar bg-white" style="width: @(Model.BMI * 2)%"></div>
-                    </div>
-                    <p class="small mt-3">Keep monitoring for optimal health! 💪</p>
-                </div>
-            </div>
+    <div class="container py-5">
+        <div class="greeting-header">
+            <h1 class="fw-bold mb-2">Welcome back, <span class="text-light">@Model.FullName</span>! 👋</h1>
+            <p class="mb-0 fs-6">Immaculate Heart Hospital - Your Health Journey Starts Here</p>
         </div>
 
-        <div class="col-md-4">
-            <div class="card stat-card card-pulse card-slide h-100 border-0 shadow wellness-card">
-                <div class="card-body">
-                    <div class="icon-large text-white"><i class="bi bi-calendar-heart"></i></div>
-                    <h5 class="text-white"><strong>Women's Wellness</strong></h5>
-                    <div class="text-center py-3">
-                        <div class="rounded-circle d-inline-block p-4 mb-2 bg-white bg-opacity-20">
-                            <h3 class="mb-0 text-white fw-bold">Day @Model.DayOfCycle</h3>
+        <!-- Top Health Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card card-pulse card-slide h-100 border-0 shadow text-white card-rose">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-heart"></i></div>
+                        <h5 class="mb-3">Your BMI Status</h5>
+                        <div class="display-3 fw-bold">@Model.BMI.ToString("F1")</div>
+                        <div class="badge bg-white text-dark mb-3 mt-2">@Model.BMICategory</div>
+                        <div class="progress" style="height: 8px; background: rgba(255,255,255,0.3);">
+                            <div class="progress-bar bg-white" style="width: @(Math.Min(Model.BMI * 5, 100))%"></div>
                         </div>
-                        <h5 class="fw-bold text-white">@Model.CyclePhase</h5>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-light fw-bold">📝 Log Period</button>
+                        <p class="small mt-3">💪 Keep monitoring!</p>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card stat-card card-pulse card-slide h-100 border-0 shadow consultation-card">
-                <div class="card-body d-flex flex-column justify-content-center text-center">
-                    <div class="icon-large text-white"><i class="bi bi-person-video3"></i></div>
-                    <h4 class="fw-bold text-white">Need a Doctor?</h4>
-                    <p class="small text-white">In-person or Virtual</p>
-                    <a asp-page="/Appointments/Create" class="btn btn-white fw-bold">
-                        📅 BOOK NOW
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h5 class="fw-bold">Lab Results</h5>
-                    <p class="text-muted">View and download your laboratory reports.</p>
-                    <a asp-page="/Labs/Index" class="btn btn-primary">Open Labs</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h5 class="fw-bold">Billing</h5>
-                    <p class="text-muted">Review invoices, payments, and outstanding balances.</p>
-                    <a asp-page="/Billing/Index" class="btn btn-primary">Open Billing</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h5 class="fw-bold">Discharge Summaries</h5>
-                    <p class="text-muted">Download your discharge reports and summaries.</p>
-                    <a asp-page="/DischargeSummaries/Index" class="btn btn-primary">Open Summaries</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h5 class="fw-bold">Admissions</h5>
-                    <p class="text-muted">Track hospital admissions and bed assignments.</p>
-                    <a asp-page="/Admissions/Index" class="btn btn-primary">Open Admissions</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-8">
-            <div class="card border-0 shadow stat-card card-slide h-100">
-                <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h5 class="mb-0"><i class="bi bi-baby"></i> Pediatric Corner: Child BMI Checker</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Child's Weight (kg)</label>
-                            <input type="number" id="cWeight" class="form-control mb-3" placeholder="e.g. 15">
-                            <label class="form-label fw-bold">Child's Height (cm)</label>
-                            <input type="number" id="cHeight" class="form-control mb-3" placeholder="e.g. 110">
-                            <button onclick="calcChildBMI()" class="btn fw-bold w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">📊 Calculate BMI</button>
+            <div class="col-md-4">
+                <div class="card stat-card card-pulse card-slide h-100 border-0 shadow text-white card-cyan">
+                    <div class="card-body">
+                        <div class="icon-large"><i class="bi bi-calendar-heart"></i></div>
+                        <h5><strong>Women's Wellness</strong></h5>
+                        <div class="text-center py-3">
+                            <div class="rounded-circle d-inline-block p-4 mb-2 bg-white bg-opacity-20">
+                                <h3 class="mb-0 text-white fw-bold">Day @Model.DayOfCycle</h3>
+                            </div>
+                            <h5 class="fw-bold">@Model.CyclePhase</h5>
                         </div>
-                        <div class="col-md-6 text-center d-flex flex-column justify-content-center border-start ps-4">
-                            <div id="pResult" class="display-5 fw-bold text-gradient">--</div>
-                            <div id="pStatus" class="text-muted fs-5">Enter details above</div>
+                        <button class="btn btn-light fw-bold w-100" data-bs-toggle="modal" data-bs-target="#periodModal">📝 Log Period</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card card-pulse card-slide h-100 border-0 shadow text-white card-sunset">
+                    <div class="card-body d-flex flex-column justify-content-center text-center">
+                        <div class="icon-large"><i class="bi bi-person-video3"></i></div>
+                        <h4 class="fw-bold">Book Appointment</h4>
+                        <p class="small mb-3">In-person or Virtual</p>
+                        <a asp-page="/Appointments/Create" class="btn btn-light fw-bold">📅 BOOK NOW</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adult BMI Calculator -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow stat-card card-slide h-100">
+                    <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);">
+                        <h5 class="mb-0"><i class="bi bi-calculator"></i> Your BMI Calculator</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Weight (kg)</label>
+                                <input type="number" id="adultWeight" class="form-control" placeholder="e.g. 70" step="0.1">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Height (cm)</label>
+                                <input type="number" id="adultHeight" class="form-control" placeholder="e.g. 175" step="0.1">
+                            </div>
+                        </div>
+                        <button onclick="calcAdultBMI()" class="btn btn-warning fw-bold w-100 mt-3">📊 Calculate</button>
+                        <div class="text-center mt-4">
+                            <div class="display-4 fw-bold text-gradient" id="adultResult">--</div>
+                            <div class="badge bg-warning text-dark mt-2" id="adultStatus">Enter details above</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow stat-card card-slide h-100">
+                    <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                        <h5 class="mb-0"><i class="bi bi-baby"></i> Child BMI Calculator</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Weight (kg)</label>
+                                <input type="number" id="cWeight" class="form-control" placeholder="e.g. 15" step="0.1">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Height (cm)</label>
+                                <input type="number" id="cHeight" class="form-control" placeholder="e.g. 110" step="0.1">
+                            </div>
+                        </div>
+                        <button onclick="calcChildBMI()" class="btn btn-success fw-bold w-100 mt-3">📊 Calculate</button>
+                        <div class="text-center mt-4">
+                            <div class="display-4 fw-bold text-gradient" id="pResult">--</div>
+                            <div class="badge bg-success text-white mt-2" id="pStatus">Enter details above</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow stat-card card-slide h-100">
-                <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Health Trends</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="healthChart" height="200"></canvas>
+        <!-- Downloads Section -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-emerald">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-file-earmark-pdf"></i></div>
+                        <h5 class="fw-bold">Download Bills</h5>
+                        <p class="small">Your invoices & receipts</p>
+                        <a asp-page="/Billing/Index" class="btn btn-light btn-sm fw-bold">📄 Download</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Nutrition Section -->
-    <div class="row g-4 mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow stat-card card-slide">
-                <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <h5 class="mb-0"><i class="bi bi-apple"></i> Nutrition & Wellness Tips</h5>
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-file-earmark-medical"></i></div>
+                        <h5 class="fw-bold">Medical History</h5>
+                        <p class="small">Your health records</p>
+                        <a asp-page="/HealthRecords/Index" class="btn btn-light btn-sm fw-bold">📋 View</a>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold mb-3 text-gradient">Daily Nutrition Guidelines</h6>
-                            @foreach (var tip in Model.NutritionTips)
-                            {
-                                <div class="nutrition-item">
-                                    <strong>@tip.Title</strong><br>
-                                    <small class="text-muted">@tip.Description</small>
-                                </div>
-                            }
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold mb-3 text-gradient">Healthy Habits</h6>
-                            @foreach (var habit in Model.HealthyHabits)
-                            {
-                                <div class="nutrition-item">
-                                    <div class="d-flex align-items-start">
-                                        <i class="bi bi-check-circle-fill me-3" style="color: #f093fb; font-size: 1.3rem;"></i>
-                                        <div>
-                                            <strong>@habit.Title</strong><br>
-                                            <small class="text-muted">@habit.Description</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-flask"></i></div>
+                        <h5 class="fw-bold">Lab Results</h5>
+                        <p class="small">Your test reports</p>
+                        <a asp-page="/Labs/Index" class="btn btn-light btn-sm fw-bold">🧬 Download</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-file-earmark-text"></i></div>
+                        <h5 class="fw-bold">Summaries</h5>
+                        <p class="small">Discharge documents</p>
+                        <a asp-page="/DischargeSummaries/Index" class="btn btn-light btn-sm fw-bold">📑 Download</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- FAQ Section -->
-    <div class="row g-4">
-        <div class="col-12">
-            <div class="card border-0 shadow stat-card card-slide">
-                <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                    <h5 class="mb-0"><i class="bi bi-question-circle"></i> Frequently Asked Questions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="accordion" id="faqAccordion">
-                        @foreach (var faq in Model.FAQItems)
-                        {
-                            var itemId = "faq" + Model.FAQItems.IndexOf(faq);
-                            <div class="accordion-item border-0 mb-2" style="border-bottom: 1px solid #e0e0e0;">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@itemId">
-                                        <i class="bi bi-patch-question me-2"></i> @faq.Question
-                                    </button>
-                                </h2>
-                                <div id="@itemId" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        @faq.Answer
-                                    </div>
+        <!-- Telehealth & Appointments (Conditional) -->
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow stat-card card-slide">
+                    <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="mb-0"><i class="bi bi-telephone-video"></i> Telehealth & Consultations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle"></i> <strong>Payment Verification Required:</strong> Schedule telehealth sessions and in-person appointments after confirming your account payment status.
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="p-4 border-2 rounded" style="border: 2px solid #667eea;">
+                                    <h6 class="fw-bold mb-3"><i class="bi bi-camera-video text-primary"></i> Telehealth Session</h6>
+                                    <p class="text-muted small mb-3">Consult with doctors via video call from home.</p>
+                                    <button class="btn btn-primary btn-sm w-100" onclick="checkPaymentAndBook('telehealth')">Book Telehealth</button>
                                 </div>
                             </div>
-                        }
+                            <div class="col-md-4">
+                                <div class="p-4 border-2 rounded" style="border: 2px solid #38ef7d;">
+                                    <h6 class="fw-bold mb-3"><i class="bi bi-hospital text-success"></i> In-Person Visit</h6>
+                                    <p class="text-muted small mb-3">Visit our hospital for detailed consultation.</p>
+                                    <button class="btn btn-success btn-sm w-100" onclick="checkPaymentAndBook('inperson')">Schedule Visit</button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-4 border-2 rounded" style="border: 2px solid #f7931e;">
+                                    <h6 class="fw-bold mb-3"><i class="bi bi-calendar-check text-warning"></i> View Appointments</h6>
+                                    <p class="text-muted small mb-3">Check your upcoming appointments.</p>
+                                    <a asp-page="/Appointments/Index" class="btn btn-warning btn-sm w-100">My Appointments</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-bed"></i></div>
+                        <h6 class="fw-bold">Admissions</h6>
+                        <p class="small mb-2">Track hospital stays</p>
+                        <a asp-page="/Admissions/Index" class="btn btn-light btn-sm w-100">View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-flame">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-graph-up"></i></div>
+                        <h6 class="fw-bold">Health Records</h6>
+                        <p class="small mb-2">Your vital history</p>
+                        <a asp-page="/HealthRecords/Index" class="btn btn-light btn-sm w-100">View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-wallet2"></i></div>
+                        <h6 class="fw-bold">Billing</h6>
+                        <p class="small mb-2">Payment history</p>
+                        <a asp-page="/Billing/Index" class="btn btn-light btn-sm w-100">Review</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-grape">
+                    <div class="card-body text-center">
+                        <div class="icon-large"><i class="bi bi-queue"></i></div>
+                        <h6 class="fw-bold">Queue Status</h6>
+                        <p class="small mb-2">Check wait times</p>
+                        <a asp-page="/Queue/Index" class="btn btn-light btn-sm w-100">Check</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Period Logging Modal -->
+<div class="modal fade" id="periodModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Log Your Period</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="periodForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Start Date</label>
+                        <input type="date" id="periodStart" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">End Date (Optional)</label>
+                        <input type="date" id="periodEnd" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Flow Intensity</label>
+                        <select id="flowIntensity" class="form-select">
+                            <option>Light</option>
+                            <option selected>Normal</option>
+                            <option>Heavy</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Symptoms (Optional)</label>
+                        <textarea id="symptoms" class="form-control" rows="3" placeholder="e.g., cramps, mood changes..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="savePeriod()">Save Period Log</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    // Pediatric Logic
+    // Adult BMI Calculator
+    function calcAdultBMI() {
+        let w = document.getElementById('adultWeight').value;
+        let h = document.getElementById('adultHeight').value / 100;
+        if(w > 0 && h > 0) {
+            let bmi = (w / (h * h)).toFixed(1);
+            document.getElementById('adultResult').innerHTML = bmi;
+            let status = (bmi < 18.5) ? "Underweight" : (bmi < 25) ? "Healthy" : (bmi < 30) ? "Overweight" : "Obese";
+            document.getElementById('adultStatus').innerHTML = status;
+        }
+    }
+
+    // Child BMI Calculator
     function calcChildBMI() {
         let w = document.getElementById('cWeight').value;
-        let h = document.getElementById('cHeight').value / 100; // convert to meters
+        let h = document.getElementById('cHeight').value / 100;
         if(w > 0 && h > 0) {
             let bmi = (w / (h * h)).toFixed(1);
             document.getElementById('pResult').innerHTML = bmi;
-            document.getElementById('pStatus').innerHTML = (bmi < 14) ? "Underweight" : (bmi < 18) ? "Healthy" : "Overweight";
+            let status = (bmi < 14) ? "Underweight" : (bmi < 18) ? "Healthy" : "Overweight";
+            document.getElementById('pStatus').innerHTML = status;
+        }
+    }
+
+    // Period Logging
+    function savePeriod() {
+        let startDate = document.getElementById('periodStart').value;
+        let endDate = document.getElementById('periodEnd').value;
+        let flow = document.getElementById('flowIntensity').value;
+        let symptoms = document.getElementById('symptoms').value;
+        
+        if(startDate) {
+            localStorage.setItem('lastPeriodStart', startDate);
+            localStorage.setItem('lastPeriodFlow', flow);
+            alert('✅ Period logged successfully! We\'ll track your cycle.');
+            document.getElementById('periodForm').reset();
+            bootstrap.Modal.getInstance(document.getElementById('periodModal')).hide();
+            location.reload();
+        }
+    }
+
+    // Payment Verification Check
+    function checkPaymentAndBook(type) {
+        let paidAmount = parseFloat('@Model.PaidAmount');
+        let totalAmount = parseFloat('@Model.TotalAmount');
+        
+        if(paidAmount > 0) {
+            if(type === 'telehealth') {
+                window.location.href = '/Identity/Pages/Appointments/Create?type=telehealth';
+            } else {
+                window.location.href = '/Identity/Pages/Appointments/Create?type=inperson';
+            }
+        } else {
+            alert('⚠️ Please complete payment before booking. Visit Billing section to pay.');
+            window.location.href = '/Pages/Billing/Index';
         }
     }
 </script>
