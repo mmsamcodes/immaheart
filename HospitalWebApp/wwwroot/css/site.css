@@ -1,7 +1,7 @@
 /* ===== Root Variables ===== */
 :root {
-    --primary: #004a99;
-    --primary-dark: #003a7a;
+    --primary: #003d7f;
+    --primary-dark: #002d5f;
     --secondary: #0f4fa7;
     --success: #28a745;
     --warning: #ffc107;
@@ -148,6 +148,19 @@ a:hover {
     font-size: 0.95rem;
 }
 
+/* ===== Login/Logout Button ===== */
+.logout-btn {
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.logout-btn:hover {
+    opacity: 0.8;
+}
+
 /* Ensure navbar links are visible on the dark header */
 .navbar-custom {
     position: sticky;
@@ -181,6 +194,8 @@ a:hover {
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .menu-toggle {
