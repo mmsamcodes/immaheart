@@ -1,0 +1,25 @@
+@page
+@model HospitalWebApp.Pages.Appointments.CreateModel
+@{ ViewData["Title"] = "Book Appointment"; }
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h2 class="text-primary">Book an Appointment</h2>
+        <hr />
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="Appointment.AppointmentDate" class="form-label">Preferred Date & Time</label>
+                <input asp-for="Appointment.AppointmentDate" class="form-control" type="datetime-local" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Appointment.SymptomsSummary" class="form-label">Brief Summary of Symptoms</label>
+                <textarea asp-for="Appointment.SymptomsSummary" class="form-control" rows="3" placeholder="Tell us how you are feeling..."></textarea>
+            </div>
+            <div class="form-check mb-4">
+                <input asp-for="Appointment.IsVirtual" class="form-check-input" type="checkbox">
+                <label asp-for="Appointment.IsVirtual" class="form-check-label">Request Virtual Consultation</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Submit Appointment Request</button>
+        </form>
+    </div>
+</div>

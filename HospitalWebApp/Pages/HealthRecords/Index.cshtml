@@ -1,0 +1,57 @@
+@page
+@model HospitalWebApp.Pages.HealthRecords.IndexModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@{
+    ViewData["Title"] = "Health Records";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="fw-bold">Health Records</h2>
+            <p class="text-muted">Medical history, vital checks and diagnostic notes for registered patients.</p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            @if (Model.HealthRecords.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Patient</th>
+                                <th>BP</th>
+                                <th>Weight (kg)</th>
+                                <th>Diagnosis</th>
+                                <th>Prescription</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.HealthRecords)
+                            {
+                                <tr>
+                                    <td>@record.RecordDate.ToString("dd MMM yyyy")</td>
+                                    <td>@(record.Patient?.FullName ?? "Unknown patient")</td>
+                                    <td>@record.BloodPressure</td>
+                                    <td>@record.WeightKg</td>
+                                    <td>@record.Diagnosis</td>
+                                    <td>@record.Prescription</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    No health records are available yet. Please add records through the patient consultation workflow.
+                </div>
+            }
+        </div>
+    </div>
+</div>

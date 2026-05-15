@@ -1,0 +1,168 @@
+@page
+@model HospitalWebApp.Pages.Triage.DetailsModel
+@{
+    ViewData["Title"] = "Triage Details";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-4">
+        <div>
+            <h1>Triage Details</h1>
+            <p class="text-muted">Review patient triage data and send them to the next care step.</p>
+        </div>
+        <a asp-page="/Triage/Index" class="btn btn-secondary">Back to queue</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (Model.Entry == null)
+            {
+                <div class="alert alert-danger">Triage entry not found.</div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Patient</strong><br />
+                        @Model.Entry.PatientName<br />
+                        @Model.Entry.PatientEmail<br />
+                        @Model.Entry.PatientPhone
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Status</strong><br />
+                        @Model.Entry.Status<br />
+                        <strong>Next step</strong><br />
+                        @Model.Entry.NextStep
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4"><strong>Blood pressure</strong><br />@Model.Entry.BloodPressure</div>
+                    <div class="col-md-4"><strong>Temperature</strong><br />@Model.Entry.TemperatureC °C</div>
+                    <div class="col-md-4"><strong>Heart rate</strong><br />@Model.Entry.HeartRate bpm</div>
+                    <div class="col-md-4"><strong>Respiration</strong><br />@Model.Entry.RespiratoryRate bpm</div>
+                    <div class="col-md-4"><strong>Oxygen sat</strong><br />@Model.Entry.OxygenSaturation %</div>
+                    <div class="col-md-4"><strong>Weight</strong><br />@Model.Entry.WeightKg kg</div>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Symptoms</strong>
+                    <p>@Model.Entry.Symptoms</p>
+                </div>
+                <div class="mb-3">
+                    <strong>Primary concern</strong>
+                    <p>@Model.Entry.PrimaryConcern</p>
+                </div>
+                <div class="mb-3">
+                    <strong>Notes</strong>
+                    <p>@Model.Entry.Notes</p>
+                </div>
+                <div class="mb-4">
+                    <h5>Care plan history</h5>
+                    @if (!Model.CarePlans.Any())
+                    {
+                        <div class="alert alert-secondary">No care plan has been recorded yet.</div>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var carePlan in Model.CarePlans)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <strong>@carePlan.Instructions</strong>
+                                        <span class="badge bg-secondary">@carePlan.Status</span>
+                                    </div>
+                                    <p class="mb-1"><strong>Goals:</strong> @carePlan.Goals</p>
+                                    <p class="mb-1 text-muted">Reviewed on @carePlan.ReviewDate?.ToString("yyyy-MM-dd") by @carePlan.CreatedBy?.FullName</p>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <h5>Doctor findings and prescription</h5>
+                    @if (User.IsInRole("Doctor"))
+                    {
+                        <form method="post" asp-page-handler="AddRecord">
+                            <input type="hidden" name="id" value="@Model.Entry?.Id" />
+                            <div class="mb-3">
+                                <label class="form-label">Diagnosis</label>
+                                <textarea asp-for="RecordInput.Diagnosis" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Prescription</label>
+                                <textarea asp-for="RecordInput.Prescription" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Doctor notes</label>
+                                <textarea asp-for="RecordInput.DoctorNotes" class="form-control" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save findings</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Doctor findings are available to medical staff only.</p>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <h5>Medical record history</h5>
+                    @if (!Model.HealthRecords.Any())
+                    {
+                        <div class="alert alert-secondary">No medical records have been created for this patient yet.</div>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var record in Model.HealthRecords)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <strong>@record.RecordDate.ToString("yyyy-MM-dd HH:mm")</strong>
+                                            <div class="text-muted">Doctor: @record.Doctor?.FullName</div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-1"><strong>Diagnosis:</strong> @record.Diagnosis</p>
+                                    <p class="mb-1"><strong>Prescription:</strong> @record.Prescription</p>
+                                    <p class="mb-0"><strong>Notes:</strong> @record.DoctorNotes</p>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="d-flex gap-2">
+                    @if (Model.Entry.Status == "PendingDoctor")
+                    {
+                        <form method="post" asp-page-handler="UpdateStatus">
+                            <input type="hidden" name="id" value="@Model.Entry.Id" />
+                            <input type="hidden" name="actionType" value="SendToLab" />
+                            <button type="submit" class="btn btn-warning">Send to Lab</button>
+                        </form>
+                        <form method="post" asp-page-handler="UpdateStatus">
+                            <input type="hidden" name="id" value="@Model.Entry.Id" />
+                            <input type="hidden" name="actionType" value="SendToPharmacy" />
+                            <button type="submit" class="btn btn-info">Send to Pharmacy</button>
+                        </form>
+                        <form method="post" asp-page-handler="UpdateStatus">
+                            <input type="hidden" name="id" value="@Model.Entry.Id" />
+                            <input type="hidden" name="actionType" value="MarkComplete" />
+                            <button type="submit" class="btn btn-success">Mark Complete</button>
+                        </form>
+                    }
+                    else if (Model.Entry.Status == "PendingLab" || Model.Entry.Status == "PendingPharmacy")
+                    {
+                        <form method="post" asp-page-handler="UpdateStatus">
+                            <input type="hidden" name="id" value="@Model.Entry.Id" />
+                            <input type="hidden" name="actionType" value="MarkComplete" />
+                            <button type="submit" class="btn btn-success">Mark Complete</button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

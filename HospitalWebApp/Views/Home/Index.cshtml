@@ -1,0 +1,150 @@
+@{
+    ViewData["Title"] = "Home";
+    ViewData["Description"] = "Immaculate Heart Hospital Kereita offers emergency care, maternity services, diagnostics, and compassionate patient-focused healthcare in Kiambu County, Kenya.";
+    ViewData["Keywords"] = "hospital in Kereita, Immaculate Heart Hospital, emergency care, maternity, diagnostics, ambulance, healthcare Kenya";
+    ViewData["OgImage"] = "https://immaculatehearthospitalkereita.org/images/compound.JPG";
+}
+
+<section class="hero-banner text-white d-flex align-items-center">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <span class="badge badge-level4 mb-3 px-3 py-2 fw-bold text-uppercase">Level 4 Mission Hospital</span>
+                <h1 class="display-4 fw-bold mb-3">Compassionate care for Kereita and beyond</h1>
+                <p class="lead text-white-75 mb-4">Delivering trustworthy, modern health services with a focus on comfort, dignity, and quick clinical support.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-controller="Home" asp-action="Services" class="btn btn-primary btn-lg">Our Services</a>
+                    <a asp-controller="Home" asp-action="About" class="btn btn-outline-light btn-lg">About Us</a>
+                </div>
+            </div>
+            <div class="col-lg-6 mt-4 mt-lg-0">
+                <div class="card shadow-lg rounded-4 border-0 overflow-hidden hero-image-wrapper">
+                    <img src="~/images/compound.JPG" alt="Immaculate Heart Hospital campus" class="home-image" />
+                    <div class="hero-image-badge">
+                        <img src="~/images/logo.jpg" alt="Hospital logo" />
+                        <div>
+                            <div class="text-dark fw-bold">Immaculate Heart Hospital</div>
+                            <div class="small text-muted">Level 4 Mission Hospital</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="spotlight-card shadow-sm bg-white rounded-4 mx-auto px-4 py-4 mt-n5" style="max-width: 92%;">
+    <div class="container">
+        <div class="row text-center g-3">
+            <div class="col-md-3">
+                <h5 class="fw-bold text-primary">24/7 Emergency</h5>
+                <p class="text-muted small mb-0">On-site emergency care and urgent triage around the clock.</p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="fw-bold text-primary">Ambulance Dispatch</h5>
+                <p class="text-muted small mb-0">Rapid ambulance response and reliable patient transfer when every minute counts.</p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="fw-bold text-primary">Laboratory Services</h5>
+                <p class="text-muted small mb-0">In-house diagnostics and faster clinical decision support.</p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="fw-bold text-primary">Quality Patient Care</h5>
+                <p class="text-muted small mb-0">Comfort-first care for outpatient, inpatient, and maternity services.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-soft py-5">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-3">A trusted medical partner for the community</h2>
+                <p class="text-muted mb-4">Our mission is to provide responsive, respectful healthcare with strong community support and simple navigation for patients and families.</p>
+                <ul class="list-unstyled text-muted">
+                    <li class="mb-3"><strong class="text-dark">Timely care:</strong> Well-organized appointments, referrals, and follow-ups.</li>
+                    <li class="mb-3"><strong class="text-dark">Modern diagnostics:</strong> Lab tests, imaging and clinical reviews in one place.</li>
+                    <li class="mb-3"><strong class="text-dark">Patient comfort:</strong> Clear communication, safe wards, and compassionate support.</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="card p-4 card-quiet">
+                    <h3 class="fw-bold">Helpful services at every visit</h3>
+                    <p class="text-muted mb-4">From consults to billing assistance, we work to keep every visit calm and easy to navigate.</p>
+                    <div class="row g-3">
+                        <div class="col-6"><div class="small-card">Emergency care</div></div>
+                        <div class="col-6"><div class="small-card">Laboratory tests</div></div>
+                        <div class="col-6"><div class="small-card">Clinic appointments</div></div>
+                        <div class="col-6"><div class="small-card">Billing support</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Services designed around people</h2>
+        <p class="text-muted mx-auto" style="max-width: 700px;">Care packages for maternity, general medicine, diagnostics and sustained wellness.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card p-4 card-quiet h-100">
+                <h5 class="fw-bold mb-3">Maternity & Child Health</h5>
+                <p class="text-muted small mb-0">Antenatal care, safe delivery planning and newborn follow-up.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 card-quiet h-100">
+                <h5 class="fw-bold mb-3">General Clinic</h5>
+                <p class="text-muted small mb-0">Consistent outpatient reviews for families and chronic conditions.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 card-quiet h-100">
+                <h5 class="fw-bold mb-3">Laboratory & Diagnostics</h5>
+                <p class="text-muted small mb-0">Faster, reliable lab results to support clear treatment planning.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 card-quiet h-100">
+                <h5 class="fw-bold mb-3">Ambulance & Transport</h5>
+                <p class="text-muted small mb-0">Rapid ambulance response and patient transport for urgent care needs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="rounded overflow-hidden shadow-sm">
+                <img src="~/images/doc.JPG" alt="Doctor consultation" class="img-fluid" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rounded overflow-hidden shadow-sm">
+                <img src="~/images/happy nurse.JPG" alt="Nurse smiling" class="img-fluid" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rounded overflow-hidden shadow-sm">
+                <img src="~/images/receptionist.JPG" alt="Hospital reception" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5 py-5 bg-primary text-white rounded shadow-sm">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold mb-3">A kinder, safer hospital experience</h2>
+            <p class="mb-0 text-white-75">Trusted health services for the whole family, delivered with respect, clarity and fast support.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a asp-controller="Home" asp-action="Contact" class="btn btn-light btn-lg text-primary">Contact Us</a>
+        </div>
+    </div>
+</section>

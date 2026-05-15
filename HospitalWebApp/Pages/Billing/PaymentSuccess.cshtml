@@ -1,0 +1,28 @@
+@page ""
+@model HospitalWebApp.Pages_Billing.PaymentSuccessModel
+@{
+    ViewData["Title"] = "Payment Success";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold">Payment Received</h4>
+                    @if (Model.Invoice == null)
+                    {
+                        <div class="alert alert-warning">Invoice not found.</div>
+                    }
+                    else
+                    {
+                        <p class="mb-2">Your payment for invoice <strong>@Model.Invoice.InvoiceNumber</strong> has been recorded.</p>
+                        <p class="mb-2">Amount: <strong>@Model.Invoice.TotalAmount.ToString("C")</strong></p>
+                        <p class="mb-2">Status: <strong>@Model.Invoice.Status</strong></p>
+                        <a asp-page="/Billing/Index" class="btn btn-primary mt-3">Back to invoices</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

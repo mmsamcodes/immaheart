@@ -1,0 +1,68 @@
+@page
+@model HospitalWebApp.Pages.Reception.IntakeModel
+@{
+    ViewData["Title"] = "Reception Patient Intake";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-4">
+        <div>
+            <h1>Reception Patient Intake</h1>
+            <p class="text-muted">Register new patients and queue them directly for triage from reception.</p>
+        </div>
+        <a asp-page="/Queue/Index" asp-route-queueType="Triage" class="btn btn-secondary">View Triage Queue</a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success">@Model.Message</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.FullName" class="form-label"></label>
+                        <input asp-for="Input.FullName" class="form-control" />
+                        <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.IDNumber" class="form-label"></label>
+                        <input asp-for="Input.IDNumber" class="form-control" />
+                        <span asp-validation-for="Input.IDNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.Age" class="form-label"></label>
+                        <input asp-for="Input.Age" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.BloodGroup" class="form-label"></label>
+                        <input asp-for="Input.BloodGroup" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.Notes" class="form-label"></label>
+                        <input asp-for="Input.Notes" class="form-control" />
+                    </div>
+                </div>
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-primary">Register and Queue for Triage</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://immaculatehearthospitalkereita.org/sitemap.xml

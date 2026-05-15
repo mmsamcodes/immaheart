@@ -1,0 +1,31 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.PharmacyDashboardModel
+@{
+    ViewData["Title"] = "Pharmacy Dashboard";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Pharmacy Dashboard</h1>
+    <p class="lead">Welcome back, @Model.FullName.</p>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card border-info bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Pharmacy Queue</h5>
+                    <p class="display-6">@Model.PharmacyQueueCount</p>
+                    <a asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-info btn-sm">Open pharmacy queue</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-secondary bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Outstanding Invoices</h5>
+                    <p class="display-6">@Model.PendingInvoices</p>
+                    <a asp-area="Identity" asp-page="/AccountsDashboard" class="btn btn-secondary btn-sm">Open billing</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

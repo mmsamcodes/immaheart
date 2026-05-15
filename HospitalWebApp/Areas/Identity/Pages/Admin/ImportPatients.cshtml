@@ -1,0 +1,48 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.Admin.ImportPatientsModel
+@{
+    ViewData["Title"] = "Import Patients";
+}
+
+<div class="container py-5">
+    <h1>Import Patients</h1>
+    <p class="text-muted">Upload a CSV file containing patient records. The file should include columns in this order: FullName, Email, PhoneNumber, IDNumber, Age, BloodGroup.</p>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label asp-for="PatientCsvFile" class="form-label">Patient CSV file</label>
+                    <input asp-for="PatientCsvFile" class="form-control" type="file" accept=".csv" />
+                    <span asp-validation-for="PatientCsvFile" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Import Patients</button>
+                <a asp-area="Identity" asp-page="/Admin/AdminDashboard" class="btn btn-secondary ms-2">Back to dashboard</a>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.ImportMessages.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Import result</h5>
+                <div class="mb-3">
+                    <span class="badge bg-success">Imported: @Model.ImportedCount</span>
+                    <span class="badge bg-warning text-dark">Existing: @Model.ExistingCount</span>
+                    <span class="badge bg-danger">Skipped: @Model.SkippedCount</span>
+                </div>
+                <ul class="list-group">
+                    @foreach (var message in Model.ImportMessages)
+                    {
+                        <li class="list-group-item">@message</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

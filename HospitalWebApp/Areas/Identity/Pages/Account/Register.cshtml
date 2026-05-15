@@ -1,0 +1,141 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Account Setup";
+}
+
+<div class="heartbeat-bg">
+    <div class="heartbeat-ring ring-1"></div>
+    <div class="heartbeat-ring ring-2"></div>
+    <div class="heartbeat-ring ring-3"></div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="auth-card p-4 p-md-5">
+                
+                <div class="text-center mb-4">
+                    <i class="bi bi-heart-pulse-fill text-danger display-4 float-icon"></i>
+                    <h2 class="fw-bold text-gradient mt-2">Patient Portal Registration</h2>
+                    <p class="text-muted small">Step 1: Set Login Details | Step 2: Complete Profile</p>
+                </div>
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge rounded-pill bg-primary me-2">1</span>
+                        <h5 class="mb-0 text-primary fw-bold">Create Your Login</h5>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="Input.Email">Email Address</label>
+                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.Password">Password</label>
+                                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mt-4 mb-3">
+                        <span class="badge rounded-pill bg-primary me-2">2</span>
+                        <h5 class="mb-0 text-primary fw-bold">Patient Details</h5>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.FullName" class="form-control" placeholder="Full Name" />
+                        <label asp-for="Input.FullName">Full Name</label>
+                        <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.IDNumber" class="form-control" placeholder="ID Number" />
+                                <label asp-for="Input.IDNumber">ID Number (SHA Check)</label>
+                                <span asp-validation-for="Input.IDNumber" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Phone Number" />
+                                <label asp-for="Input.PhoneNumber">Phone Number</label>
+                                <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mt-4 mb-3">
+                        <span class="badge rounded-pill bg-primary me-2">3</span>
+                        <h5 class="mb-0 text-primary fw-bold">Physical Vitals</h5>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Age" class="form-control" placeholder="Age" />
+                                <label asp-for="Input.Age">Age</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Weight" class="form-control" placeholder="Weight" />
+                                <label asp-for="Input.Weight">Weight (kg)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Height" class="form-control" placeholder="Height" />
+                                <label asp-for="Input.Height">Height (cm)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <select asp-for="Input.BloodGroup" class="form-select">
+                            <option value="Unknown">Unknown / Not Sure</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                        <label asp-for="Input.BloodGroup">Blood Group</label>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="w-100 btn btn-primary py-3 fw-bold">
+                        Complete Registration & Log In
+                    </button>
+                    
+                    <div class="text-center mt-4">
+                        <p class="small text-muted">Already have a portal account? 
+                            <a asp-page="./Login" class="text-primary fw-bold text-decoration-none">Log in here</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

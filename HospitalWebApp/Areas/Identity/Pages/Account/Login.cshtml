@@ -1,0 +1,62 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Welcome Back";
+}
+
+<div class="heartbeat-bg">
+    <div class="heartbeat-ring ring-1"></div>
+    <div class="heartbeat-ring ring-2"></div>
+    <div class="heartbeat-ring ring-3"></div>
+</div>
+
+<div class="auth-container d-flex align-items-center justify-content-center" style="min-height: 85vh; padding: 20px;">
+    @* Added max-width here to keep it compact *@
+    <div class="auth-card shadow-lg" style="max-width: 420px; width: 100%;">
+        <div class="text-center mb-4">
+            <i class="bi bi-heart-pulse-fill text-danger display-4 float-icon"></i>
+            <h2 class="fw-bold text-gradient mt-2">Welcome Back</h2>
+            <p class="text-muted small">Immaculate Heart Hospital Portal</p>
+        </div>
+        
+        <form id="account" method="post" class="px-2">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small" role="alert"></div>
+            
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Email" class="text-muted">Email Address</label>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+            </div>
+            
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.Password" class="text-muted">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 px-1">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                    <label asp-for="Input.RememberMe" class="form-check-label small text-muted">
+                        Remember me
+                    </label>
+                </div>
+                <a id="forgot-password" asp-page="./ForgotPassword" class="small text-decoration-none text-primary">Forgot?</a>
+            </div>
+
+            <button id="login-submit" type="submit" class="w-100 btn btn-primary py-2 mb-4 fw-bold">Log in to Portal</button>
+
+            <div class="text-center border-top pt-3">
+                <p class="small text-muted mb-1">First time here?</p>
+                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold text-decoration-none text-primary">
+                    Create a Patient Account
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

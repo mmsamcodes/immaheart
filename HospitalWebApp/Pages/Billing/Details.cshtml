@@ -1,0 +1,142 @@
+@page
+@model HospitalWebApp.Pages_Billing.DetailsModel
+@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+<div class="container py-5">
+    @if (Model.Invoice == null)
+    {
+        <div class="alert alert-danger">Invoice not found.</div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h1>Invoice @Model.Invoice.InvoiceNumber</h1>
+                <p class="text-muted">Patient: @Model.Invoice.Patient?.FullName ?? "Unknown"</p>
+            </div>
+            <a asp-page="/Billing/Index" class="btn btn-secondary">Back to Billing</a>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <strong>Issued</strong>
+                <p>@Model.Invoice.IssuedAt.ToString("yyyy-MM-dd")</p>
+            </div>
+            <div class="col-md-4">
+                <strong>Due</strong>
+                <p>@Model.Invoice.DueDate.ToString("yyyy-MM-dd")</p>
+            </div>
+            <div class="col-md-4">
+                <strong>Status</strong>
+                <p>@Model.Invoice.Status</p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Invoice Items</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Invoice.Items)
+                            {
+                                <tr>
+                                    <td>@item.Description</td>
+                                    <td class="text-end">@item.Amount.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Total</th>
+                                <th class="text-end">@Model.Invoice.TotalAmount.ToString("C")</th>
+                            </tr>
+                            <tr>
+                                <th>Paid</th>
+                                <th class="text-end">@Model.Invoice.PaidAmount.ToString("C")</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <p><strong>Payment Method:</strong> @Model.Invoice.PaymentMethod</p>
+                <p><strong>Notes:</strong> @Model.Invoice.Notes</p>
+
+                @if (User.IsInRole("Doctor") || User.IsInRole("Nurse") || User.IsInRole("Pharmacy") || User.IsInRole("Accounts") || User.IsInRole("Cashier") || User.IsInRole("Reception"))
+                {
+                    <hr />
+                    <h6>Add billing item</h6>
+                    <form method="post" asp-page-handler="AddItem">
+                        <input type="hidden" name="id" value="@Model.Invoice.Id" />
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Service (optional)</label>
+                                <select asp-for="ItemInput.ServiceId" class="form-select">
+                                    <option value="">-- select service --</option>
+                                    @foreach (var s in Model.Services)
+                                    {
+                                        <option value="@s.Id">@s.Name (@s.Price.ToString("C"))</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Drug (optional)</label>
+                                <select asp-for="ItemInput.DrugId" class="form-select">
+                                    <option value="">-- select drug --</option>
+                                    @foreach (var d in Model.Drugs)
+                                    {
+                                        <option value="@d.Id">@d.Name (@d.UnitPrice.ToString("C"))</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Description</label>
+                                <input asp-for="ItemInput.Description" class="form-control" />
+                            </div>
+                            <div class="col-md-1">
+                                <label class="form-label">Amount</label>
+                                <input asp-for="ItemInput.Amount" class="form-control" />
+                            </div>
+                            <div class="col-12 text-end mt-2">
+                                <button class="btn btn-sm btn-primary">Add item</button>
+                            </div>
+                        </div>
+                    </form>
+                }
+
+                @if (User.IsInRole("Accounts") || User.IsInRole("Cashier") || User.IsInRole("Reception"))
+                {
+                    <hr />
+                    <h6>Insurance</h6>
+                    <form method="post" asp-page-handler="AddInsurance">
+                        <input type="hidden" name="id" value="@Model.Invoice.Id" />
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label">Scheme</label>
+                                <input asp-for="InsuranceInput.Scheme" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Policy/Number</label>
+                                <input asp-for="InsuranceInput.Number" class="form-control" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Coverage %</label>
+                                <input asp-for="InsuranceInput.CoveragePercent" class="form-control" />
+                            </div>
+                            <div class="col-12 text-end mt-2">
+                                <button class="btn btn-sm btn-outline-primary">Save insurance</button>
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>

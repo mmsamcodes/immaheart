@@ -1,0 +1,52 @@
+@page
+@model HospitalWebApp.Pages.DischargeSummaries.IndexModel
+@{
+    ViewData["Title"] = "Discharge Summaries";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-4">
+        <div>
+            <h1>Discharge Summaries</h1>
+            <p class="text-muted">Review discharge summaries uploaded for patients.</p>
+        </div>
+        <a asp-page="/DischargeSummaries/Upload" class="btn btn-primary">Upload New Summary</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (!Model.Documents.Any())
+            {
+                <div class="alert alert-info">No discharge summaries available.</div>
+            }
+            else
+            {
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Description</th>
+                            <th>Uploaded At</th>
+                            <th>Uploaded By</th>
+                            <th>File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var doc in Model.Documents)
+                        {
+                            <tr>
+                                <td>@doc.Patient?.FullName ?? "Unknown"</td>
+                                <td>@doc.Description</td>
+                                <td>@doc.UploadedAt.ToString("g")</td>
+                                <td>@doc.UploadedBy?.FullName ?? "System"</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-secondary" href="~/uploads/discharge-summaries/@doc.FileName" target="_blank">Download</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

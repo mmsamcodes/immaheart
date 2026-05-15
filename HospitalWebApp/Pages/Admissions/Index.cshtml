@@ -1,0 +1,33 @@
+@page
+@model HospitalWebApp.Pages_Admissions.IndexModel
+@{
+    ViewData["Title"] = "Admissions";
+}
+
+<h1 class="mb-4">Patient Admissions</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Admission</th>
+            <th>Patient</th>
+            <th>Ward / Bed</th>
+            <th>Status</th>
+            <th>Admitted</th>
+            <th>Discharge</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var admission in Model.Admissions)
+        {
+            <tr>
+                <td>@admission.Id</td>
+                <td>@admission.Patient?.FullName ?? admission.PatientId</td>
+                <td>@admission.Ward - @admission.Bed</td>
+                <td>@admission.Status</td>
+                <td>@admission.AdmissionDate.ToString("yyyy-MM-dd")</td>
+                <td>@(admission.DischargeDate.HasValue ? admission.DischargeDate.Value.ToString("yyyy-MM-dd") : "—")</td>
+            </tr>
+        }
+    </tbody>
+</table>

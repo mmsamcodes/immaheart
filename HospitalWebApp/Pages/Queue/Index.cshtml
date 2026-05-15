@@ -1,0 +1,48 @@
+@page
+@model HospitalWebApp.Pages.Queue.IndexModel
+@{
+    ViewData["Title"] = string.IsNullOrEmpty(Model.QueueType) ? "Patient Queues" : $"{Model.QueueType} Queue";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>@ViewData["Title"]</h1>
+            <p class="text-muted">Review and manage queued patients across hospital workflows.</p>
+        </div>
+        <div class="btn-group">
+            <a asp-page="/Queue/Index" class="btn btn-outline-secondary btn-sm">All</a>
+            <a asp-page="/Queue/Index" asp-route-queueType="Doctor" class="btn btn-outline-primary btn-sm">Doctor</a>
+            <a asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-outline-warning btn-sm">Lab</a>
+            <a asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-outline-info btn-sm">Pharmacy</a>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Queue Type</th>
+                <th>Patient</th>
+                <th>Assigned By</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.QueueEntries)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.QueueType</td>
+                    <td>@item.Patient?.FullName ?? item.PatientId</td>
+                    <td>@item.AssignedBy?.FullName ?? item.AssignedById</td>
+                    <td>@item.Status</td>
+                    <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@item.Notes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

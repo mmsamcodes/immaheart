@@ -1,0 +1,46 @@
+@using Microsoft.AspNetCore.Identity
+@using HospitalWebApp.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<div class="nav-links">
+@if (SignInManager.IsSignedIn(User))
+{
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-area="Identity" asp-page="/AdminDashboard">Admin Dashboard</a>
+    }
+    else if (User.IsInRole("Doctor"))
+    {
+        <a asp-area="Identity" asp-page="/DoctorDashboard">Doctor Dashboard</a>
+    }
+    else if (User.IsInRole("Accounts") || User.IsInRole("Cashier") || User.IsInRole("Reception"))
+    {
+        <a asp-area="Identity" asp-page="/AccountsDashboard">Accounts Dashboard</a>
+    }
+    else if (User.IsInRole("Nurse"))
+    {
+        <a asp-area="Identity" asp-page="/NurseDashboard">Nurse Dashboard</a>
+    }
+    else if (User.IsInRole("LabTech"))
+    {
+        <a asp-area="Identity" asp-page="/LabTechDashboard">Lab Tech Dashboard</a>
+    }
+    else if (User.IsInRole("Pharmacy"))
+    {
+        <a asp-area="Identity" asp-page="/PharmacyDashboard">Pharmacy Dashboard</a>
+    }
+    else
+    {
+        <a asp-area="Identity" asp-page="/Dashboard">My Dashboard</a>
+    }
+    
+    <form class="d-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button type="submit" class="logout-btn" style="background:none; border:none; color:inherit; cursor:pointer; font-family:inherit; font-size:inherit;">Logout</button>
+    </form>
+}
+else
+{
+    <a asp-area="Identity" asp-page="/Account/Login">Login</a>
+}
+</div>

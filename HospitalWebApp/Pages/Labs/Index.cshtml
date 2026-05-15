@@ -1,0 +1,48 @@
+@page
+@model HospitalWebApp.Pages_Labs.IndexModel
+@{
+    ViewData["Title"] = "Lab Orders";
+}
+
+<h1 class="mb-4">Lab Orders</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order</th>
+            <th>Test</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Status</th>
+            <th>Ordered</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.LabOrders)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.TestName</td>
+                <td>@order.Patient?.FullName ?? order.PatientId</td>
+                <td>@order.Doctor?.FullName ?? order.DoctorId</td>
+                <td>@order.Status</td>
+                <td>@order.OrderedAt.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(order.ResultFileName))
+                    {
+                        <a href="/labs/download/@order.Id" class="btn btn-sm btn-outline-primary">Download</a>
+                    }
+                    else if (!string.IsNullOrEmpty(order.ResultSummary))
+                    {
+                        <span class="text-success">Summary available</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Pending</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

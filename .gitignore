@@ -1,0 +1,71 @@
+# Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+
+# ASP.NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Build results
+*.log
+*.vspscc
+*.vssscc
+
+# NuGet
+*.nupkg
+packages/
+*.snupkg
+
+# Rider
+.idea/
+*.sln.iml
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Files built by Visual Studio
+*.dll
+*.exe
+*.cache
+*.pdb
+*.mdb
+*.pdb
+
+# Node modules
+node_modules/
+
+# Misc
+*.db
+*.db-shm
+*.db-wal
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userprefs
+
+# Publish output
+publish/
+
+# Others
+*.psess
+*.vsp
+*.vsmdi
+*.testsettings
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt

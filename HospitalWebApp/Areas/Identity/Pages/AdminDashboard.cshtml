@@ -1,0 +1,319 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.AdminDashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="fw-bold">Admin Dashboard</h2>
+            <p class="text-muted">Hospital leadership controls, role summaries and finance insights.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-primary">@Model.TotalUsersCount</div>
+                    <p class="mb-0 text-muted">Total Registered Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-success">@Model.DoctorsCount</div>
+                    <p class="mb-0 text-muted">Doctors</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-warning">@Model.PatientsCount</div>
+                    <p class="mb-0 text-muted">Patients</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-danger">@Model.OutstandingInvoicesCount</div>
+                    <p class="mb-0 text-muted">Unpaid Invoices</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-info">@Model.DrugCatalogCount</div>
+                    <p class="mb-0 text-muted">Drugs in catalog</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-secondary">@Model.ServiceCatalogCount</div>
+                    <p class="mb-0 text-muted">Services in catalog</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-people-fill text-primary me-2"></i>Doctor View</h5>
+                    <p class="text-muted small">See doctor assignments, schedule workload, and access lab or billing pages.</p>
+                    <a href="#doctor-summary" class="btn btn-outline-primary btn-sm">Open doctor summary</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-person-badge-fill text-success me-2"></i>Patient View</h5>
+                    <p class="text-muted small">Quick access to the patient dashboard, appointments and medical records.</p>
+                    <a href="#patient-summary" class="btn btn-outline-success btn-sm">Open patient summary</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-currency-dollar text-warning me-2"></i>Finance Center</h5>
+                    <p class="text-muted small">Review billing totals and outstanding balances from one place.</p>
+                    <div class="d-flex gap-2">
+                        <a asp-page="/Billing/Index" class="btn btn-outline-warning btn-sm">Open billing</a>
+                        <a asp-area="Identity" asp-page="/AccountsDashboard" class="btn btn-outline-primary btn-sm">Open accounts</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-hospital text-info me-2"></i>Admissions</h5>
+                    <p class="text-muted small">Track admissions, bed occupancy and active patient care.</p>
+                    <a asp-page="/Admissions/Index" class="btn btn-outline-info btn-sm">Open admissions</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-upload text-primary me-2"></i>Import Patients</h5>
+                    <p class="text-muted small">Upload your existing patient database from CSV and onboard them automatically.</p>
+                    <a asp-area="Identity" asp-page="/Admin/ImportPatients" class="btn btn-outline-primary btn-sm">Import patients</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-box-seam text-success me-2"></i>Drug catalog</h5>
+                    <p class="text-muted small">Create a master drug database for pharmacy billing and usage tracking.</p>
+                    <a asp-area="Identity" asp-page="/Admin/Drugs" class="btn btn-outline-success btn-sm">Manage drugs</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-briefcase-medical text-warning me-2"></i>Service catalog</h5>
+                    <p class="text-muted small">Build a services price list for consultation, procedures and packages.</p>
+                    <a asp-area="Identity" asp-page="/Admin/Services" class="btn btn-outline-warning btn-sm">Manage services</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart-line-fill me-2"></i>Finance Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="d-block text-muted small">Outstanding balance</span>
+                        <div class="h3 fw-bold">KSh @Model.OutstandingBalance:N0</div>
+                    </div>
+                    <div class="mb-3">
+                        <span class="d-block text-muted small">Total invoices</span>
+                        <div class="fw-bold">@Model.TotalInvoicesCount invoices</div>
+                    </div>
+                    <div class="mb-3">
+                        <span class="d-block text-muted small">Billing ready</span>
+                        <div class="fw-bold">@Model.LabOrdersCount lab orders</div>
+                    </div>
+                    <a href="/Billing/Index" class="btn btn-primary w-100">Review invoices</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Invite new doctor</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="FullName" class="form-label">Full name</label>
+                                <input type="text" class="form-control" id="FullName" name="FullName" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="Email" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="Email" name="Email" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="Password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="Password" name="Password" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ConfirmPassword" class="form-label">Confirm password</label>
+                                <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required />
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Add Doctor</button>
+                        </div>
+                    </form>
+                    @if (!string.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-info mt-4">@Model.Message</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="doctor-summary">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Recent doctors</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentDoctors.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var doctor in Model.RecentDoctors)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>@doctor.FullName</strong><br />
+                                        <small class="text-muted">@doctor.Email</small>
+                                    </div>
+                                    <span class="badge bg-success rounded-pill">Doctor</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No doctors added yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6" id="patient-summary">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Recent patients</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentPatients.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var patient in Model.RecentPatients)
+                            {
+                                <li class="list-group-item">
+                                    <strong>@patient.FullName</strong><br />
+                                    <small class="text-muted">@patient.Email</small>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No recent patients yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-capsule me-2"></i>Top drug usage</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopDrugs.Any())
+                    {
+                        <ol class="list-group list-group-numbered">
+                            @foreach (var drug in Model.TopDrugs)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>@drug.Name</strong><br />
+                                        <small class="text-muted">Used @drug.UsageCount times</small>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">@drug.TotalRevenue.ToString("C")</span>
+                                </li>
+                            }
+                        </ol>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No drug billing data available yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-heart-pulse me-2"></i>Top patient concerns</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopConditions.Any())
+                    {
+                        <ol class="list-group list-group-numbered">
+                            @foreach (var condition in Model.TopConditions)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>@condition.Concern</strong><br />
+                                        <small class="text-muted">@condition.Count cases</small>
+                                    </div>
+                                </li>
+                            }
+                        </ol>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No condition trends recorded yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

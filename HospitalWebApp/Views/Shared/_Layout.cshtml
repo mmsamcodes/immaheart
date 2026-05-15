@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+@using Microsoft.AspNetCore.Identity
+@using HospitalWebApp.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    var siteName = "Immaculate Heart Hospital Kereita";
+    var description = ViewData["Description"] as string ?? "Immaculate Heart Hospital Kereita provides compassionate medical care, emergency response, maternity services, diagnostics, ambulance transport, and community health support in Kiambu County, Kenya.";
+    var keywords = ViewData["Keywords"] as string ?? "Immaculate Heart Hospital, Kereita hospital, mission hospital, emergency care, maternity care, medical services, diagnostics, ambulance services, doctor consultation, healthcare Kenya";
+    var pageTitle = ViewData["Title"] as string ?? siteName;
+    var ogImage = ViewData["OgImage"] as string ?? "https://immaculatehearthospitalkereita.org/images/compound.JPG";
+    var pageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="@description" />
+    <meta name="keywords" content="@keywords" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="@pageUrl" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@pageTitle - @siteName" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@pageUrl" />
+    <meta property="og:site_name" content="@siteName" />
+    <meta property="og:image" content="@ogImage" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@pageTitle - @siteName" />
+    <meta name="twitter:description" content="@description" />
+    <meta name="twitter:image" content="@ogImage" />
+    <meta name="theme-color" content="#004a99" />
+    <title>@pageTitle - @siteName</title>
+    <link rel="icon" href="~/images/logo.jpg" type="image/jpeg" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "MedicalBusiness",
+      "name": "Immaculate Heart Hospital Kereita",
+      "description": "Immaculate Heart Hospital Kereita provides compassionate medical care, emergency response, maternity services, diagnostics, ambulance transport, and community health support in Kiambu County, Kenya.",
+      "url": "https://immaculatehearthospitalkereita.org",
+      "logo": "https://immaculatehearthospitalkereita.org/images/logo.jpg",
+      "image": [
+        "https://immaculatehearthospitalkereita.org/images/compound.JPG",
+        "https://immaculatehearthospitalkereita.org/images/inside.JPG"
+      ],
+      "telephone": "+254110361550",
+      "address": {
+        "@@type": "PostalAddress",
+        "streetAddress": "Near Kimende Town, Kereita area",
+        "addressLocality": "Lari",
+        "addressRegion": "Kiambu",
+        "postalCode": "00200",
+        "addressCountry": "KE"
+      },
+      "openingHours": "Mo,Tu,We,Th,Fr,Sa,Su 00:00-23:59",
+      "sameAs": [
+        "https://www.google.com/search?q=Immaculate+Heart+Hospital+Kereita"
+      ]
+    }
+    </script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HospitalWebApp.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar-custom">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center gap-2 text-white text-decoration-none">
+                <img src="~/images/logo.jpg" alt="Immaculate Heart Hospital logo" class="navbar-logo" />
+                <span class="ms-2">Immaculate Heart Hospital Kereita</span>
+            </a>
+            
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+            <div class="nav-links" id="navLinks">
+                <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-area="" asp-controller="Home" asp-action="About">About</a>
+                <a asp-area="" asp-controller="Services" asp-action="Index">Services</a>
+                <a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <a asp-page="/HealthRecords/Index">Medical Records</a>
+                    @if (User.IsInRole("Doctor"))
+                    {
+                        <a asp-page="/Video/Sessions">Telehealth</a>
+                    }
+                }
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid p-0">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        <div class="container text-center">
+            <p class="mb-1">&copy; 2026 - Immaculate Heart Hospital Kereita - All Rights Reserved</p>
+            <p class="mb-0">
+                <a asp-controller="Home" asp-action="Privacy" class="footer-policy-link">Privacy Policy</a>
+            </p>
+            <div class="footer-social mt-3">
+                <a href="https://www.google.com/search?q=Immaculate+Heart+Hospital+Kereita" target="_blank" rel="noopener noreferrer"><i class="fab fa-google"></i> Google Business</a>
+                <a href="https://www.facebook.com/search/top?q=Immaculate%20Heart%20Hospital%20Kereita" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i> Facebook</a>
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/254110361550" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp Support">
+    </a>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        function toggleMenu() {
+            var x = document.getElementById("navLinks");
+            x.classList.toggle("active");
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,41 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.Admin.ManageStaffModel
+@{
+    ViewData["Title"] = "Manage Staff Roles";
+}
+
+<div class="container py-5">
+    <h1>Manage Staff Roles</h1>
+    <p class="text-muted">Assign a primary role to staff users during onboarding.</p>
+
+    <table class="table table-hover mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Assign Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model.Users)
+            {
+                <tr>
+                    <td>@u.FullName</td>
+                    <td>@u.Email</td>
+                    <td>
+                        <form method="post" asp-page-handler="AssignRole" class="d-flex gap-2">
+                            <input type="hidden" name="userId" value="@u.Id" />
+                            <select name="role" class="form-select form-select-sm w-auto">
+                                @foreach (var r in Model.Roles)
+                                {
+                                    <option value="@r">@r</option>
+                                }
+                            </select>
+                            <button class="btn btn-sm btn-primary">Assign</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

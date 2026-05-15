@@ -1,0 +1,101 @@
+@{
+    ViewData["Title"] = "Contact Us";
+    ViewData["Description"] = "Contact Immaculate Heart Hospital Kereita for appointments, emergency support, ambulance dispatch and patient inquiries in Kiambu County, Kenya.";
+    ViewData["Keywords"] = "Immaculate Heart Hospital contact, hospital phone number, hospital email, ambulance service Kenya";
+    ViewData["OgImage"] = "https://immaculatehearthospitalkereita.org/images/gate view.JPG";
+}
+
+<section class="bg-primary text-white text-center py-5 bg-hero-cover" style="background: linear-gradient(rgba(0, 74, 153, 0.9), rgba(0, 40, 90, 0.95)), url('/images/gate view.JPG');">
+    <div class="container py-3">
+        <img src="~/images/logo.jpg" class="page-logo mb-4" alt="Immaculate Heart Hospital logo" />
+        <h1 class="display-4 fw-bold">Get In Touch</h1>
+        <p class="lead mb-0">Our team is available 24 hours a day, 7 days a week to support emergency calls, appointments, and inquiries.</p>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row g-5">
+        <div class="col-lg-5">
+            <h2 class="text-primary fw-bold mb-4">Contact Details</h2>
+            <div class="d-flex align-items-start mb-4">
+                <div class="p-3 bg-light rounded border text-primary me-3"><i class="fa fa-building fs-5"></i></div>
+                <div>
+                    <h5 class="fw-bold mb-1">Physical Address</h5>
+                    <p class="text-muted mb-0">Kereita area, Near Kimende Town,<br>Lari Sub-County, Kiambu, Kenya</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-start mb-4">
+                <div class="p-3 bg-light rounded border text-success me-3"><i class="fa fa-phone fs-5"></i></div>
+                <div>
+                    <h5 class="fw-bold mb-1">Emergency & Main Inquiries</h5>
+                    <p class="text-muted mb-0">Mobile Desk: <strong>+254 110 361 550</strong></p>
+                    <p class="text-muted small">Available round-the-clock for emergencies.</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-start mb-4">
+                <div class="p-3 bg-light rounded border text-info me-3"><i class="fa fa-envelope fs-5"></i></div>
+                <div>
+                    <h5 class="fw-bold mb-1">Email Correspondence</h5>
+                    <p class="text-muted mb-0">info@immaculatehearthospitalkereita.org</p>
+                </div>
+            </div>
+            <div class="p-4 bg-warning bg-opacity-10 border border-warning rounded">
+                <h6 class="fw-bold text-dark mb-1">Dental Clinic Location</h6>
+                <p class="small text-muted mb-0">Our dental services operate from the Kimende clinic during standard daytime hours. Contact reception for scheduling.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="rounded overflow-hidden shadow-sm contact-image">
+                        <img src="~/images/receptionist.JPG" alt="Hospital receptionist" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="rounded overflow-hidden shadow-sm contact-image">
+                        <img src="~/images/ambulance.JPG" alt="Hospital ambulance" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card p-4 border shadow-sm rounded-3">
+                        <h3 class="fw-bold text-dark mb-3">Send an Online Inquiry</h3>
+                        <p class="text-muted small mb-4">Fill out the form below and our administration desk will contact you promptly.</p>
+                        <form method="post" action="#">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Full Name</label>
+                                    <input type="text" class="form-control shadow-sm" placeholder="Your Name" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Phone Number</label>
+                                    <input type="tel" class="form-control shadow-sm" placeholder="e.g. 0712345678" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Email Address</label>
+                                    <input type="email" class="form-control shadow-sm" placeholder="name@example.com" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Subject / Inquiry Type</label>
+                                    <select class="form-select shadow-sm">
+                                        <option>General Inquiry</option>
+                                        <option>Maternity Booking</option>
+                                        <option>Specialist Clinic Booking</option>
+                                        <option>Insurance / Corporate Query</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Your Message</label>
+                                    <textarea class="form-control shadow-sm" rows="4" placeholder="Type your detailed message here..." required></textarea>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm w-100" onclick="event.preventDefault(); alert('Inquiry simulated. Please connect through WhatsApp or phone for fast support.');">Submit Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

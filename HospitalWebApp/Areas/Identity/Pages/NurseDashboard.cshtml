@@ -1,0 +1,49 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.NurseDashboardModel
+@{
+    ViewData["Title"] = "Nurse Dashboard";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Nurse Dashboard</h1>
+    <p class="lead">Welcome back, @Model.FullName.</p>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card border-primary bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Admissions</h5>
+                    <p class="display-6">@Model.PendingAdmissions</p>
+                    <a asp-page="/Admissions/Index" class="btn btn-primary btn-sm">View admissions</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Doctor Queue</h5>
+                    <p class="display-6">@Model.DoctorQueueCount</p>
+                    <a asp-page="/Queue/Index" asp-route-queueType="Doctor" class="btn btn-success btn-sm">Open queue</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Lab Queue</h5>
+                    <p class="display-6">@Model.LabQueueCount</p>
+                    <a asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-warning btn-sm">Open queue</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Pharmacy Queue</h5>
+                    <p class="display-6">@Model.PharmacyQueueCount</p>
+                    <a asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-info btn-sm">Open queue</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

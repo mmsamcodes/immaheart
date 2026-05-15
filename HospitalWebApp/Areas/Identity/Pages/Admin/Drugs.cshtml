@@ -1,0 +1,105 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.Admin.DrugsModel
+@{
+    ViewData["Title"] = "Drug Catalog";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Drug Catalog</h1>
+            <p class="text-muted">Add and manage drugs for pharmacy billing.</p>
+        </div>
+        <a asp-area="Identity" asp-page="/Admin/AdminDashboard" class="btn btn-secondary">Back to dashboard</a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="InputDrug.Name" class="form-label">Name</label>
+                        <input asp-for="InputDrug.Name" class="form-control" />
+                        <span asp-validation-for="InputDrug.Name" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="InputDrug.Code" class="form-label">Code</label>
+                        <input asp-for="InputDrug.Code" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="InputDrug.UnitPrice" class="form-label">Price</label>
+                        <input asp-for="InputDrug.UnitPrice" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="InputDrug.StockQuantity" class="form-label">Stock</label>
+                        <input asp-for="InputDrug.StockQuantity" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="InputDrug.Unit" class="form-label">Unit</label>
+                        <input asp-for="InputDrug.Unit" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="InputDrug.Category" class="form-label">Category</label>
+                        <input asp-for="InputDrug.Category" class="form-control" />
+                    </div>
+                    <div class="col-md-8">
+                        <label asp-for="InputDrug.Description" class="form-label">Description</label>
+                        <input asp-for="InputDrug.Description" class="form-control" />
+                    </div>
+                </div>
+                <div class="mt-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Add drug</button>
+                    <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                </div>
+            </form>
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-success mt-3">@Model.Message</div>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5>Existing drugs</h5>
+            @if (!Model.Drugs.Any())
+            {
+                <div class="alert alert-secondary">No drugs have been added yet.</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Price</th>
+                                <th>Unit</th>
+                                <th>Stock</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var drug in Model.Drugs)
+                            {
+                                <tr>
+                                    <td>@drug.Name</td>
+                                    <td>@drug.Code</td>
+                                    <td>@drug.UnitPrice.ToString("C")</td>
+                                    <td>@drug.Unit</td>
+                                    <td>@drug.StockQuantity</td>
+                                    <td>@drug.Category</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

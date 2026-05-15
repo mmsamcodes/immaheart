@@ -1,0 +1,70 @@
+@page
+@model HospitalWebApp.Pages.Triage.IndexModel
+@{
+    ViewData["Title"] = "Triage Queue";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Triage Queue</h1>
+            <p class="text-muted">Review triage entries and send patients to the next clinical step.</p>
+        </div>
+        <a asp-page="/Triage/Create" class="btn btn-primary">New Triage</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card p-3 border-primary">
+                <h5>Doctor Pending</h5>
+                <p class="display-6">@Model.PendingDoctorCount</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 border-warning">
+                <h5>Lab Pending</h5>
+                <p class="display-6">@Model.PendingLabCount</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 border-info">
+                <h5>Pharmacy Pending</h5>
+                <p class="display-6">@Model.PendingPharmacyCount</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Status</th>
+                    <th>Next Step</th>
+                    <th>Nurse</th>
+                    <th>Doctor</th>
+                    <th>Triage Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.TriageEntries)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.PatientName<br /><small>@item.PatientEmail</small></td>
+                        <td>@item.Status</td>
+                        <td>@item.NextStep</td>
+                        <td>@item.Nurse?.FullName ?? item.NurseId</td>
+                        <td>@item.AssignedDoctor?.FullName ?? item.AssignedDoctorId</td>
+                        <td>@item.TriageDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <a asp-page="/Triage/Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Open</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

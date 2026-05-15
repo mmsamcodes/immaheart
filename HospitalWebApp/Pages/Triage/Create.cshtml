@@ -1,0 +1,112 @@
+@page
+@model HospitalWebApp.Pages.Triage.CreateModel
+@{
+    ViewData["Title"] = "Nurse Triage";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Nurse Triage</h1>
+    <p class="text-muted">Enter patient vitals and create a patient account automatically.</p>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.FullName" class="form-label"></label>
+                        <input asp-for="Input.FullName" class="form-control" />
+                        <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.IDNumber" class="form-label">ID / Passport</label>
+                        <input asp-for="Input.IDNumber" class="form-control" />
+                        <span asp-validation-for="Input.IDNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.Age" class="form-label"></label>
+                        <input asp-for="Input.Age" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.BloodGroup" class="form-label"></label>
+                        <input asp-for="Input.BloodGroup" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.WeightKg" class="form-label"></label>
+                        <input asp-for="Input.WeightKg" class="form-control" />
+                        <span asp-validation-for="Input.WeightKg" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.HeightCm" class="form-label"></label>
+                        <input asp-for="Input.HeightCm" class="form-control" />
+                        <span asp-validation-for="Input.HeightCm" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.BloodPressure" class="form-label"></label>
+                        <input asp-for="Input.BloodPressure" class="form-control" />
+                        <span asp-validation-for="Input.BloodPressure" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.TemperatureC" class="form-label"></label>
+                        <input asp-for="Input.TemperatureC" class="form-control" />
+                        <span asp-validation-for="Input.TemperatureC" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.HeartRate" class="form-label"></label>
+                        <input asp-for="Input.HeartRate" class="form-control" />
+                        <span asp-validation-for="Input.HeartRate" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.RespiratoryRate" class="form-label"></label>
+                        <input asp-for="Input.RespiratoryRate" class="form-control" />
+                        <span asp-validation-for="Input.RespiratoryRate" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.OxygenSaturation" class="form-label"></label>
+                        <input asp-for="Input.OxygenSaturation" class="form-control" />
+                        <span asp-validation-for="Input.OxygenSaturation" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.Symptoms" class="form-label"></label>
+                        <textarea asp-for="Input.Symptoms" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.PrimaryConcern" class="form-label">Primary concern / likely condition</label>
+                        <input asp-for="Input.PrimaryConcern" class="form-control" />
+                        <span asp-validation-for="Input.PrimaryConcern" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.CarePlanSummary" class="form-label">Care plan summary</label>
+                        <textarea asp-for="Input.CarePlanSummary" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.CarePlanGoals" class="form-label">Care plan goals</label>
+                        <textarea asp-for="Input.CarePlanGoals" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.Notes" class="form-label"></label>
+                        <textarea asp-for="Input.Notes" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Save Triage</button>
+                    <a asp-page="/Triage/Index" class="btn btn-secondary ms-2">View Triage Queue</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

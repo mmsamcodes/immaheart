@@ -1,0 +1,149 @@
+@model HospitalWebApp.Models.AboutViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["Description"] = "Learn about the story, mission and values of Immaculate Heart Hospital Kereita, a faith-based Level 4 mission hospital serving families across Kiambu County.";
+    ViewData["Keywords"] = "Immaculate Heart Hospital about, mission hospital Kereita, hospital values, healthcare vision";
+    ViewData["OgImage"] = "https://immaculatehearthospitalkereita.org/images/inside.JPG";
+}
+
+<section class="bg-primary text-white text-center py-5" style="background: linear-gradient(rgba(0, 74, 153, 0.9), rgba(0, 40, 90, 0.95));">
+    <div class="container py-3 text-center">
+        <img src="~/images/logo.jpg" class="page-logo mb-4" alt="Immaculate Heart Hospital logo" />
+        <h1 class="display-4 fw-bold">About Immaculate Heart Hospital</h1>
+        <p class="lead mb-0">@Model.Subtitle</p>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <h2 class="text-primary fw-bold mb-3">Our Story of Care</h2>
+            <p class="text-secondary lead">@Model.IntroText</p>
+            <p class="text-muted">Built from a calling to serve the people of Kiambu County, our hospital delivers modern clinical services within a warm, faith-anchored environment. We bring together specialist diagnostics, maternity expertise, and compassionate follow-up care in one trusted facility.</p>
+            <a asp-controller="Home" asp-action="Services" class="btn btn-outline-primary px-4 mt-3">View Our Services</a>
+        </div>
+        <div class="col-lg-6">
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="rounded overflow-hidden shadow-sm about-image">
+                        <img src="~/images/inside.JPG" alt="Hospital interior" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="rounded overflow-hidden shadow-sm about-image">
+                        <img src="~/images/doc room.JPG" alt="Doctor office" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <div class="p-4 bg-light rounded shadow-sm">
+                        <h5 class="fw-bold mb-2">Facility Highlight</h5>
+                        <p class="text-muted small mb-0">Use this area to show your hospital's reception, wards, and clinical teams. Visitors expect clear, reassuring visuals of your facilities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-light py-5 border-top border-bottom">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 p-4 border-0 shadow-sm rounded-3">
+                    <div class="text-primary mb-3"><i class="fa fa-eye fs-2"></i></div>
+                    <h3 class="h5 fw-bold text-dark">Our Vision</h3>
+                    <p class="text-muted small mb-0">To be the trusted faith-based hospital in the region, recognized for compassionate outcomes, community trust, and accessible quality care.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-4 border-0 shadow-sm rounded-3">
+                    <div class="text-success mb-3"><i class="fa fa-heartbeat fs-2"></i></div>
+                    <h3 class="h5 fw-bold text-dark">Our Mission</h3>
+                    <p class="text-muted small mb-0">To care for body and spirit through professional treatment, dignity-focused service, and support for families throughout recovery.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-4 border-0 shadow-sm rounded-3">
+                    <div class="text-warning mb-3"><i class="fa fa-shield-alt fs-2"></i></div>
+                    <h3 class="h5 fw-bold text-dark">Our Values</h3>
+                    <ul class="text-muted small ps-3 mb-0">
+                        <li>Compassion</li>
+                        <li>Excellence</li>
+                        <li>Integrity</li>
+                        <li>Dignity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="rounded overflow-hidden shadow-sm about-image">
+                <img src="~/images/happy nurse.JPG" alt="Nurse with patient" class="img-fluid" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rounded overflow-hidden shadow-sm about-image">
+                <img src="~/images/receptionist.JPG" alt="Hospital reception" class="img-fluid" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rounded overflow-hidden shadow-sm about-image">
+                <img src="~/images/cleanliness dept.JPG" alt="Clean hospital department" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row align-items-center g-4">
+        <div class="col-md-6">
+            <h2 class="text-primary fw-bold mb-3">Community Articles & Health Guidance</h2>
+            <p class="text-muted mb-4">Find patient stories, helpful tips, and hospital updates that inform and inspire better health choices.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-primary btn-lg">Get In Touch</a>
+        </div>
+    </div>
+
+    @if (Model.RecentBlogPosts.Any())
+    {
+        <div class="row g-4">
+            @foreach (var post in Model.RecentBlogPosts)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-3">
+                        <div class="card-body">
+                            <span class="badge bg-info text-dark mb-3">@post.Category</span>
+                            <h4 class="h6 fw-bold">@post.Title</h4>
+                            <p class="text-muted small mb-3">@post.DatePosted.ToString("MMMM d, yyyy")</p>
+                            <p class="text-secondary small mb-3">@post.Summary</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary">No recent community articles are available yet. Please contact us to share your story or request more information.</div>
+    }
+</section>
+
+<section class="py-5 bg-primary text-white rounded shadow-sm">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 class="fw-bold mb-2">Have a health story or a question?</h3>
+                <p class="mb-0 text-white-75">Reach out to our care team for support, appointments, or to share feedback that helps us improve.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a asp-controller="Home" asp-action="Contact" class="btn btn-warning btn-lg fw-bold">Contact Our Team</a>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,130 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.AccountsDashboardModel
+@{
+    ViewData["Title"] = "Accounts Dashboard";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="fw-bold">Accounts / Cashier Dashboard</h2>
+            <p class="text-muted">Log payments, reconcile invoices, and mark consultations as paid.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Invoices</h5>
+                    @if (Model.Invoices.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Invoice</th>
+                                    <th>Patient</th>
+                                    <th>Issued</th>
+                                    <th>Total</th>
+                                    <th>Paid</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var inv in Model.Invoices)
+                                {
+                                    <tr>
+                                        <td>@inv.Id</td>
+                                        <td>@inv.InvoiceNumber</td>
+                                        <td>@inv.Patient?.FullName</td>
+                                        <td>@inv.IssuedAt.ToShortDateString()</td>
+                                        <td>@inv.TotalAmount</td>
+                                        <td>@inv.PaidAmount</td>
+                                        <td>@inv.Status</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#payModal" data-invoiceid="@inv.Id" data-total="@inv.TotalAmount" data-paid="@inv.PaidAmount">Log payment</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No invoices found.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Quick actions</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">Use the payment modal to record MPesa or Visa transactions. Admins can see and review all records.</p>
+                    <a asp-page="/Reception/Intake" class="btn btn-outline-primary w-100 mb-2">Patient Intake</a>
+                    <a asp-page="/Billing/Index" class="btn btn-outline-primary w-100 mb-2">Open Billing Center</a>
+                    <a asp-area="Identity" asp-page="/AdminDashboard" class="btn btn-outline-secondary w-100">Back to Admin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment modal -->
+    <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" asp-page-handler="MarkPaid">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Log Payment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="InvoiceId" name="InvoiceId" />
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" step="0.01" class="form-control" id="Amount" name="Amount" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Method</label>
+                            <select class="form-select" id="Method" name="Method">
+                                <option>MPesa</option>
+                                <option>Visa</option>
+                                <option>Cash</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reference</label>
+                            <input type="text" class="form-control" id="Reference" name="Reference" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var payModal = document.getElementById('payModal')
+        payModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget
+            var invoiceId = button.getAttribute('data-invoiceid')
+            var total = button.getAttribute('data-total')
+            var paid = button.getAttribute('data-paid')
+            var modal = this
+            modal.querySelector('#InvoiceId').value = invoiceId
+            modal.querySelector('#Amount').value = (parseFloat(total) - parseFloat(paid)).toFixed(2)
+        })
+    </script>
+}

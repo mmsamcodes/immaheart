@@ -1,0 +1,40 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.LabTechDashboardModel
+@{
+    ViewData["Title"] = "Lab Technician Dashboard";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Lab Tech Dashboard</h1>
+    <p class="lead">Welcome back, @Model.FullName.</p>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-warning bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Lab Orders</h5>
+                    <p class="display-6">@Model.PendingLabOrders</p>
+                    <a asp-page="/Labs/Index" class="btn btn-warning btn-sm">View lab orders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Completed Lab Orders</h5>
+                    <p class="display-6">@Model.CompletedLabOrders</p>
+                    <a asp-page="/Labs/Index" class="btn btn-success btn-sm">Review completed</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-info bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Lab Queue</h5>
+                    <p class="display-6">@Model.LabQueueCount</p>
+                    <a asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-info btn-sm">Open queue</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
