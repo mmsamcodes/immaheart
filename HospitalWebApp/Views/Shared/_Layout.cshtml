@@ -11,6 +11,11 @@
     var pageTitle = ViewData["Title"] as string ?? siteName;
     var ogImage = ViewData["OgImage"] as string ?? "https://immaculatehearthospitalkereita.org/images/compound.JPG";
     var pageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+    bool IsNavActive(string controller, string action) => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+    bool IsPageActive(string page) => !string.IsNullOrEmpty(page) && string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase);
 }
 
 <head>
@@ -70,25 +75,25 @@
 <body>
     <header>
         <nav class="navbar-custom">
-            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center gap-2 text-white text-decoration-none">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center gap-2 text-white text-decoration-none" aria-label="Go to home page" title="Home">
                 <img src="~/images/logo.jpg" alt="Immaculate Heart Hospital logo" class="navbar-logo" />
                 <span class="ms-2">Immaculate Heart Hospital Kereita</span>
             </a>
             
-            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <button type="button" class="menu-toggle" onclick="toggleMenu()" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation menu">☰</button>
 
             <div class="nav-links" id="navLinks">
-                <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                <a asp-area="" asp-controller="Home" asp-action="About">About</a>
-                <a asp-area="" asp-controller="Services" asp-action="Index">Services</a>
-                <a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
-                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="@(IsNavActive("Home", "Index") ? "active" : string.Empty)">Home</a>
+                <a asp-area="" asp-controller="Home" asp-action="About" class="@(IsNavActive("Home", "About") ? "active" : string.Empty)">About</a>
+                <a asp-area="" asp-controller="Home" asp-action="Services" class="@(IsNavActive("Home", "Services") ? "active" : string.Empty)">Services</a>
+                <a asp-area="" asp-controller="Home" asp-action="Contact" class="@(IsNavActive("Home", "Contact") ? "active" : string.Empty)">Contact</a>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="@(IsNavActive("Home", "Privacy") ? "active" : string.Empty)">Privacy</a>
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <a asp-page="/HealthRecords/Index">Medical Records</a>
+                    <a asp-page="/HealthRecords/Index" class="@(IsPageActive("/HealthRecords/Index") ? "active" : string.Empty)">Medical Records</a>
                     @if (User.IsInRole("Doctor"))
                     {
-                        <a asp-page="/Video/Sessions">Telehealth</a>
+                        <a asp-page="/Video/Sessions" class="@(IsPageActive("/Video/Sessions") ? "active" : string.Empty)">Telehealth</a>
                     }
                 }
                 <partial name="_LoginPartial" />
@@ -127,7 +132,11 @@
     <script>
         function toggleMenu() {
             var x = document.getElementById("navLinks");
-            x.classList.toggle("active");
+            var button = document.querySelector('.menu-toggle');
+            var isOpen = x.classList.toggle("active");
+            if (button) {
+                button.setAttribute('aria-expanded', isOpen.toString());
+            }
         }
     </script>
 

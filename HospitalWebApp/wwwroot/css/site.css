@@ -149,14 +149,31 @@ a:hover {
 }
 
 /* Ensure navbar links are visible on the dark header */
-.navbar-custom .nav-links a {
-    color: white;
-    margin-left: 0.75rem;
+.navbar-custom {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-.navbar-custom .nav-links a:hover {
+.navbar-custom .nav-links a,
+.navbar-custom .logout-btn {
+    color: white;
+    margin-left: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 0.65rem;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.navbar-custom .nav-links a:hover,
+.navbar-custom .logout-btn:hover,
+.navbar-custom .nav-links a.active {
+    background: rgba(255, 255, 255, 0.12);
     color: #ffb703;
-    text-decoration: underline;
+    text-decoration: none;
+}
+
+.navbar-custom .nav-links a.active {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 }
 
 /* Desktop layout for nav links */
@@ -171,6 +188,16 @@ a:hover {
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.65rem;
+}
+
+.menu-toggle:hover,
+.menu-toggle:focus {
+    background: rgba(255,255,255,0.12);
+    outline: none;
 }
 
 @media (max-width: 768px) {

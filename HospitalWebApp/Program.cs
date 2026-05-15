@@ -79,6 +79,7 @@ app.Use(async (context, next) =>
     context.Response.Headers["X-Frame-Options"] = "DENY";
     context.Response.Headers["Referrer-Policy"] = "no-referrer";
     context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+    context.Response.Headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://immaculatehearthospitalkereita.org https://cdn-icons-png.flaticon.com; connect-src 'self'; frame-ancestors 'none';";
     await next();
 });
 app.UseStaticFiles(); // Serve static files from wwwroot
