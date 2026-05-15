@@ -35,7 +35,19 @@
     <meta name="twitter:title" content="@pageTitle - @siteName" />
     <meta name="twitter:description" content="@description" />
     <meta name="twitter:image" content="@ogImage" />
-    <meta name="theme-color" content="#004a99" />
+    <meta name="theme-color" content="#003d7f" />
+    
+    <!-- PWA Configuration -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="IH Hospital" />
+    <meta name="application-name" content="Immaculate Heart Hospital Kereita" />
+    <meta name="msapplication-TileColor" content="#003d7f" />
+    <meta name="msapplication-config" content="~/browserconfig.xml" />
+    <link rel="manifest" href="~/manifest.json" />
+    <link rel="apple-touch-icon" href="~/images/logo.jpg" />
+    
     <title>@pageTitle - @siteName</title>
     <link rel="icon" href="~/images/logo.jpg" type="image/jpeg" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -139,7 +151,32 @@
                 button.setAttribute('aria-expanded', isOpen.toString());
             }
         }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('✅ Service Worker registered:', reg))
+                    .catch(err => console.log('❌ Service Worker registration failed:', err));
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install button/prompt here if you have one
+            console.log('📱 App can be installed');
+        });
+
+        // Handle app installation
+        window.addEventListener('appinstalled', () => {
+            console.log('✅ App installed successfully!');
+            deferredPrompt = null;
+        });
     </script>
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
