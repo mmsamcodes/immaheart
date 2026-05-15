@@ -8,10 +8,10 @@
 }
 
 <section class="bg-primary text-white text-center py-5" style="background: linear-gradient(rgba(0, 74, 153, 0.9), rgba(0, 40, 90, 0.95));">
-    <div class="container py-3 text-center">
+    <div class="container py-5 text-center">
         <img src="~/images/logo.jpg" class="page-logo mb-4" alt="Immaculate Heart Hospital logo" />
         <h1 class="display-4 fw-bold">About Immaculate Heart Hospital</h1>
-        <p class="lead mb-0">@Model.Subtitle</p>
+        <p class="fw-bold" style="font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-top: 1rem;">@Model.Subtitle</p>
     </div>
 </section>
 
@@ -24,23 +24,8 @@
             <a asp-controller="Home" asp-action="Services" class="btn btn-outline-primary px-4 mt-3">View Our Services</a>
         </div>
         <div class="col-lg-6">
-            <div class="row g-3">
-                <div class="col-6">
-                    <div class="rounded overflow-hidden shadow-sm about-image">
-                        <img src="~/images/inside.JPG" alt="Hospital interior" class="img-fluid" />
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="rounded overflow-hidden shadow-sm about-image">
-                        <img src="~/images/doc room.JPG" alt="Doctor office" class="img-fluid" />
-                    </div>
-                </div>
-                <div class="col-12 mt-3">
-                    <div class="p-4 bg-light rounded shadow-sm">
-                        <h5 class="fw-bold mb-2">Facility Highlight</h5>
-                        <p class="text-muted small mb-0">Use this area to show your hospital's reception, wards, and clinical teams. Visitors expect clear, reassuring visuals of your facilities.</p>
-                    </div>
-                </div>
+            <div class="rounded overflow-hidden shadow-lg about-image">
+                <img src="~/images/inside.JPG" alt="Hospital interior" class="img-fluid" style="height: 400px; object-fit: cover;" />
             </div>
         </div>
     </div>
@@ -58,14 +43,14 @@
             </div>
             <div class="col-md-4">
                 <div class="card h-100 p-4 border-0 shadow-sm rounded-3">
-                    <div class="text-success mb-3"><i class="fa fa-heartbeat fs-2"></i></div>
+                    <div class="text-success mb-3"><i class="fa fa-heart-pulse fs-2"></i></div>
                     <h3 class="h5 fw-bold text-dark">Our Mission</h3>
                     <p class="text-muted small mb-0">To care for body and spirit through professional treatment, dignity-focused service, and support for families throughout recovery.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card h-100 p-4 border-0 shadow-sm rounded-3">
-                    <div class="text-warning mb-3"><i class="fa fa-shield-alt fs-2"></i></div>
+                    <div class="text-warning mb-3"><i class="fa fa-shield fs-2"></i></div>
                     <h3 class="h5 fw-bold text-dark">Our Values</h3>
                     <ul class="text-muted small ps-3 mb-0">
                         <li>Compassion</li>
@@ -81,17 +66,12 @@
 
 <section class="container my-5">
     <div class="row g-4">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="rounded overflow-hidden shadow-sm about-image">
-                <img src="~/images/happy nurse.JPG" alt="Nurse with patient" class="img-fluid" />
+                <img src="~/images/nice view.JPG" alt="Hospital facility" class="img-fluid" />
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="rounded overflow-hidden shadow-sm about-image">
-                <img src="~/images/receptionist.JPG" alt="Hospital reception" class="img-fluid" />
-            </div>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="rounded overflow-hidden shadow-sm about-image">
                 <img src="~/images/cleanliness dept.JPG" alt="Clean hospital department" class="img-fluid" />
             </div>

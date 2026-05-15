@@ -5,11 +5,11 @@
     ViewData["OgImage"] = "https://immaculatehearthospitalkereita.org/images/gate view.JPG";
 }
 
-<section class="bg-primary text-white text-center py-5 bg-hero-cover" style="background: linear-gradient(rgba(0, 74, 153, 0.9), rgba(0, 40, 90, 0.95)), url('/images/gate view.JPG');">
-    <div class="container py-3">
+<section class="bg-primary text-white text-center py-5" style="background: linear-gradient(rgba(0, 74, 153, 0.9), rgba(0, 40, 90, 0.95)), url('/images/gate view.JPG'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <div class="container py-5">
         <img src="~/images/logo.jpg" class="page-logo mb-4" alt="Immaculate Heart Hospital logo" />
-        <h1 class="display-4 fw-bold">Get In Touch</h1>
-        <p class="lead mb-0">Our team is available 24 hours a day, 7 days a week to support emergency calls, appointments, and inquiries.</p>
+        <h1 class="display-4 fw-bold mb-3">Get In Touch</h1>
+        <p class="lead fw-bold mb-0" style="font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Our team is available 24 hours a day, 7 days a week to support emergency calls, appointments, and inquiries.</p>
     </div>
 </section>
 
@@ -47,37 +47,28 @@
 
         <div class="col-lg-7">
             <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="rounded overflow-hidden shadow-sm contact-image">
-                        <img src="~/images/receptionist.JPG" alt="Hospital receptionist" class="img-fluid" />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="rounded overflow-hidden shadow-sm contact-image">
-                        <img src="~/images/ambulance.JPG" alt="Hospital ambulance" class="img-fluid" />
-                    </div>
-                </div>
                 <div class="col-12">
                     <div class="card p-4 border shadow-sm rounded-3">
                         <h3 class="fw-bold text-dark mb-3">Send an Online Inquiry</h3>
                         <p class="text-muted small mb-4">Fill out the form below and our administration desk will contact you promptly.</p>
-                        <form method="post" action="#">
+                        <div id="contactMessage"></div>
+                        <form id="contactForm" method="post" asp-action="Contact">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold">Full Name</label>
-                                    <input type="text" class="form-control shadow-sm" placeholder="Your Name" required />
+                                    <input type="text" name="fullName" class="form-control shadow-sm" placeholder="Your Name" required />
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold">Phone Number</label>
-                                    <input type="tel" class="form-control shadow-sm" placeholder="e.g. 0712345678" required />
+                                    <input type="tel" name="phone" class="form-control shadow-sm" placeholder="e.g. 0712345678" required />
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label small fw-bold">Email Address</label>
-                                    <input type="email" class="form-control shadow-sm" placeholder="name@example.com" required />
+                                    <input type="email" name="email" class="form-control shadow-sm" placeholder="name@example.com" required />
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label small fw-bold">Subject / Inquiry Type</label>
-                                    <select class="form-select shadow-sm">
+                                    <select name="subject" class="form-select shadow-sm" required>
                                         <option>General Inquiry</option>
                                         <option>Maternity Booking</option>
                                         <option>Specialist Clinic Booking</option>
@@ -86,13 +77,46 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label small fw-bold">Your Message</label>
-                                    <textarea class="form-control shadow-sm" rows="4" placeholder="Type your detailed message here..." required></textarea>
+                                    <textarea name="message" class="form-control shadow-sm" rows="4" placeholder="Type your detailed message here..." required></textarea>
                                 </div>
                                 <div class="col-12 mt-3">
-                                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm w-100" onclick="event.preventDefault(); alert('Inquiry simulated. Please connect through WhatsApp or phone for fast support.');">Submit Message</button>
+                                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm w-100">Submit Message</button>
                                 </div>
                             </div>
                         </form>
+                        <script>
+                            document.getElementById('contactForm').addEventListener('submit', async function(e) {
+                                e.preventDefault();
+                                
+                                const formData = new FormData(this);
+                                const submitBtn = this.querySelector('button[type="submit"]');
+                                const messageDiv = document.getElementById('contactMessage');
+                                submitBtn.disabled = true;
+                                submitBtn.textContent = 'Sending...';
+                                
+                                try {
+                                    const response = await fetch('@Url.Action("Contact")', {
+                                        method: 'POST',
+                                        body: formData
+                                    });
+                                    
+                                    const result = await response.json();
+                                    
+                                    if (result.success) {
+                                        messageDiv.innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert">' + result.message + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                                        this.reset();
+                                    } else {
+                                        messageDiv.innerHTML = '<div class="alert alert-warning alert-dismissible fade show" role="alert">' + result.message + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                                    }
+                                } catch (error) {
+                                    messageDiv.innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">Error sending message. Please try again.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                                } finally {
+                                    submitBtn.disabled = false;
+                                    submitBtn.textContent = 'Submit Message';
+                                }
+                            });
+                        </script>
+                    </div>
                     </div>
                 </div>
             </div>
