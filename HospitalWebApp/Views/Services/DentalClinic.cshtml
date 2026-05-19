@@ -1,0 +1,113 @@
+@{
+    ViewData["Title"] = "Dental Clinic Services";
+}
+
+<section class="bg-primary text-white text-center py-5" style="background: linear-gradient(rgba(0, 74, 153, 0.9), rgba(0, 40, 90, 0.95));">
+    <div class="container py-3">
+        <h1 class="display-4 fw-bold">Dental Clinic Services</h1>
+        <p class="lead mb-0">Professional dental care for your whole family.</p>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <h2 class="text-primary fw-bold mb-3">Your Smile Deserves Expert Care</h2>
+            <p class="text-secondary lead">From routine cleanings to restorative work, our dental clinic provides comprehensive oral health services with compassion and expertise.</p>
+            
+            <div class="mt-4">
+                <h4 class="text-dark fw-bold mb-3">Dental Services Offered</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Oral Health Screening</strong> - Comprehensive dental examinations and early detection</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Professional Cleaning & Hygiene</strong> - Tartar removal and deep cleaning</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Restorative Dental Work</strong> - Fillings, crowns, and bridges</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Oral Health Education</strong> - Guidance on brushing, flossing, and diet</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Pain Management</strong> - Treatment of dental pain and infection</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-light">
+                <h4 class="text-dark fw-bold mb-3">Kimende Satellite Clinic</h4>
+                <p class="text-muted small mb-3">We extend our dental services to the community through our satellite clinic:</p>
+                <ul class="text-muted small ps-3">
+                    <li>Location: Kimende clinic</li>
+                    <li>Reduced cost services for rural communities</li>
+                    <li>Mobile clinic appointments available</li>
+                    <li>Referral services to main hospital clinic</li>
+                    <li>Community dental education programs</li>
+                </ul>
+                <hr class="my-4">
+                <p class="text-muted small mb-0"><strong>We bring quality dental care closer to underserved areas.</strong></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-light py-5 border-top border-bottom">
+    <div class="container">
+        <h2 class="text-primary fw-bold text-center mb-5">Why Choose Our Dental Clinic</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-primary mb-3"><i class="bi bi-person-fill fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Experienced Dentists</h5>
+                    <p class="text-muted small">Qualified dental professionals trained in latest techniques and best practices.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-primary mb-3"><i class="bi bi-shield-check fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Modern Equipment</h5>
+                    <p class="text-muted small">Clean, sterilized instruments and contemporary dental technology.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-primary mb-3"><i class="bi bi-heart-fill fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Patient Comfort</h5>
+                    <p class="text-muted small">Compassionate care with pain management to ensure comfortable visits.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5 py-5">
+    <div class="row g-5 align-items-center">
+        <div class="col-lg-6">
+            <h3 class="text-primary fw-bold mb-3">Preventive Dental Care</h3>
+            <p class="text-secondary mb-3">Prevention is better than cure. We recommend:</p>
+            <ul class="text-secondary">
+                <li class="mb-2"><strong>Regular Check-ups:</strong> Visit every 6 months for screening</li>
+                <li class="mb-2"><strong>Professional Cleaning:</strong> Annual deep cleaning to remove buildup</li>
+                <li class="mb-2"><strong>Daily Hygiene:</strong> Brush twice daily and floss regularly</li>
+                <li class="mb-2"><strong>Healthy Diet:</strong> Limit sugary foods and drinks</li>
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-primary text-white">
+                <h5 class="fw-bold mb-3">Schedule Your Dental Visit</h5>
+                <p class="small mb-3">Book an appointment at our main clinic or Kimende satellite clinic.</p>
+                <a asp-controller="Services" asp-action="ClinicAppointments" class="btn btn-warning btn-sm fw-bold mb-2">Book Appointment</a>
+                <br>
+                <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-light btn-sm fw-bold">Contact Dental Department</a>
+            </div>
+        </div>
+    </div>
+</section>

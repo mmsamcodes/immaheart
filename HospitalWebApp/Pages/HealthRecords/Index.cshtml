@@ -3,55 +3,239 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 @{
-    ViewData["Title"] = "Health Records";
+    ViewData["Title"] = "My Health Records";
 }
 
+<style>
+    .record-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 15px;
+        color: white;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .record-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .record-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    }
+
+    .record-card.health {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .record-card.health:hover {
+        box-shadow: 0 15px 40px rgba(245, 87, 108, 0.3);
+    }
+
+    .record-card.vitals {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .record-card.vitals:hover {
+        box-shadow: 0 15px 40px rgba(79, 172, 254, 0.3);
+    }
+
+    .record-card.diagnosis {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .record-card.diagnosis:hover {
+        box-shadow: 0 15px 40px rgba(67, 233, 123, 0.3);
+    }
+
+    .record-card-content {
+        padding: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .record-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.9;
+    }
+
+    .record-label {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .record-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+    }
+
+    .record-date {
+        font-size: 0.8rem;
+        opacity: 0.85;
+        margin-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        padding-top: 0.75rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%);
+        border-radius: 15px;
+        border: 2px dashed rgba(102, 126, 234, 0.2);
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
+    }
+</style>
+
 <div class="container py-5">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="fw-bold">Health Records</h2>
-            <p class="text-muted">Medical history, vital checks and diagnostic notes for registered patients.</p>
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h1 class="fw-bold mb-2">My Health Records</h1>
+            <p class="text-muted lead">Complete medical history, vital checks, and diagnostic information.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <span class="badge bg-primary fs-6">
+                <i class="bi bi-file-medical me-2"></i>@(Model.HealthRecords.Count()) Records
+            </span>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            @if (Model.HealthRecords.Any())
+    @if (Model.HealthRecords.Any())
+    {
+        <!-- Records Grid -->
+        <div class="row g-4 mb-5">
+            @foreach (var record in Model.HealthRecords.OrderByDescending(r => r.RecordDate).Take(6))
             {
+                <div class="col-md-6 col-lg-4">
+                    <div class="record-card vitals">
+                        <div class="record-card-content">
+                            <div class="record-icon">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                            </div>
+                            <div class="record-label">Blood Pressure</div>
+                            <div class="record-value">@record.BloodPressure</div>
+                            <div class="record-date">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                @record.RecordDate.ToString("dd MMM yyyy")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="record-card health">
+                        <div class="record-card-content">
+                            <div class="record-icon">
+                                <i class="bi bi-weight"></i>
+                            </div>
+                            <div class="record-label">Weight</div>
+                            <div class="record-value">@record.WeightKg <span style="font-size: 0.6em;">kg</span></div>
+                            <div class="record-date">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                @record.RecordDate.ToString("dd MMM yyyy")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="record-card diagnosis">
+                        <div class="record-card-content">
+                            <div class="record-icon">
+                                <i class="bi bi-stethoscope"></i>
+                            </div>
+                            <div class="record-label">Diagnosis</div>
+                            <div class="record-value" style="font-size: 1.2rem;">@record.Diagnosis</div>
+                            <div class="record-date">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Dr. @(record.Patient?.FullName?.Split(' ').Last() ?? "Staff")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Full Records Table -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-light border-0 p-4">
+                <h5 class="mb-0">
+                    <i class="bi bi-table me-2 text-primary"></i>Complete Records
+                </h5>
+            </div>
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Date</th>
-                                <th>Patient</th>
-                                <th>BP</th>
+                                <th class="px-4">Date</th>
+                                <th>Blood Pressure</th>
                                 <th>Weight (kg)</th>
                                 <th>Diagnosis</th>
                                 <th>Prescription</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var record in Model.HealthRecords)
+                            @foreach (var record in Model.HealthRecords.OrderByDescending(r => r.RecordDate))
                             {
                                 <tr>
-                                    <td>@record.RecordDate.ToString("dd MMM yyyy")</td>
-                                    <td>@(record.Patient?.FullName ?? "Unknown patient")</td>
-                                    <td>@record.BloodPressure</td>
-                                    <td>@record.WeightKg</td>
+                                    <td class="px-4">
+                                        <span class="badge bg-light text-dark">
+                                            @record.RecordDate.ToString("dd MMM yyyy")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-danger fw-bold">@record.BloodPressure</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-info fw-bold">@record.WeightKg kg</span>
+                                    </td>
                                     <td>@record.Diagnosis</td>
-                                    <td>@record.Prescription</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(record.Prescription))
+                                        {
+                                            <span class="badge bg-success">@record.Prescription</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
-            }
-            else
-            {
-                <div class="alert alert-info mb-0">
-                    No health records are available yet. Please add records through the patient consultation workflow.
-                </div>
-            }
+            </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-file-medical"></i>
+            </div>
+            <h4 class="text-muted mb-2">No Health Records Yet</h4>
+            <p class="text-muted mb-0">Your health records will appear here after your medical consultations and check-ups.</p>
+        </div>
+    }
 </div>
+

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +8,7 @@ using HospitalWebApp.Data;
 
 namespace HospitalWebApp.Areas.Identity.Pages
 {
+    [Authorize(Roles = "Doctor")]
     public class DoctorDashboardModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;

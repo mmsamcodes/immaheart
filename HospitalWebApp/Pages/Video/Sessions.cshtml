@@ -3,86 +3,369 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 @{
-    ViewData["Title"] = "Video Sessions";
+    ViewData["Title"] = "Telehealth Sessions";
 }
 
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="fw-bold">Virtual Appointments</h2>
-            <p class="text-muted">Create, confirm and join telehealth sessions for patients who already have payment confirmed.</p>
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .hero-section h1 {
+        position: relative;
+        z-index: 1;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .hero-section p {
+        position: relative;
+        z-index: 1;
+        opacity: 0.95;
+        font-size: 1.1rem;
+    }
+
+    .session-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        border: 2px solid #f0f0f0;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .session-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .session-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.15);
+        border-color: #667eea;
+    }
+
+    .patient-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .doctor-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .session-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .session-details {
+        flex: 1;
+    }
+
+    .session-name {
+        font-weight: 700;
+        color: #102a43;
+        margin-bottom: 0.25rem;
+    }
+
+    .session-meta {
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-ready {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+    }
+
+    .status-pending {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        color: white;
+    }
+
+    .session-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .btn-join {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        border: none;
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        flex: 1;
+    }
+
+    .btn-join:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(67, 233, 123, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-create {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        flex: 1;
+    }
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-create:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%);
+        border-radius: 15px;
+        border: 2px dashed rgba(102, 126, 234, 0.2);
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
+    }
+
+    .date-time {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
+
+    .date-time-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+    }
+
+    .date-time-item i {
+        color: #667eea;
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 1.8rem;
+        }
+
+        .hero-section p {
+            font-size: 0.95rem;
+        }
+
+        .session-actions {
+            flex-direction: column;
+        }
+
+        .session-info {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div style="position: relative; z-index: 1;">
+            <h1 class="mb-2">
+                <i class="bi bi-camera-video me-3"></i>Telehealth Sessions
+            </h1>
+            <p class="mb-0">Manage your virtual appointments and connect with healthcare professionals from anywhere.</p>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            @if (Model.VideoSessions.Any())
+    @if (Model.VideoSessions.Any())
+    {
+        <div class="mb-4">
+            <h5 class="text-muted">
+                <i class="bi bi-calendar-check me-2"></i>
+                You have <strong>@Model.VideoSessions.Count()</strong> scheduled session@(Model.VideoSessions.Count() != 1 ? "s" : "")
+            </h5>
+        </div>
+
+        <!-- Sessions Grid -->
+        <div class="row g-4">
+            @foreach (var appointment in Model.VideoSessions.OrderByDescending(a => a.AppointmentDate))
             {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Patient</th>
-                                <th>Doctor</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Session</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var appointment in Model.VideoSessions)
+                <div class="col-lg-6">
+                    <div class="session-card">
+                        <!-- Patient Info -->
+                        <div class="session-info">
+                            <div class="patient-avatar">
+                                @(appointment.Patient?.FullName?.Split(' ').FirstOrDefault()?[0] ?? "P")
+                            </div>
+                            <div class="session-details flex-grow-1">
+                                <div class="session-name">
+                                    Patient: @(appointment.Patient?.FullName ?? "Unknown")
+                                </div>
+                                <div class="session-meta">
+                                    <i class="bi bi-person-fill me-1"></i>Patient Account
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Doctor Info -->
+                        <div class="session-info">
+                            <div class="doctor-avatar">
+                                @(appointment.Doctor?.FullName?.Split(' ').FirstOrDefault()?[0] ?? "D")
+                            </div>
+                            <div class="session-details flex-grow-1">
+                                <div class="session-name">
+                                    Dr. @(appointment.Doctor?.FullName?.Split(' ').LastOrDefault() ?? "Unknown")
+                                </div>
+                                <div class="session-meta">
+                                    <i class="bi bi-stethoscope me-1"></i>Healthcare Provider
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date & Time -->
+                        <div class="date-time">
+                            <div class="date-time-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <span>@appointment.AppointmentDate.ToString("dddd, dd MMM")</span>
+                            </div>
+                            <div class="date-time-item">
+                                <i class="bi bi-clock"></i>
+                                <span>@appointment.AppointmentDate.ToString("HH:mm")</span>
+                            </div>
+                        </div>
+
+                        <!-- Status & Actions -->
+                        <div class="d-flex align-items-center justify-content-between mt-3 mb-2">
+                            <div>
+                                @if (!string.IsNullOrEmpty(appointment.VideoJoinUrl))
+                                {
+                                    <span class="status-badge status-ready">
+                                        <i class="bi bi-check-circle me-1"></i>Ready to Join
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-pending">
+                                        <i class="bi bi-hourglass-split me-1"></i>Pending Setup
+                                    </span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="session-actions" id="appointment-row-@appointment.Id">
+                            @if (!string.IsNullOrEmpty(appointment.VideoJoinUrl))
                             {
-                                <tr id="appointment-row-@appointment.Id">
-                                    <td>@(appointment.Patient?.FullName ?? "Unknown")</td>
-                                    <td>@(appointment.Doctor?.FullName ?? "Unknown")</td>
-                                    <td>@appointment.AppointmentDate.ToString("dd MMM yyyy HH:mm")</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(appointment.VideoJoinUrl))
-                                        {
-                                            <span class="badge bg-success">Ready</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-warning text-dark">Not created</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(appointment.VideoJoinUrl))
-                                        {
-                                            <a href="@appointment.VideoJoinUrl" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success">Join session</a>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">No join URL yet</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-primary" onclick="createSession(@appointment.Id)">Create session</button>
-                                    </td>
-                                </tr>
+                                <a href="@appointment.VideoJoinUrl" target="_blank" rel="noopener noreferrer" class="btn-join">
+                                    <i class="bi bi-play-circle me-2"></i>Join Session
+                                </a>
                             }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-info mb-0">
-                    No video appointments have been scheduled yet. Confirm payment and return when the appointment is ready to be connected.
+                            else
+                            {
+                                <button type="button" class="btn-create" onclick="createSession(@appointment.Id)">
+                                    <i class="bi bi-plus-circle me-2"></i>Create Session
+                                </button>
+                            }
+                        </div>
+                    </div>
                 </div>
             }
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-camera-video"></i>
+            </div>
+            <h4 class="text-muted mb-2">No Telehealth Sessions</h4>
+            <p class="text-muted mb-0">
+                Once you schedule a telehealth appointment and payment is confirmed, you'll be able to create and join video sessions here.
+            </p>
+        </div>
+    }
 </div>
 
 @section Scripts {
     <script>
         async function createSession(appointmentId) {
-            const button = document.querySelector(`#appointment-row-${appointmentId} button`);
+            const container = document.getElementById(`appointment-row-${appointmentId}`);
+            const button = container.querySelector('.btn-create');
+            
             if (!button) return;
+            
+            const originalText = button.innerHTML;
             button.disabled = true;
-            button.textContent = 'Creating...';
+            button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Creating...';
 
             try {
                 const response = await fetch(`/api/video/create-session/${appointmentId}`, { method: 'POST' });
@@ -91,22 +374,29 @@
                 }
 
                 const data = await response.json();
-                const row = document.getElementById(`appointment-row-${appointmentId}`);
-                const statusCell = row.querySelector('td:nth-child(4)');
-                const sessionCell = row.querySelector('td:nth-child(5)');
-
-                statusCell.innerHTML = '<span class="badge bg-success">Ready</span>';
-                sessionCell.innerHTML = `<a href="${data.joinUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success">Join session</a>`;
-                button.textContent = 'Created';
-                button.disabled = true;
+                
+                // Update the container with new button
+                container.innerHTML = `
+                    <a href="${data.joinUrl}" target="_blank" rel="noopener noreferrer" class="btn-join">
+                        <i class="bi bi-play-circle me-2"></i>Join Session
+                    </a>
+                `;
+                
+                // Update status badge
+                const statusBadge = container.closest('.session-card').querySelector('.status-badge');
+                if (statusBadge) {
+                    statusBadge.className = 'status-badge status-ready';
+                    statusBadge.innerHTML = '<i class="bi bi-check-circle me-1"></i>Ready to Join';
+                }
             } catch (error) {
-                button.textContent = 'Failed';
+                button.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Failed';
                 console.error(error);
                 setTimeout(() => {
-                    button.textContent = 'Create session';
+                    button.innerHTML = originalText;
                     button.disabled = false;
-                }, 1500);
+                }, 2000);
             }
         }
     </script>
 }
+

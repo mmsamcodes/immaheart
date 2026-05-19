@@ -1,0 +1,115 @@
+@{
+    ViewData["Title"] = "Ambulance & Emergency Transport";
+}
+
+<section class="bg-primary text-white text-center py-5" style="background: linear-gradient(rgba(0, 74, 153, 0.9), rgba(0, 40, 90, 0.95));">
+    <div class="container py-3">
+        <h1 class="display-4 fw-bold">Ambulance & Emergency Transport</h1>
+        <p class="lead mb-0">24/7 emergency medical transport when every minute counts.</p>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <h2 class="text-primary fw-bold mb-3">Rapid Emergency Response</h2>
+            <p class="text-secondary lead">Our ambulance service provides professional emergency medical transport with trained paramedics ready to respond 24/7.</p>
+            
+            <div class="mt-4">
+                <h4 class="text-dark fw-bold mb-3">Our Transport Services</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>24/7 Ambulance Dispatch</strong> - Immediate response to emergency calls</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Emergency Patient Transfers</strong> - Safe transport from accident sites and other facilities</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Inter-Hospital Transfers</strong> - Patient transport between healthcare facilities</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>On-Call Transport Services</strong> - Pre-arranged transport for scheduled care</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                        <span class="text-secondary"><strong>Paramedic Support</strong> - Basic and advanced life support during transport</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-light">
+                <h4 class="text-dark fw-bold mb-3">Emergency Ambulance Contact</h4>
+                <p class="text-muted small mb-4">In case of medical emergency, call immediately:</p>
+                <div class="bg-white p-3 rounded border-2 border-primary mb-4">
+                    <p class="mb-0"><i class="bi bi-telephone-fill text-primary me-2"></i><a href="tel:+254722123456" class="text-primary fw-bold fs-5">+254 722 123 456</a></p>
+                </div>
+                <p class="text-muted small mb-3"><strong>What to Tell Us:</strong></p>
+                <ul class="text-muted small ps-3">
+                    <li>Patient's location and exact address</li>
+                    <li>Nature of the emergency</li>
+                    <li>Patient's age and any known medical conditions</li>
+                    <li>If conscious or responsive</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-light py-5 border-top border-bottom">
+    <div class="container">
+        <h2 class="text-primary fw-bold text-center mb-5">Our Ambulance Fleet & Equipment</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-primary mb-3"><i class="bi bi-truck fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Modern Ambulances</h5>
+                    <p class="text-muted small">Well-maintained, GPS-equipped vehicles for rapid response and efficient routing.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-primary mb-3"><i class="bi bi-heart-pulse-fill fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Advanced Life Support</h5>
+                    <p class="text-muted small">Oxygen, defibrillators, cardiac monitoring, and emergency medications on-board.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-primary mb-3"><i class="bi bi-person-check-fill fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Trained Paramedics</h5>
+                    <p class="text-muted small">Certified paramedics with emergency response training and first aid expertise.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5 py-5">
+    <div class="row g-5 align-items-center">
+        <div class="col-lg-6">
+            <h3 class="text-primary fw-bold mb-3">Response Protocol</h3>
+            <p class="text-secondary mb-3">Our emergency response system follows a coordinated protocol:</p>
+            <ol class="text-secondary">
+                <li class="mb-2"><strong>Call Reception:</strong> Dispatcher receives emergency call and location</li>
+                <li class="mb-2"><strong>Ambulance Dispatch:</strong> Nearest ambulance is immediately dispatched</li>
+                <li class="mb-2"><strong>Transport:</strong> Paramedics provide care during transport to hospital</li>
+                <li class="mb-2"><strong>Hospital Notification:</strong> Emergency department is alerted of incoming patient</li>
+                <li class="mb-2"><strong>Seamless Handoff:</strong> Patient is received by emergency team</li>
+            </ol>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-primary text-white">
+                <h5 class="fw-bold mb-3">Non-Emergency Transport</h5>
+                <p class="small mb-3">Need scheduled transport for medical appointments or referrals?</p>
+                <a asp-controller="Services" asp-action="EmergencyCare" class="btn btn-warning btn-sm fw-bold mb-2">Request Transport</a>
+                <br>
+                <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-light btn-sm fw-bold">Schedule In Advance</a>
+            </div>
+        </div>
+    </div>
+</section>

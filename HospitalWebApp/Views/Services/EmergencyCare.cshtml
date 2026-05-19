@@ -1,0 +1,104 @@
+@{
+    ViewData["Title"] = "Emergency Care";
+}
+
+<section class="bg-danger text-white text-center py-5">
+    <div class="container py-3">
+        <h1 class="display-4 fw-bold">Emergency Care</h1>
+        <p class="lead mb-0">Medical assistance available 24/7</p>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <h2 class="text-danger fw-bold mb-3">Need Immediate Help?</h2>
+            <p class="text-secondary lead mb-4">Our emergency department is equipped and staffed to handle urgent medical situations around the clock.</p>
+            
+            <div class="card border-3 border-danger shadow-lg p-4 mb-4">
+                <h3 class="text-danger fw-bold mb-3">Call Emergency Now</h3>
+                <p class="mb-0 fs-5"><i class="bi bi-telephone-fill text-danger me-2"></i><a href="tel:+254722123456" class="text-danger fw-bold">+254 722 123 456</a></p>
+            </div>
+
+            <h4 class="text-dark fw-bold mb-3">When to Seek Emergency Care</h4>
+            <ul class="text-secondary">
+                <li class="mb-2">Chest pain or difficulty breathing</li>
+                <li class="mb-2">Severe bleeding or injuries</li>
+                <li class="mb-2">Loss of consciousness or confusion</li>
+                <li class="mb-2">Severe abdominal pain</li>
+                <li class="mb-2">Sudden severe headache or vision changes</li>
+                <li class="mb-2">Signs of stroke (weakness, slurred speech)</li>
+                <li class="mb-2">Severe allergic reactions</li>
+                <li class="mb-2">Serious accidents or trauma</li>
+                <li class="mb-2">Any life-threatening condition</li>
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-light">
+                <h4 class="text-dark fw-bold mb-3">What to Do in an Emergency</h4>
+                <ol class="text-secondary">
+                    <li class="mb-3"><strong>Call immediately:</strong> Use emergency contact number above</li>
+                    <li class="mb-3"><strong>State your location:</strong> Give specific address or landmark</li>
+                    <li class="mb-3"><strong>Describe the problem:</strong> Tell dispatcher about symptoms</li>
+                    <li class="mb-3"><strong>Follow instructions:</strong> Paramedics will guide you</li>
+                    <li class="mb-3"><strong>Stay calm:</strong> Help is on the way</li>
+                </ol>
+                <hr class="my-4">
+                <p class="text-muted small mb-0"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Don't wait to call. When in doubt, it's better to get checked by a doctor.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-light py-5 border-top border-bottom">
+    <div class="container">
+        <h2 class="text-primary fw-bold text-center mb-5">What Happens When You Arrive</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-danger mb-3"><i class="bi bi-1-circle-fill fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Triage Assessment</h5>
+                    <p class="text-muted small">Quick initial evaluation to determine severity and priority of care.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-danger mb-3"><i class="bi bi-2-circle-fill fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Medical Evaluation</h5>
+                    <p class="text-muted small">Full examination by emergency physician and necessary tests.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+                    <div class="text-danger mb-3"><i class="bi bi-3-circle-fill fs-2"></i></div>
+                    <h5 class="h6 fw-bold text-dark">Treatment & Care</h5>
+                    <p class="text-muted small">Immediate treatment or admission as needed for your condition.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5 py-5">
+    <div class="row g-5 align-items-center">
+        <div class="col-lg-6">
+            <h3 class="text-primary fw-bold mb-3">Our Emergency Team</h3>
+            <p class="text-secondary mb-3">Available 24/7 to provide:</p>
+            <ul class="text-secondary">
+                <li class="mb-2"><strong>Experienced Physicians:</strong> Emergency medicine specialists</li>
+                <li class="mb-2"><strong>Trained Nurses:</strong> Critical care and emergency nursing</li>
+                <li class="mb-2"><strong>Advanced Equipment:</strong> Life support and diagnostic tools</li>
+                <li class="mb-2"><strong>Rapid Response:</strong> Immediate stabilization and treatment</li>
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-danger text-white">
+                <h5 class="fw-bold mb-3">Emergency Location</h5>
+                <p class="small mb-3">Our emergency department is located at the main hospital entrance. Signs will direct you to Emergency/Casualty.</p>
+                <a href="tel:+254722123456" class="btn btn-light btn-sm fw-bold mb-2">Call Emergency</a>
+                <br>
+                <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-light btn-sm fw-bold">Get Directions</a>
+            </div>
+        </div>
+    </div>
+</section>

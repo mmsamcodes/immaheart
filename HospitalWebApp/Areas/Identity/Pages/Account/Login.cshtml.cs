@@ -122,17 +122,17 @@ namespace HospitalWebApp.Areas.Identity.Pages.Account
                     if (signedInUser != null)
                     {
                         if (await _userManager.IsInRoleAsync(signedInUser, "Admin"))
-                            return RedirectToPage("/AdminDashboard");
+                            return RedirectToPage("AdminDashboard");
                         if (await _userManager.IsInRoleAsync(signedInUser, "Doctor"))
-                            return RedirectToPage("/DoctorDashboard");
+                            return RedirectToPage("DoctorDashboard");
                         if (await _userManager.IsInRoleAsync(signedInUser, "Nurse"))
-                            return RedirectToPage("/NurseDashboard");
+                            return RedirectToPage("NurseDashboard");
                         if (await _userManager.IsInRoleAsync(signedInUser, "LabTech"))
-                            return RedirectToPage("/LabTechDashboard");
+                            return RedirectToPage("LabTechDashboard");
                         if (await _userManager.IsInRoleAsync(signedInUser, "Pharmacy"))
-                            return RedirectToPage("/PharmacyDashboard");
+                            return RedirectToPage("PharmacyDashboard");
                         if (await _userManager.IsInRoleAsync(signedInUser, "Accounts") || await _userManager.IsInRoleAsync(signedInUser, "Cashier") || await _userManager.IsInRoleAsync(signedInUser, "Reception"))
-                            return RedirectToPage("/AccountsDashboard");
+                            return RedirectToPage("AccountsDashboard");
                     }
                     return RedirectToPage("Dashboard");
                 }

@@ -98,7 +98,31 @@
             <div class="nav-links" id="navLinks">
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="@(IsNavActive("Home", "Index") ? "active" : string.Empty)">Home</a>
                 <a asp-area="" asp-controller="Home" asp-action="About" class="@(IsNavActive("Home", "About") ? "active" : string.Empty)">About</a>
-                <a asp-area="" asp-controller="Home" asp-action="Services" class="@(IsNavActive("Home", "Services") ? "active" : string.Empty)">Services</a>
+                
+                <div class="dropdown-menu-container">
+                    <a asp-area="" asp-controller="Home" asp-action="Services" class="@(IsNavActive("Home", "Services") ? "active" : string.Empty) dropdown-toggle">Services <i class="bi bi-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-section">
+                            <h6 class="dropdown-header">Clinical Services</h6>
+                            <a asp-controller="Services" asp-action="EmergencyOutpatient">Emergency & Outpatient</a>
+                            <a asp-controller="Services" asp-action="MaternityChildHealth">Maternity & Child Health</a>
+                            <a asp-controller="Services" asp-action="DiagnosticsLab">Diagnostics & Lab Work</a>
+                            <a asp-controller="Services" asp-action="ChronicDisease">Chronic Disease Clinics</a>
+                            <a asp-controller="Services" asp-action="AmbulanceTransport">Ambulance & Transport</a>
+                            <a asp-controller="Services" asp-action="DentalClinic">Dental Clinic</a>
+                            <a asp-controller="Services" asp-action="PhysiotherapyRehab">Physiotherapy & Rehab</a>
+                        </div>
+                        <hr class="dropdown-divider">
+                        <div class="dropdown-section">
+                            <h6 class="dropdown-header">Quick Access</h6>
+                            <a asp-controller="Services" asp-action="EmergencyCare">Emergency Care</a>
+                            <a asp-controller="Services" asp-action="LaboratoryTests">Laboratory Tests</a>
+                            <a asp-controller="Services" asp-action="ClinicAppointments">Clinic Appointments</a>
+                            <a asp-controller="Services" asp-action="BillingSupport">Billing Support</a>
+                        </div>
+                    </div>
+                </div>
+                
                 <a asp-area="" asp-controller="Home" asp-action="Contact" class="@(IsNavActive("Home", "Contact") ? "active" : string.Empty)">Contact</a>
                 <a asp-area="" asp-controller="Home" asp-action="Privacy" class="@(IsNavActive("Home", "Privacy") ? "active" : string.Empty)">Privacy</a>
                 @if (SignInManager.IsSignedIn(User))
