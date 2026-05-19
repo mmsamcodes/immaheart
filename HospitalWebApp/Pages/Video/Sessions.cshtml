@@ -215,7 +215,7 @@
         font-size: 1.1rem;
     }
 
-    @media (max-width: 768px) {
+    @@media (max-width: 768px) {
         .hero-section h1 {
             font-size: 1.8rem;
         }
@@ -264,7 +264,7 @@
                         <!-- Patient Info -->
                         <div class="session-info">
                             <div class="patient-avatar">
-                                @(appointment.Patient?.FullName?.Split(' ').FirstOrDefault()?[0] ?? "P")
+                                @(appointment.Patient?.FullName?.Split(' ').FirstOrDefault()?[0].ToString() ?? "P")
                             </div>
                             <div class="session-details flex-grow-1">
                                 <div class="session-name">
@@ -279,7 +279,7 @@
                         <!-- Doctor Info -->
                         <div class="session-info">
                             <div class="doctor-avatar">
-                                @(appointment.Doctor?.FullName?.Split(' ').FirstOrDefault()?[0] ?? "D")
+                                @(appointment.Doctor?.FullName?.Split(' ').FirstOrDefault()?[0].ToString() ?? "D")
                             </div>
                             <div class="session-details flex-grow-1">
                                 <div class="session-name">
