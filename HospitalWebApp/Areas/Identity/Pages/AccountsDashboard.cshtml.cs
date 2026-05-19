@@ -39,8 +39,8 @@ namespace HospitalWebApp.Areas.Identity.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            // Allow accounts, admin, or cashier users to access this page.
-            if (!await _userManager.IsInRoleAsync(user, "Accounts") && !await _userManager.IsInRoleAsync(user, "Admin") && !await _userManager.IsInRoleAsync(user, "Cashier"))
+            // Allow accounts, admin, cashier, or reception users to access this page.
+            if (!await _userManager.IsInRoleAsync(user, "Accounts") && !await _userManager.IsInRoleAsync(user, "Admin") && !await _userManager.IsInRoleAsync(user, "Cashier") && !await _userManager.IsInRoleAsync(user, "Reception"))
             {
                 return RedirectToPage("/Dashboard");
             }
@@ -58,7 +58,7 @@ namespace HospitalWebApp.Areas.Identity.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
-            if (!await _userManager.IsInRoleAsync(user, "Accounts") && !await _userManager.IsInRoleAsync(user, "Admin") && !await _userManager.IsInRoleAsync(user, "Cashier"))
+            if (!await _userManager.IsInRoleAsync(user, "Accounts") && !await _userManager.IsInRoleAsync(user, "Admin") && !await _userManager.IsInRoleAsync(user, "Cashier") && !await _userManager.IsInRoleAsync(user, "Reception"))
             {
                 return RedirectToPage("/Dashboard");
             }

@@ -48,6 +48,7 @@ namespace HospitalWebApp.Areas.Identity.Pages.Account
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        [BindProperty]
         public string ReturnUrl { get; set; }
 
         /// <summary>
@@ -118,23 +119,30 @@ namespace HospitalWebApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // Preserve safe return URLs for direct navigation.
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != Url.Content("~/"))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+
                     var signedInUser = await _userManager.FindByEmailAsync(Input.Email);
                     if (signedInUser != null)
                     {
                         if (await _userManager.IsInRoleAsync(signedInUser, "Admin"))
-                            return RedirectToPage("AdminDashboard");
+                            return RedirectToPage("/AdminDashboard", new { area = "Identity" });
                         if (await _userManager.IsInRoleAsync(signedInUser, "Doctor"))
-                            return RedirectToPage("DoctorDashboard");
+                            return RedirectToPage("/DoctorDashboard", new { area = "Identity" });
                         if (await _userManager.IsInRoleAsync(signedInUser, "Nurse"))
-                            return RedirectToPage("NurseDashboard");
+                            return RedirectToPage("/NurseDashboard", new { area = "Identity" });
                         if (await _userManager.IsInRoleAsync(signedInUser, "LabTech"))
-                            return RedirectToPage("LabTechDashboard");
+                            return RedirectToPage("/LabTechDashboard", new { area = "Identity" });
                         if (await _userManager.IsInRoleAsync(signedInUser, "Pharmacy"))
-                            return RedirectToPage("PharmacyDashboard");
+                            return RedirectToPage("/PharmacyDashboard", new { area = "Identity" });
                         if (await _userManager.IsInRoleAsync(signedInUser, "Accounts") || await _userManager.IsInRoleAsync(signedInUser, "Cashier") || await _userManager.IsInRoleAsync(signedInUser, "Reception"))
-                            return RedirectToPage("AccountsDashboard");
+                            return RedirectToPage("/AccountsDashboard", new { area = "Identity" });
                     }
-                    return RedirectToPage("Dashboard");
+                    return RedirectToPage("/Dashboard", new { area = "Identity" });
                 }
                 if (result.RequiresTwoFactor)
                 {

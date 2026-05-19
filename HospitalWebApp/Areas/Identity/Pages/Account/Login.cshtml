@@ -22,6 +22,7 @@
         
         <form id="account" method="post" class="px-2">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small" role="alert"></div>
+            <input type="hidden" asp-for="ReturnUrl" />
             
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />

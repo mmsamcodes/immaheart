@@ -9,99 +9,228 @@
 <style>
     @@keyframes pulse {
         0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.9; transform: scale(1.02); }
+        50% { opacity: 0.9; transform: scale(1.05); }
     }
 
     @@keyframes slideIn {
-        from { opacity: 0; transform: translateY(20px); }
+        from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
+    @@keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @@keyframes glow {
+        0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.3), 0 10px 40px rgba(0,0,0,0.2); }
+        50% { box-shadow: 0 0 25px rgba(255,255,255,0.6), 0 15px 60px rgba(0,0,0,0.25); }
+    }
+
+    @@keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+
     .dashboard-container {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8e8ff 50%, #f0e8ff 100%);
         min-height: 100vh;
         padding-bottom: 3rem;
     }
 
-    .card-pulse { animation: pulse 3s ease-in-out infinite; }
-    .card-slide { animation: slideIn 0.6s ease-out; }
+    .card-pulse { animation: pulse 2.5s ease-in-out infinite, glow 3s ease-in-out infinite; }
+    .card-slide { animation: slideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .card-float { animation: float 3s ease-in-out infinite; }
 
     .greeting-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         color: white;
         padding: 3rem 2rem;
-        border-radius: 15px;
+        border-radius: 20px;
         margin-bottom: 2rem;
-        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
         animation: slideIn 0.8s ease-out;
-    }
-
-    .stat-card {
-        transition: all 0.3s ease;
-        border: none;
-        border-radius: 12px;
+        position: relative;
         overflow: hidden;
     }
 
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
+    .greeting-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: float 15s linear infinite;
     }
 
-    /* Vibrant Card Colors */
-    .card-rose { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-    .card-cyan { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-    .card-sunset { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-    .card-emerald { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-    .card-ocean { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .card-flame { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); }
-    .card-grape { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+    .stat-card {
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 2px solid rgba(255,255,255,0.15);
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .stat-card:hover::before {
+        left: 100%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+        border-color: rgba(255,255,255,0.3);
+    }
+
+    /* Ultra-Vibrant Card Colors */
+    .card-rose { background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ff1493 100%); box-shadow: 0 10px 40px rgba(255, 20, 147, 0.35); }
+    .card-cyan { background: linear-gradient(135deg, #00bfff 0%, #00d4ff 50%, #1e90ff 100%); box-shadow: 0 10px 40px rgba(30, 144, 255, 0.35); }
+    .card-sunset { background: linear-gradient(135deg, #ff6b9d 0%, #ffc94c 50%, #ffb347 100%); box-shadow: 0 10px 40px rgba(255, 107, 157, 0.35); }
+    .card-emerald { background: linear-gradient(135deg, #00d084 0%, #00ff88 50%, #1abc9c 100%); box-shadow: 0 10px 40px rgba(26, 188, 156, 0.35); }
+    .card-ocean { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); box-shadow: 0 10px 40px rgba(240, 147, 251, 0.35); }
+    .card-flame { background: linear-gradient(135deg, #ff6b35 0%, #ff8c00 50%, #ffa500 100%); box-shadow: 0 10px 40px rgba(255, 107, 53, 0.35); }
+    .card-grape { background: linear-gradient(135deg, #9d84ff 0%, #d580ff 50%, #ff84ff 100%); box-shadow: 0 10px 40px rgba(255, 132, 255, 0.35); }
+    .card-peach { background: linear-gradient(135deg, #ff6b9d 0%, #ffa07a 50%, #ffb6c1 100%); box-shadow: 0 10px 40px rgba(255, 160, 122, 0.35); }
+    .card-mint { background: linear-gradient(135deg, #1dda63 0%, #20ff88 50%, #00ff99 100%); box-shadow: 0 10px 40px rgba(29, 218, 99, 0.35); }
 
     .icon-large {
-        font-size: 3rem;
+        font-size: 3.5rem;
         margin-bottom: 1rem;
         display: inline-block;
+        animation: float 3s ease-in-out infinite;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .hero-subtitle {
+        color: rgba(255,255,255,0.95);
+        font-size: 1.1rem;
+        max-width: 760px;
+        line-height: 1.7;
+        font-weight: 500;
+    }
+
+    .dashboard-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        border-radius: 25px;
+        padding: 3.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+        animation: slideIn 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid rgba(255,255,255,0.15);
+    }
+
+    .dashboard-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+        background-size: 40px 40px;
     }
 
     .text-gradient {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #00ff88 0%, #ff1493 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        font-weight: 700;
+    }
+
+    /* Button Enhancements */
+    .btn-light {
+        background: rgba(255,255,255,0.95);
+        border: 2px solid transparent;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    .btn-light:hover {
+        background: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    /* Badge Enhancements */
+    .badge {
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Section Titles */
+    h4, h5, h6 {
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    /* Progress Bar Enhancement */
+    .progress {
+        border-radius: 10px;
+        background: rgba(255,255,255,0.2);
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+        transition: width 0.6s ease;
     }
 </style>
 
 <div class="dashboard-container">
     <div class="container py-5">
-        <div class="greeting-header">
-            <h1 class="fw-bold mb-2">Welcome back, <span class="text-light">@Model.FullName</span>! 👋</h1>
-            <p class="mb-0 fs-6">Immaculate Heart Hospital - Your Health Journey Starts Here</p>
+        <div class="dashboard-hero text-white">
+            <h1 class="fw-bold mb-3">Welcome back, <span class="text-white">@Model.FullName</span>! 👋</h1>
+            <p class="hero-subtitle mb-4">Your personalized health dashboard is ready. Track BMI, appointments, billing, lab results, and telehealth—all from one place designed for comfort and clarity.</p>
+            <div class="d-flex flex-wrap gap-3">
+                <span class="badge bg-white text-dark py-2 px-3">Patient Dashboard</span>
+                <span class="badge bg-light text-dark py-2 px-3">Secure access</span>
+                <span class="badge bg-light text-dark py-2 px-3">Fast booking</span>
+            </div>
         </div>
 
         <!-- Top Health Cards -->
         <div class="row g-4 mb-4">
             <div class="col-md-4">
-                <div class="card stat-card card-pulse card-slide h-100 border-0 shadow text-white card-rose">
+                <div class="card stat-card card-pulse card-slide card-float h-100 border-0 text-white card-rose">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-heart"></i></div>
-                        <h5 class="mb-3">Your BMI Status</h5>
-                        <div class="display-3 fw-bold">@Model.BMI.ToString("F1")</div>
-                        <div class="badge bg-white text-dark mb-3 mt-2">@Model.BMICategory</div>
-                        <div class="progress" style="height: 8px; background: rgba(255,255,255,0.3);">
-                            <div class="progress-bar bg-white" style="width: @(Math.Min(Model.BMI * 5, 100))%"></div>
+                        <div class="icon-large">❤️</div>
+                        <h5 class="mb-3 fw-bold">Your BMI Status</h5>
+                        <div class="display-3 fw-bold" style="text-shadow: 0 2px 4px rgba(0,0,0,0.2);">@Model.BMI.ToString("F1")</div>
+                        <div class="badge bg-white text-dark mb-3 mt-2" style="font-size: 1rem;">@Model.BMICategory</div>
+                        <div class="progress" style="height: 10px; background: rgba(255,255,255,0.3); border-radius: 10px;">
+                            <div class="progress-bar bg-white" style="width: @(Math.Min(Model.BMI * 5, 100))%; border-radius: 10px;"></div>
                         </div>
-                        <p class="small mt-3">💪 Keep monitoring!</p>
+                        <p class="small mt-3 fw-bold">💪 Keep monitoring!</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="card stat-card card-pulse card-slide h-100 border-0 shadow text-white card-cyan">
+                <div class="card stat-card card-pulse card-slide card-float h-100 border-0 text-white card-cyan">
                     <div class="card-body">
-                        <div class="icon-large"><i class="bi bi-calendar-heart"></i></div>
-                        <h5><strong>Women's Wellness</strong></h5>
-                        <div class="text-center py-3">
-                            <div class="rounded-circle d-inline-block p-4 mb-2 bg-white bg-opacity-20">
+                        <div class="icon-large">📅</div>
+                        <h5 class="fw-bold">Women's Wellness</h5>
+                        <div class="text-center py-4">
+                            <div class="rounded-circle d-inline-block p-4 mb-2" style="background: rgba(255,255,255,0.25); border: 2px solid rgba(255,255,255,0.4);">
                                 <h3 class="mb-0 text-white fw-bold">Day @Model.DayOfCycle</h3>
                             </div>
                             <h5 class="fw-bold">@Model.CyclePhase</h5>
@@ -112,11 +241,11 @@
             </div>
 
             <div class="col-md-4">
-                <div class="card stat-card card-pulse card-slide h-100 border-0 shadow text-white card-sunset">
+                <div class="card stat-card card-pulse card-slide card-float h-100 border-0 text-white card-sunset">
                     <div class="card-body d-flex flex-column justify-content-center text-center">
-                        <div class="icon-large"><i class="bi bi-person-video3"></i></div>
+                        <div class="icon-large">🎥</div>
                         <h4 class="fw-bold">Book Appointment</h4>
-                        <p class="small mb-3">In-person or Virtual</p>
+                        <p class="small mb-3 fw-bold">In-person or Virtual</p>
                         <a asp-page="/Appointments/Create" class="btn btn-light fw-bold">📅 BOOK NOW</a>
                     </div>
                 </div>
@@ -126,50 +255,50 @@
         <!-- Adult BMI Calculator -->
         <div class="row g-4 mb-4">
             <div class="col-md-6">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-flame">
-                    <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);">
-                        <h5 class="mb-0"><i class="bi bi-calculator"></i> Your BMI Calculator</h5>
+                <div class="card border-0 stat-card card-slide h-100 text-white card-flame">
+                    <div class="card-header bg-transparent text-white border-0 py-4" style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c00 50%, #ffa500 100%); border-radius: 20px 20px 0 0;">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-calculator"></i> Your BMI Calculator</h5>
                     </div>
-                    <div class="card-body" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);">
+                    <div class="card-body" style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c00 50%, #ffa500 100%);">
                         <div class="row g-3">
                             <div class="col-6">
                                 <label class="form-label fw-bold text-white">Weight (kg)</label>
-                                <input type="number" id="adultWeight" class="form-control" placeholder="e.g. 70" step="0.1">
+                                <input type="number" id="adultWeight" class="form-control fw-bold" placeholder="e.g. 70" step="0.1" style="border-radius: 10px; border: 2px solid rgba(255,255,255,0.3);">
                             </div>
                             <div class="col-6">
                                 <label class="form-label fw-bold text-white">Height (cm)</label>
-                                <input type="number" id="adultHeight" class="form-control" placeholder="e.g. 175" step="0.1">
+                                <input type="number" id="adultHeight" class="form-control fw-bold" placeholder="e.g. 175" step="0.1" style="border-radius: 10px; border: 2px solid rgba(255,255,255,0.3);">
                             </div>
                         </div>
-                        <button onclick="calcAdultBMI()" class="btn btn-light fw-bold w-100 mt-3">📊 Calculate</button>
+                        <button onclick="calcAdultBMI()" class="btn btn-light fw-bold w-100 mt-4" style="font-size: 1.1rem;">📊 Calculate</button>
                         <div class="text-center mt-4">
-                            <div class="display-4 fw-bold text-white" id="adultResult">--</div>
-                            <div class="badge bg-light text-dark mt-2" id="adultStatus">Enter details above</div>
+                            <div class="display-4 fw-bold text-white" id="adultResult" style="text-shadow: 0 3px 6px rgba(0,0,0,0.3);">--</div>
+                            <div class="badge bg-light text-dark mt-3" id="adultStatus" style="font-size: 1rem; padding: 0.8rem 1.5rem;">Enter details above</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-emerald">
-                    <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
-                        <h5 class="mb-0"><i class="bi bi-baby"></i> Child BMI Calculator</h5>
+                <div class="card border-0 stat-card card-slide h-100 text-white card-emerald">
+                    <div class="card-header bg-transparent text-white border-0 py-4" style="background: linear-gradient(135deg, #00d084 0%, #00ff88 50%, #1abc9c 100%); border-radius: 20px 20px 0 0;">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-baby"></i> Child BMI Calculator</h5>
                     </div>
-                    <div class="card-body" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    <div class="card-body" style="background: linear-gradient(135deg, #00d084 0%, #00ff88 50%, #1abc9c 100%);">
                         <div class="row g-3">
                             <div class="col-6">
                                 <label class="form-label fw-bold text-white">Weight (kg)</label>
-                                <input type="number" id="cWeight" class="form-control" placeholder="e.g. 15" step="0.1">
+                                <input type="number" id="cWeight" class="form-control fw-bold" placeholder="e.g. 15" step="0.1" style="border-radius: 10px; border: 2px solid rgba(255,255,255,0.3);">
                             </div>
                             <div class="col-6">
                                 <label class="form-label fw-bold text-white">Height (cm)</label>
-                                <input type="number" id="cHeight" class="form-control" placeholder="e.g. 110" step="0.1">
+                                <input type="number" id="cHeight" class="form-control fw-bold" placeholder="e.g. 110" step="0.1" style="border-radius: 10px; border: 2px solid rgba(255,255,255,0.3);">
                             </div>
                         </div>
-                        <button onclick="calcChildBMI()" class="btn btn-light fw-bold w-100 mt-3">📊 Calculate</button>
+                        <button onclick="calcChildBMI()" class="btn btn-light fw-bold w-100 mt-4" style="font-size: 1.1rem;">📊 Calculate</button>
                         <div class="text-center mt-4">
-                            <div class="display-4 fw-bold text-white" id="pResult">--</div>
-                            <div class="badge bg-light text-dark mt-2" id="pStatus">Enter details above</div>
+                            <div class="display-4 fw-bold text-white" id="pResult" style="text-shadow: 0 3px 6px rgba(0,0,0,0.3);">--</div>
+                            <div class="badge bg-light text-dark mt-3" id="pStatus" style="font-size: 1rem; padding: 0.8rem 1.5rem;">Enter details above</div>
                         </div>
                     </div>
                 </div>
@@ -179,42 +308,42 @@
         <!-- Downloads Section -->
         <div class="row g-4 mb-4">
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-emerald">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-emerald">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-file-earmark-pdf"></i></div>
-                        <h5 class="fw-bold">Download Bills</h5>
+                        <div class="icon-large">📄</div>
+                        <h6 class="fw-bold">Download Bills</h6>
                         <p class="small">Your invoices & receipts</p>
-                        <a asp-page="/Billing/Index" class="btn btn-light btn-sm fw-bold">📄 Download</a>
+                        <a asp-page="/Billing/Index" class="btn btn-light btn-sm fw-bold">📋 Download</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-grape">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-file-earmark-medical"></i></div>
-                        <h5 class="fw-bold">Medical History</h5>
+                        <div class="icon-large">🏥</div>
+                        <h6 class="fw-bold">Medical History</h6>
                         <p class="small">Your health records</p>
                         <a asp-page="/HealthRecords/Index" class="btn btn-light btn-sm fw-bold">📋 View</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-flame">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-flask"></i></div>
-                        <h5 class="fw-bold">Lab Results</h5>
+                        <div class="icon-large">🧬</div>
+                        <h6 class="fw-bold">Lab Results</h6>
                         <p class="small">Your test reports</p>
-                        <a asp-page="/Labs/Index" class="btn btn-light btn-sm fw-bold">🧬 Download</a>
+                        <a asp-page="/Labs/Index" class="btn btn-light btn-sm fw-bold">🧪 Download</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-rose">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-file-earmark-text"></i></div>
-                        <h5 class="fw-bold">Summaries</h5>
+                        <div class="icon-large">📑</div>
+                        <h6 class="fw-bold">Summaries</h6>
                         <p class="small">Discharge documents</p>
-                        <a asp-page="/DischargeSummaries/Index" class="btn btn-light btn-sm fw-bold">📑 Download</a>
+                        <a asp-page="/DischargeSummaries/Index" class="btn btn-light btn-sm fw-bold">📄 Download</a>
                     </div>
                 </div>
             </div>
@@ -223,34 +352,34 @@
         <!-- Telehealth & Appointments (Conditional) -->
         <div class="row g-4 mb-4">
             <div class="col-12">
-                <div class="card border-0 shadow stat-card card-slide">
-                    <div class="card-header bg-gradient text-white border-0 py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <h5 class="mb-0"><i class="bi bi-telephone-video"></i> Telehealth & Consultations</h5>
+                <div class="card border-0 stat-card card-slide card-float text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);">
+                    <div class="card-header bg-transparent text-white border-0 py-4">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-telephone-video"></i> 🎥 Telehealth & Consultations</h5>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info mb-4">
-                            <i class="bi bi-info-circle"></i> <strong>Payment Verification Required:</strong> Schedule telehealth sessions and in-person appointments after confirming your account payment status.
+                        <div class="alert alert-light text-dark mb-4 fw-bold">
+                            <i class="bi bi-info-circle-fill"></i> <strong>✨ Payment Verified?</strong> Book telehealth or in-person appointments after confirming payment. We're here for your health!
                         </div>
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <div class="p-4 border-2 rounded" style="border: 2px solid #667eea;">
-                                    <h6 class="fw-bold mb-3"><i class="bi bi-camera-video text-primary"></i> Telehealth Session</h6>
-                                    <p class="text-muted small mb-3">Consult with doctors via video call from home.</p>
-                                    <button class="btn btn-primary btn-sm w-100" onclick="checkPaymentAndBook('telehealth')">Book Telehealth</button>
+                                <div class="p-4 rounded-4 fw-bold" style="background: linear-gradient(135deg, #00bfff 0%, #00d4ff 50%, #1e90ff 100%); border: 2px solid rgba(255,255,255,0.2); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 40px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';">
+                                    <h6 class="fw-bold mb-3 text-white"><i class="bi bi-camera-video-fill"></i> 🎥 Telehealth Session</h6>
+                                    <p class="text-white small mb-3">Video consultations with expert doctors from the comfort of your home.</p>
+                                    <button class="btn btn-light btn-sm w-100 fw-bold" onclick="checkPaymentAndBook('telehealth')">Book Telehealth</button>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="p-4 border-2 rounded" style="border: 2px solid #38ef7d;">
-                                    <h6 class="fw-bold mb-3"><i class="bi bi-hospital text-success"></i> In-Person Visit</h6>
-                                    <p class="text-muted small mb-3">Visit our hospital for detailed consultation.</p>
-                                    <button class="btn btn-success btn-sm w-100" onclick="checkPaymentAndBook('inperson')">Schedule Visit</button>
+                                <div class="p-4 rounded-4 fw-bold" style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c00 50%, #ffa500 100%); border: 2px solid rgba(255,255,255,0.2); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 40px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';">
+                                    <h6 class="fw-bold mb-3 text-white"><i class="bi bi-hospital-fill"></i> 🏥 In-Person Visit</h6>
+                                    <p class="text-white small mb-3">Schedule a detailed consultation at our state-of-the-art facility.</p>
+                                    <button class="btn btn-light btn-sm w-100 fw-bold" onclick="checkPaymentAndBook('inperson')">Schedule Visit</button>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="p-4 border-2 rounded" style="border: 2px solid #f7931e;">
-                                    <h6 class="fw-bold mb-3"><i class="bi bi-calendar-check text-warning"></i> View Appointments</h6>
-                                    <p class="text-muted small mb-3">Check your upcoming appointments.</p>
-                                    <a asp-page="/Appointments/Index" class="btn btn-warning btn-sm w-100">My Appointments</a>
+                                <div class="p-4 rounded-4 fw-bold" style="background: linear-gradient(135deg, #1dda63 0%, #20ff88 50%, #00ff99 100%); border: 2px solid rgba(255,255,255,0.2); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 40px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';">
+                                    <h6 class="fw-bold mb-3 text-white"><i class="bi bi-calendar-check-fill"></i> 📅 View Appointments</h6>
+                                    <p class="text-white small mb-3">See all your upcoming appointments and consultations.</p>
+                                    <a asp-page="/Appointments/Index" class="btn btn-light btn-sm w-100 fw-bold">My Appointments</a>
                                 </div>
                             </div>
                         </div>
@@ -262,42 +391,42 @@
         <!-- Quick Links -->
         <div class="row g-4 mb-4">
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-ocean">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-bed"></i></div>
+                        <div class="icon-large">🏨</div>
                         <h6 class="fw-bold">Admissions</h6>
-                        <p class="small mb-2">Track hospital stays</p>
-                        <a asp-page="/Admissions/Index" class="btn btn-light btn-sm w-100">View</a>
+                        <p class="small mb-3">Track your hospital stays</p>
+                        <a asp-page="/Admissions/Index" class="btn btn-light btn-sm w-100 fw-bold">View</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-flame">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-flame">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-graph-up"></i></div>
+                        <div class="icon-large">📊</div>
                         <h6 class="fw-bold">Health Records</h6>
-                        <p class="small mb-2">Your vital history</p>
-                        <a asp-page="/HealthRecords/Index" class="btn btn-light btn-sm w-100">View</a>
+                        <p class="small mb-3">Your vital history</p>
+                        <a asp-page="/HealthRecords/Index" class="btn btn-light btn-sm w-100 fw-bold">View</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-rose">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-wallet2"></i></div>
+                        <div class="icon-large">💳</div>
                         <h6 class="fw-bold">Billing</h6>
-                        <p class="small mb-2">Payment history</p>
-                        <a asp-page="/Billing/Index" class="btn btn-light btn-sm w-100">Review</a>
+                        <p class="small mb-3">Payment history</p>
+                        <a asp-page="/Billing/Index" class="btn btn-light btn-sm w-100 fw-bold">Review</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow stat-card card-slide h-100 text-white card-grape">
+                <div class="card border-0 stat-card card-slide card-float h-100 text-white card-grape">
                     <div class="card-body text-center">
-                        <div class="icon-large"><i class="bi bi-queue"></i></div>
+                        <div class="icon-large">⏳</div>
                         <h6 class="fw-bold">Queue Status</h6>
-                        <p class="small mb-2">Check wait times</p>
-                        <a asp-page="/Queue/Index" class="btn btn-light btn-sm w-100">Check</a>
+                        <p class="small mb-3">Check wait times</p>
+                        <a asp-page="/Queue/Index" class="btn btn-light btn-sm w-100 fw-bold">Check</a>
                     </div>
                 </div>
             </div>
@@ -394,13 +523,13 @@
         
         if(paidAmount > 0) {
             if(type === 'telehealth') {
-                window.location.href = '/Identity/Pages/Appointments/Create?type=telehealth';
+                window.location.href = '/Appointments/Create?type=telehealth';
             } else {
-                window.location.href = '/Identity/Pages/Appointments/Create?type=inperson';
+                window.location.href = '/Appointments/Create?type=inperson';
             }
         } else {
             alert('⚠️ Please complete payment before booking. Visit Billing section to pay.');
-            window.location.href = '/Pages/Billing/Index';
+            window.location.href = '/Billing/Index';
         }
     }
 </script>
