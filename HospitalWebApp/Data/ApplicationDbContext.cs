@@ -27,5 +27,7 @@ namespace HospitalWebApp.Data // Ensure the data namespace matches the project s
         public DbSet<CarePlanEntry> CarePlans { get; set; }
         public DbSet<Drug> Drugs { get; set; }
         public DbSet<ServiceCatalog> ServiceCatalogs { get; set; }
+        public DbSet<PatientService> PatientServices { get; set; }
+        public DbSet<CareNote> CareNotes { get; set; }
     }
 }

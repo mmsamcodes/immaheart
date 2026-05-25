@@ -1,0 +1,188 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.AddServiceModel
+@{
+    ViewData["Title"] = "Add Service to Patient";
+}
+
+<style>
+    .service-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .service-list-item {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+    }
+
+    .service-list-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .btn-assign {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-assign:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .message {
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="service-card">
+        <h1 class="fw-bold mb-2">📋 Add Service to Patient</h1>
+        <p class="mb-0">Assign medical services and treatments to your patients</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="message @(Model.IsSuccess ? "success" : "error")">
+            @Model.Message
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-section">
+                <h4 class="fw-bold mb-4">🏥 Assign Service</h4>
+                
+                <form method="post">
+                    <div class="mb-4">
+                        <label class="form-label" for="PatientId">Select Patient *</label>
+                        <select id="PatientId" asp-for="PatientId" class="form-select" required>
+                            <option value="">-- Choose a patient --</option>
+                            @foreach (var patient in Model.Patients.OrderBy(p => p.FullName))
+                            {
+                                <option value="@patient.Id">@patient.FullName (@patient.Email)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="ServiceCatalogId">Select Service *</label>
+                        <select id="ServiceCatalogId" asp-for="ServiceCatalogId" class="form-select" required>
+                            <option value="">-- Choose a service --</option>
+                            @foreach (var category in Model.Services.GroupBy(s => s.Category))
+                            {
+                                <optgroup label="@category.Key">
+                                    @foreach (var service in category)
+                                    {
+                                        <option value="@service.Id">@service.Name - KES @service.Price</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="ScheduledDate">Schedule Date (Optional)</label>
+                        <input type="datetime-local" id="ScheduledDate" asp-for="ScheduledDate" class="form-control">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="Notes">Notes (Optional)</label>
+                        <textarea id="Notes" asp-for="Notes" class="form-control" rows="4" placeholder="Add any special instructions or notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-assign w-100 btn-lg">
+                        <i class="bi bi-check-circle"></i> Assign Service
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="form-section">
+                <h4 class="fw-bold mb-4">📝 Recent Assignments</h4>
+                
+                @if (Model.AssignedServices.Any())
+                {
+                    @foreach (var ps in Model.AssignedServices.Take(10))
+                    {
+                        <div class="service-list-item">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold mb-1">@ps.Service?.Name</h6>
+                                    <p class="small mb-1">👤 <strong>@ps.Patient?.FullName</strong></p>
+                                    <p class="small mb-0">💰 KES @ps.Service?.Price</p>
+                                </div>
+                                <span class="badge bg-@(ps.Status == "Pending" ? "warning" : ps.Status == "Completed" ? "success" : "info")">
+                                    @ps.Status
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(ps.Notes))
+                            {
+                                <p class="small text-muted mb-0">📌 @ps.Notes</p>
+                            }
+                            <p class="small text-muted mt-2 mb-0">📅 @ps.AssignedAt.ToString("ddd, MMM dd, yyyy h:mm tt")</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted text-center py-5">No services assigned yet. Start by selecting a patient above! 👆</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

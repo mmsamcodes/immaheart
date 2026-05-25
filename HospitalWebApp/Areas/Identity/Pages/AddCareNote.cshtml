@@ -1,0 +1,302 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.AddCareNoteModel
+@{
+    ViewData["Title"] = "Add Care Note";
+}
+
+<style>
+    .care-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(26, 188, 156, 0.3);
+    }
+
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .care-note-item {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 10px;
+        border-left: 5px solid #11998e;
+        transition: all 0.3s ease;
+    }
+
+    .care-note-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .care-note-urgent {
+        border-left-color: #ff6b6b;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(26, 188, 156, 0.4);
+        color: white;
+    }
+
+    .message {
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #11998e;
+        box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+    }
+
+    .category-badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+    }
+
+    .priority-urgent {
+        background: #ff6b6b;
+        color: white;
+    }
+
+    .priority-high {
+        background: #ffa500;
+        color: white;
+    }
+
+    .priority-normal {
+        background: #667eea;
+        color: white;
+    }
+
+    .priority-low {
+        background: #95e1d3;
+        color: #333;
+    }
+
+    .patient-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .patient-card {
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .patient-card:hover {
+        border-color: #11998e;
+        box-shadow: 0 8px 20px rgba(26, 188, 156, 0.2);
+        transform: translateY(-3px);
+    }
+
+    .patient-card.selected {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        border-color: transparent;
+    }
+
+    .patient-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .patient-email {
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="care-header">
+        <h1 class="fw-bold mb-2">📋 Add Care Note</h1>
+        <p class="mb-0">Document patient observations, vital signs, and care progress</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="message @(Model.IsSuccess ? "success" : "error")">
+            @Model.Message
+        </div>
+    }
+
+    <!-- Patient Selection -->
+    @if (string.IsNullOrEmpty(Model.SelectedPatientId))
+    {
+        <div class="form-section">
+            <h4 class="fw-bold mb-4">👤 Select Patient</h4>
+            <div class="patient-selector">
+                @foreach (var patient in Model.Patients.OrderBy(p => p.FullName))
+                {
+                    <a asp-page="/AddCareNote" asp-route-patientId="@patient.Id" class="patient-card">
+                        <div class="patient-name">@patient.FullName</div>
+                        <div class="patient-email">@patient.Email</div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-section">
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">
+                            👤 @Model.SelectedPatient?.FullName
+                            <small class="text-muted ms-2">@Model.SelectedPatient?.Email</small>
+                        </h5>
+                        <a asp-page="/AddCareNote" class="btn btn-outline-secondary btn-sm">Change Patient</a>
+                    </div>
+
+                    <h4 class="fw-bold mb-4">📝 Add Care Note</h4>
+
+                    <form method="post">
+                        <input type="hidden" asp-for="PatientId" value="@Model.SelectedPatientId" />
+
+                        <div class="mb-4">
+                            <label class="form-label" for="Title">Note Title *</label>
+                            <input type="text" id="Title" asp-for="Title" class="form-control" placeholder="e.g., Post-Surgery Observation, Vital Signs Check" required>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label" for="Category">Category *</label>
+                                <select id="Category" asp-for="Category" class="form-select" required>
+                                    <option value="General">General</option>
+                                    <option value="Observation">Observation</option>
+                                    <option value="Medication">Medication</option>
+                                    <option value="Vital Signs">Vital Signs</option>
+                                    <option value="Progress">Progress</option>
+                                    <option value="Alert">Alert</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="Priority">Priority *</label>
+                                <select id="Priority" asp-for="Priority" class="form-select" required>
+                                    <option value="Low">Low</option>
+                                    <option value="Normal" selected>Normal</option>
+                                    <option value="High">High</option>
+                                    <option value="Urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" id="IsUrgent" asp-for="IsUrgent" class="form-check-input">
+                            <label class="form-check-label" for="IsUrgent">
+                                ⚠️ Mark as Urgent
+                            </label>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label" for="Content">Care Note Details *</label>
+                            <textarea id="Content" asp-for="Content" class="form-control" rows="6" placeholder="Document observations, treatments, patient response, recommendations..." required></textarea>
+                            <small class="text-muted">Be specific and detailed for better patient care continuity</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-submit w-100 btn-lg">
+                            <i class="bi bi-check-circle"></i> Save Care Note
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="form-section">
+                    <h4 class="fw-bold mb-4">📚 Patient Care Notes History</h4>
+
+                    @if (Model.CareNotes.Any())
+                    {
+                        @foreach (var note in Model.CareNotes.Take(15))
+                        {
+                            <div class="care-note-item @(note.IsUrgent ? "care-note-urgent" : "")">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-2">@note.Title</h6>
+                                        <div class="mb-2">
+                                            <span class="category-badge @($"priority-{note.Priority.ToLower()}")">
+                                                @note.Priority @(note.IsUrgent ? "⚠️" : "")
+                                            </span>
+                                            <span class="category-badge" style="background: #e8f5e9; color: #333;">
+                                                @note.Category
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-2">@note.Content</p>
+                                <div class="small text-muted">
+                                    <p class="mb-1">👨‍⚕️ By: <strong>@note.AddedBy?.FullName</strong></p>
+                                    <p class="mb-0">📅 @note.CreatedAt.ToString("ddd, MMM dd, yyyy h:mm tt")</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-5">No care notes yet. Start by adding the first note! 👆</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
