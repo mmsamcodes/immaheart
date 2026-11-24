@@ -25,7 +25,7 @@ namespace HospitalWebApp.Pages.Video
         public async Task OnGetAsync()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (User.IsInRole("Admin") || User.IsInRole("Accounts"))
+            if (User.IsInRole("Admin"))
             {
                 VideoSessions = await _context.Appointments
                     .Include(a => a.Patient)

@@ -129,12 +129,13 @@ namespace HospitalWebApp.Areas.Identity.Pages
 
             foreach (var u in users)
             {
-                if (await _userManager.IsInRoleAsync(u, "Doctor"))
+                var roles = await _userManager.GetRolesAsync(u);
+                if (roles.Contains("Doctor"))
                 {
                     DoctorsCount++;
                     doctors.Add(u);
                 }
-                else
+                else if (roles.Count == 0 || roles.Contains("Patient"))
                 {
                     PatientsCount++;
                     patients.Add(u);

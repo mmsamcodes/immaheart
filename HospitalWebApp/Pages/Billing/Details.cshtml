@@ -15,6 +15,10 @@
             <div>
                 <h1>Invoice @Model.Invoice.InvoiceNumber</h1>
                 <p class="text-muted">Patient: @Model.Invoice.Patient?.FullName ?? "Unknown"</p>
+                @if (!User.IsInRole("Admin") && !User.IsInRole("Accounts") && !User.IsInRole("Cashier") && Model.Invoice.PaidAmount < Model.Invoice.TotalAmount)
+                {
+                    <a asp-area="" asp-page="/Billing/Pay" asp-route-invoiceId="@Model.Invoice.Id" class="btn btn-primary">Pay outstanding balance</a>
+                }
             </div>
             <a asp-page="/Billing/Index" class="btn btn-secondary">Back to Billing</a>
         </div>
@@ -50,18 +54,18 @@
                             {
                                 <tr>
                                     <td>@item.Description</td>
-                                    <td class="text-end">@item.Amount.ToString("C")</td>
+                                    <td class="text-end">KSh @item.Amount.ToString("N2")</td>
                                 </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th>Total</th>
-                                <th class="text-end">@Model.Invoice.TotalAmount.ToString("C")</th>
+                                <th class="text-end">KSh @Model.Invoice.TotalAmount.ToString("N2")</th>
                             </tr>
                             <tr>
                                 <th>Paid</th>
-                                <th class="text-end">@Model.Invoice.PaidAmount.ToString("C")</th>
+                                <th class="text-end">KSh @Model.Invoice.PaidAmount.ToString("N2")</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -69,7 +73,7 @@
                 <p><strong>Payment Method:</strong> @Model.Invoice.PaymentMethod</p>
                 <p><strong>Notes:</strong> @Model.Invoice.Notes</p>
 
-                @if (User.IsInRole("Doctor") || User.IsInRole("Nurse") || User.IsInRole("Pharmacy") || User.IsInRole("Accounts") || User.IsInRole("Cashier") || User.IsInRole("Reception"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Accounts") || User.IsInRole("Cashier"))
                 {
                     <hr />
                     <h6>Add billing item</h6>
@@ -111,7 +115,7 @@
                     </form>
                 }
 
-                @if (User.IsInRole("Accounts") || User.IsInRole("Cashier") || User.IsInRole("Reception"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Accounts") || User.IsInRole("Cashier"))
                 {
                     <hr />
                     <h6>Insurance</h6>

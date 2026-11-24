@@ -26,8 +26,32 @@ namespace HospitalWebApp.Data // Ensure the data namespace matches the project s
         public DbSet<DischargeDocument> DischargeDocuments { get; set; }
         public DbSet<CarePlanEntry> CarePlans { get; set; }
         public DbSet<Drug> Drugs { get; set; }
+        public DbSet<PharmacyOrder> PharmacyOrders { get; set; }
+        public DbSet<PharmacyOrderItem> PharmacyOrderItems { get; set; }
         public DbSet<ServiceCatalog> ServiceCatalogs { get; set; }
         public DbSet<PatientService> PatientServices { get; set; }
         public DbSet<CareNote> CareNotes { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<PharmacyOrder>()
+                .HasIndex(order => order.OrderNumber)
+                .IsUnique();
+            modelBuilder.Entity<PharmacyOrder>()
+                .HasOne(order => order.Patient)
+                .WithMany()
+                .HasForeignKey(order => order.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PharmacyOrder>()
+                .HasMany(order => order.Items)
+                .WithOne(item => item.PharmacyOrder)
+                .HasForeignKey(item => item.PharmacyOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<PharmacyOrderItem>()
+                .Property(item => item.RequiresPrescription)
+                .HasDefaultValue(false);
+        }
     }
 }

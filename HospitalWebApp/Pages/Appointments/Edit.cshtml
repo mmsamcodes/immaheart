@@ -1,72 +1,28 @@
 @page
 @model HospitalWebApp.Pages_Appointments.EditModel
-
 @{
-    Layout = null;
+    ViewData["Title"] = "Edit appointment";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Edit</title>
-</head>
-<body>
-
-<h4>Appointment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="dashboard-shell"><div class="container" style="max-width:900px">
+    <div class="dashboard-header"><div><div class="dashboard-kicker">Care schedule</div><h1>Edit appointment</h1><p>Update scheduling details while preserving billing and clinical records.</p></div><a asp-area="" asp-page="/Appointments/Index" class="btn btn-outline-primary">Back to appointments</a></div>
+    <div class="dashboard-panel dashboard-panel-body">
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Appointment.Id" />
-            <div class="form-group">
-<span class="text-danger">*</span>
-                <label asp-for="Appointment.PatientId" class="control-label"></label>
-                <select asp-for="Appointment.PatientId" class="form-control" asp-items="ViewBag.PatientId" aria-required="true"></select>
-                <span asp-validation-for="Appointment.PatientId" class="text-danger"></span>
+            <div class="row g-3">
+                <div class="col-md-6"><label asp-for="Appointment.PatientId" class="form-label">Patient</label><select asp-for="Appointment.PatientId" class="form-select" asp-items="ViewBag.PatientId"></select></div>
+                <div class="col-md-6"><label asp-for="Appointment.DoctorId" class="form-label">Doctor</label><select asp-for="Appointment.DoctorId" class="form-select" asp-items="ViewBag.DoctorId"></select></div>
+                <div class="col-md-6"><label asp-for="Appointment.AppointmentDate" class="form-label">Date and time</label><input asp-for="Appointment.AppointmentDate" class="form-control" /><span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span></div>
+                <div class="col-md-6"><label asp-for="Appointment.Status" class="form-label">Status</label><select asp-for="Appointment.Status" class="form-select"><option>Pending</option><option>Confirmed</option><option>Completed</option><option>Cancelled</option></select></div>
+                <div class="col-12"><label asp-for="Appointment.SymptomsSummary" class="form-label">Reason for visit</label><textarea asp-for="Appointment.SymptomsSummary" class="form-control" rows="4"></textarea></div>
+                <div class="col-12 form-check ms-2"><input asp-for="Appointment.IsVirtual" class="form-check-input" /><label asp-for="Appointment.IsVirtual" class="form-check-label">Virtual consultation</label></div>
             </div>
-            <div class="form-group">
-<span class="text-danger">*</span>
-                <label asp-for="Appointment.DoctorId" class="control-label"></label>
-                <select asp-for="Appointment.DoctorId" class="form-control" asp-items="ViewBag.DoctorId" aria-required="true"></select>
-                <span asp-validation-for="Appointment.DoctorId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-<span class="text-danger">*</span>
-                <label asp-for="Appointment.AppointmentDate" class="control-label"></label>
-                <input asp-for="Appointment.AppointmentDate" class="form-control" aria-required="true"/>
-                <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.SymptomsSummary" class="control-label"></label>
-                <input asp-for="Appointment.SymptomsSummary" class="form-control" />
-                <span asp-validation-for="Appointment.SymptomsSummary" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Status" class="control-label"></label>
-                <input asp-for="Appointment.Status" class="form-control" />
-                <span asp-validation-for="Appointment.Status" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Appointment.IsVirtual" /> @Html.DisplayNameFor(model => model.Appointment.IsVirtual)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+            <div class="d-flex justify-content-end mt-4"><button type="submit" class="btn btn-primary">Save appointment</button></div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
+</div></div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }
-</body>
-</html>

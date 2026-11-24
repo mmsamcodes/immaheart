@@ -116,7 +116,7 @@ namespace HospitalWebApp.Pages_Billing
                 return true;
             }
 
-            return User.IsInRole("Admin") || User.IsInRole("Accounts") || User.IsInRole("Cashier");
+            return false;
         }
     }
 }

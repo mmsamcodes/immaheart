@@ -71,7 +71,7 @@ namespace HospitalWebApp.Pages_Billing
         {
             Invoice = await _context.BillingInvoices.Include(i => i.Items).FirstOrDefaultAsync(i => i.Id == id);
             if (Invoice == null) return NotFound();
-            if (!CanAccessInvoice(Invoice)) return Forbid();
+            if (!CanManageBilling() || !CanAccessInvoice(Invoice)) return Forbid();
 
             string description = ItemInput.Description;
             decimal amount = ItemInput.Amount;
@@ -88,11 +88,18 @@ namespace HospitalWebApp.Pages_Billing
             else if (ItemInput.DrugId.HasValue)
             {
                 var drug = await _context.Drugs.FindAsync(ItemInput.DrugId.Value);
-                if (drug != null)
+                if (drug != null && drug.IsActive)
                 {
                     description = drug.Name;
                     amount = drug.UnitPrice;
                 }
+            }
+
+            if (string.IsNullOrWhiteSpace(description) || amount <= 0 ||
+                ItemInput.ServiceId.HasValue && !await _context.ServiceCatalogs.AnyAsync(service => service.Id == ItemInput.ServiceId && service.IsAvailable) ||
+                ItemInput.DrugId.HasValue && !await _context.Drugs.AnyAsync(drug => drug.Id == ItemInput.DrugId && drug.IsActive))
+            {
+                return BadRequest();
             }
 
             var item = new BillingItem
@@ -103,6 +110,9 @@ namespace HospitalWebApp.Pages_Billing
             };
             _context.BillingItems.Add(item);
             Invoice.TotalAmount += amount;
+            Invoice.Status = Invoice.PaidAmount >= Invoice.TotalAmount
+                ? "Paid"
+                : Invoice.PaidAmount > 0 ? "Partial" : "Unpaid";
             await _context.SaveChangesAsync();
 
             return RedirectToPage();
@@ -112,7 +122,11 @@ namespace HospitalWebApp.Pages_Billing
         {
             Invoice = await _context.BillingInvoices.FirstOrDefaultAsync(i => i.Id == id);
             if (Invoice == null) return NotFound();
-            if (!CanAccessInvoice(Invoice)) return Forbid();
+            if (!CanManageBilling() || !CanAccessInvoice(Invoice)) return Forbid();
+            if (InsuranceInput.CoveragePercent is < 0 or > 100)
+            {
+                return BadRequest();
+            }
 
             Invoice.InsuranceScheme = InsuranceInput.Scheme;
             Invoice.InsuranceNumber = InsuranceInput.Number;
@@ -124,17 +138,13 @@ namespace HospitalWebApp.Pages_Billing
 
         private bool CanAccessInvoice(BillingInvoice invoice)
         {
-            if (User.IsInRole("Admin") || User.IsInRole("Accounts") || User.IsInRole("Cashier"))
-            {
-                return true;
-            }
+            return CanManageBilling() ||
+                   invoice.PatientId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
 
-            if (User.IsInRole("Patient") && invoice.PatientId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-            {
-                return true;
-            }
-
-            return User.IsInRole("Doctor") || User.IsInRole("Nurse") || User.IsInRole("Pharmacy") || User.IsInRole("LabTech");
+        private bool CanManageBilling()
+        {
+            return User.IsInRole("Admin") || User.IsInRole("Accounts") || User.IsInRole("Cashier");
         }
     }
 }

@@ -1,64 +1,23 @@
 @page
 @model HospitalWebApp.Pages_Appointments.DetailsModel
-
 @{
-    Layout = null;
+    ViewData["Title"] = "Appointment details";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
-
-<div>
-    <h4>Appointment</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Patient)
-        </dt>
-        <dd class="col-sm-10">
-            @(Model.Appointment.Patient?.Id ?? "Unknown")
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Doctor)
-        </dt>
-        <dd class="col-sm-10">
-            @(Model.Appointment.Doctor?.Id ?? "Unknown")
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.AppointmentDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.AppointmentDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.SymptomsSummary)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.SymptomsSummary)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Status)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Status)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.IsVirtual)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.IsVirtual)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Appointment.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
-</div>
-</body>
-</html>
+<div class="dashboard-shell"><div class="container">
+    <div class="dashboard-header"><div><div class="dashboard-kicker">Care schedule</div><h1>Appointment details</h1><p>Review appointment information and status.</p></div><a asp-area="" asp-page="/Appointments/Index" class="btn btn-outline-primary">Back to appointments</a></div>
+    <div class="dashboard-panel dashboard-panel-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Patient</dt><dd class="col-sm-9">@Model.Appointment.Patient?.FullName</dd>
+            <dt class="col-sm-3">Clinician</dt><dd class="col-sm-9">@Model.Appointment.Doctor?.FullName</dd>
+            <dt class="col-sm-3">Date and time</dt><dd class="col-sm-9">@Model.Appointment.AppointmentDate.ToString("dddd, MMM d, yyyy h:mm tt")</dd>
+            <dt class="col-sm-3">Visit type</dt><dd class="col-sm-9">@(Model.Appointment.IsVirtual ? "Virtual" : "In person")</dd>
+            <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@Model.Appointment.Status</dd>
+            <dt class="col-sm-3">Reason for visit</dt><dd class="col-sm-9">@Model.Appointment.SymptomsSummary</dd>
+        </dl>
+        @if (User.IsInRole("Admin") || User.IsInRole("Reception"))
+        {
+            <a asp-area="" asp-page="/Appointments/Edit" asp-route-id="@Model.Appointment.Id" class="btn btn-primary mt-3">Edit appointment</a>
+        }
+    </div>
+</div></div>

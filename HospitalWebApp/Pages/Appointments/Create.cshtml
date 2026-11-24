@@ -1,69 +1,49 @@
 @page
 @model HospitalWebApp.Pages_Appointments.CreateModel
-
-        @{
-        Layout = null;
-        }
-        
-        <!DOCTYPE html>
-        
-        <html>
-        <head>
-        <meta name="viewport" content="width=device-width" />
-        <title>Create</title>
-        </head>
-        <body>
-        
-    <h4>Appointment</h4>
-    <hr />
-    <div class="row">
-    <div class="col-md-4">
-    <form method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.PatientId" class="control-label"></label>
-                <select asp-for="Appointment.PatientId" class ="form-control" asp-items="ViewBag.PatientId" aria-required="true"></select>
+@{
+    ViewData["Title"] = "Schedule Appointment";
+}
+<div class="dashboard-shell patient-dashboard"><div class="container" style="max-width:900px">
+    <div class="dashboard-header"><div><div class="dashboard-kicker">Appointment request</div><h1>Schedule care</h1><p>Choose a clinician, date and visit type. Your invoice will be created after booking.</p></div></div>
+    <div class="dashboard-panel"><div class="dashboard-panel-body">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Appointment.PatientId" class="form-label">Patient</label>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Reception"))
+                    {
+                        <select asp-for="Appointment.PatientId" class="form-select" asp-items="ViewBag.PatientId" required></select>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="Appointment.PatientId" />
+                        <input class="form-control" value="@Model.CurrentPatientName" readonly aria-label="Patient" />
+                    }
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Appointment.DoctorId" class="form-label">Doctor</label>
+                    <select asp-for="Appointment.DoctorId" class="form-select" asp-items="ViewBag.DoctorId" required></select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Appointment.AppointmentDate" class="form-label">Date and time</label>
+                    <input asp-for="Appointment.AppointmentDate" class="form-control" required />
+                    <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Appointment.SymptomsSummary" class="form-label">Reason for visit</label>
+                    <textarea asp-for="Appointment.SymptomsSummary" class="form-control" rows="4" placeholder="Briefly describe symptoms or care needed"></textarea>
+                </div>
+                <div class="col-12 form-check ms-2">
+                    <input class="form-check-input" asp-for="Appointment.IsVirtual" />
+                    <label class="form-check-label" asp-for="Appointment.IsVirtual">This is a virtual consultation</label>
+                </div>
             </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.DoctorId" class="control-label"></label>
-                <select asp-for="Appointment.DoctorId" class ="form-control" asp-items="ViewBag.DoctorId" aria-required="true"></select>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.AppointmentDate" class="control-label"></label>
-                <input asp-for="Appointment.AppointmentDate" class="form-control" aria-required="true"/>
-                <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.SymptomsSummary" class="control-label"></label>
-                <input asp-for="Appointment.SymptomsSummary" class="form-control" />
-                <span asp-validation-for="Appointment.SymptomsSummary" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Status" class="control-label"></label>
-                <input asp-for="Appointment.Status" class="form-control" />
-                <span asp-validation-for="Appointment.Status" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Appointment.IsVirtual" /> @Html.DisplayNameFor(model => model.Appointment.IsVirtual)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-page="Index" class="btn btn-outline-secondary">Back to appointments</a>
+                <button type="submit" class="btn btn-primary">Continue to invoice</button>
             </div>
         </form>
-    </div>
-</div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-</body>
-</html>
+    </div></div>
+</div></div>
+@section Scripts { @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} }

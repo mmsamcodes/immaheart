@@ -56,7 +56,7 @@ namespace HospitalWebApp.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return false;
-            return appt.PatientId == userId || appt.DoctorId == userId || User.IsInRole("Admin") || User.IsInRole("Accounts");
+            return appt.PatientId == userId || appt.DoctorId == userId || User.IsInRole("Admin");
         }
     }
 }

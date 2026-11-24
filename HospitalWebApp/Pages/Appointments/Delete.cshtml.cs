@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using HospitalWebApp.Data;
 using HospitalWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace HospitalWebApp.Pages_Appointments
 {
+    [Authorize]
     public class DeleteModel : PageModel
     {
         private readonly HospitalWebApp.Data.ApplicationDbContext _context;
@@ -29,10 +32,18 @@ namespace HospitalWebApp.Pages_Appointments
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments.FirstOrDefaultAsync(m => m.Id == id);
+            var appointment = await _context.Appointments
+                .Include(item => item.Patient)
+                .Include(item => item.Doctor)
+                .FirstOrDefaultAsync(item => item.Id == id);
 
             if (appointment is not null)
             {
+                if (!CanCancel(appointment) || appointment.Status == "Completed" || appointment.Status == "Cancelled")
+                {
+                    return Forbid();
+                }
+
                 Appointment = appointment;
 
                 return Page();
@@ -51,12 +62,27 @@ namespace HospitalWebApp.Pages_Appointments
             var appointment = await _context.Appointments.FindAsync(id);
             if (appointment != null)
             {
+                if (!CanCancel(appointment) || appointment.Status == "Completed")
+                {
+                    return Forbid();
+                }
+
                 Appointment = appointment;
-                _context.Appointments.Remove(Appointment);
+                Appointment.Status = "Cancelled";
                 await _context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");
+        }
+
+        private bool CanCancel(Appointment appointment)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return User.IsInRole("Admin") || User.IsInRole("Reception") ||
+                   appointment.PatientId == userId &&
+                   (User.IsInRole("Patient") || !User.IsInRole("Doctor") && !User.IsInRole("Nurse") &&
+                    !User.IsInRole("Accounts") && !User.IsInRole("Cashier") &&
+                    !User.IsInRole("LabTech") && !User.IsInRole("Pharmacy"));
         }
     }
 }

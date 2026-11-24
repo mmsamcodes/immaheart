@@ -22,7 +22,8 @@ namespace HospitalWebApp.Areas.Identity.Pages
 
         public string FullName { get; set; } = string.Empty;
         public int PharmacyQueueCount { get; set; }
-        public int PendingInvoices { get; set; }
+        public int PendingOrders { get; set; }
+        public int ReadyForCollectionOrders { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -35,7 +36,8 @@ namespace HospitalWebApp.Areas.Identity.Pages
 
             FullName = user.FullName;
             PharmacyQueueCount = await _context.QueueEntries.CountAsync(q => q.QueueType == "Pharmacy" && q.Status == "Waiting");
-            PendingInvoices = await _context.BillingInvoices.CountAsync(i => i.Status == "Unpaid" || i.Status == "Partial");
+            PendingOrders = await _context.PharmacyOrders.CountAsync(order => order.Status == PharmacyOrder.PendingReview);
+            ReadyForCollectionOrders = await _context.PharmacyOrders.CountAsync(order => order.Status == PharmacyOrder.ReadyForCollection);
             return Page();
         }
     }

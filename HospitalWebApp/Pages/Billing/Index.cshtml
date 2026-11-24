@@ -4,9 +4,9 @@
     ViewData["Title"] = "Billing";
 }
 
-<h1 class="mb-4">Billing Invoices</h1>
-
-<table class="table table-hover">
+<div class="dashboard-shell"><div class="container">
+<div class="dashboard-header"><div><div class="dashboard-kicker">Patient finance</div><h1>Billing Invoices</h1><p>Review invoice totals, payments and current status.</p></div></div>
+<div class="dashboard-panel"><div class="table-responsive"><table class="dashboard-table">
     <thead>
         <tr>
             <th>Invoice</th>
@@ -24,8 +24,8 @@
             <tr>
                 <td>@invoice.InvoiceNumber</td>
                 <td>@invoice.Patient?.FullName ?? invoice.PatientId</td>
-                <td>@invoice.TotalAmount.ToString("C")</td>
-                <td>@invoice.PaidAmount.ToString("C")</td>
+                <td>KSh @invoice.TotalAmount.ToString("N2")</td>
+                <td>KSh @invoice.PaidAmount.ToString("N2")</td>
                 <td>@invoice.Status</td>
                 <td>@invoice.IssuedAt.ToString("yyyy-MM-dd")</td>
                 <td>
@@ -34,4 +34,5 @@
             </tr>
         }
     </tbody>
-</table>
+</table></div></div>
+</div></div>

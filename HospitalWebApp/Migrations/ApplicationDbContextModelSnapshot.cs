@@ -485,6 +485,9 @@ namespace HospitalWebApp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("RequiresPrescription")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("StockQuantity")
                         .HasColumnType("INTEGER");
 
@@ -498,6 +501,84 @@ namespace HospitalWebApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Drugs");
+                });
+
+            modelBuilder.Entity("HospitalWebApp.Models.PharmacyOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PatientNote")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("PlacedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("PrescriptionDocument")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("PrescriptionContentType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderNumber")
+                        .IsUnique();
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("PharmacyOrders");
+                });
+
+            modelBuilder.Entity("HospitalWebApp.Models.PharmacyOrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DrugId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DrugName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PharmacyOrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("RequiresPrescription")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(false)
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PharmacyOrderId");
+
+                    b.ToTable("PharmacyOrderItems");
                 });
 
             modelBuilder.Entity("HospitalWebApp.Models.HealthRecord", b =>
@@ -946,6 +1027,30 @@ namespace HospitalWebApp.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalWebApp.Models.PharmacyOrder", b =>
+                {
+                    b.HasOne("HospitalWebApp.Models.ApplicationUser", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Items");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HospitalWebApp.Models.PharmacyOrderItem", b =>
+                {
+                    b.HasOne("HospitalWebApp.Models.PharmacyOrder", "PharmacyOrder")
+                        .WithMany("Items")
+                        .HasForeignKey("PharmacyOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PharmacyOrder");
                 });
 
             modelBuilder.Entity("HospitalWebApp.Models.BillingInvoice", b =>

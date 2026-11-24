@@ -90,6 +90,6 @@ public class PaymentSuccessModel : PageModel
             return false;
         }
 
-        return invoice.PatientId == userId || User.IsInRole("Admin") || User.IsInRole("Accounts") || User.IsInRole("Cashier");
+        return invoice.PatientId == userId;
     }
 }

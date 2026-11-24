@@ -1,31 +1,14 @@
 @page
 @model HospitalWebApp.Areas.Identity.Pages.PharmacyDashboardModel
-@{
-    ViewData["Title"] = "Pharmacy Dashboard";
-}
-
-<div class="container py-4">
-    <h1 class="mb-4">Pharmacy Dashboard</h1>
-    <p class="lead">Welcome back, @Model.FullName.</p>
-
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card border-info bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Pharmacy Queue</h5>
-                    <p class="display-6">@Model.PharmacyQueueCount</p>
-                    <a asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-info btn-sm">Open pharmacy queue</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card border-secondary bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Outstanding Invoices</h5>
-                    <p class="display-6">@Model.PendingInvoices</p>
-                    <a asp-area="Identity" asp-page="/AccountsDashboard" class="btn btn-secondary btn-sm">Open billing</a>
-                </div>
-            </div>
-        </div>
-    </div>
+@{ ViewData["Title"] = "Pharmacy Dashboard"; }
+<div class="dashboard-shell">
+ <div class="container">
+  <div class="dashboard-header"><div><div class="dashboard-kicker">Medication services</div><h1>Pharmacy operations</h1><p>Welcome back, @Model.FullName. Review requests, verify prescriptions and coordinate hospital collection.</p></div><a asp-area="Identity" asp-page="/PharmacyOrders" class="btn btn-primary"><i class="bi bi-list-check me-2"></i>Review order requests</a></div>
+  <div class="metric-grid">
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-person-lines-fill"></i></span></div><div class="metric-value">@Model.PharmacyQueueCount</div><div class="metric-label">Hospital pharmacy queue</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-clipboard2-pulse"></i></span><span class="status-pill warning">Review</span></div><div class="metric-value">@Model.PendingOrders</div><div class="metric-label">Requests awaiting pharmacist review</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-bag-check"></i></span></div><div class="metric-value">@Model.ReadyForCollectionOrders</div><div class="metric-label">Orders ready for collection</div></div>
+  </div>
+  <div class="row g-3"><div class="col-md-3"><a asp-area="Identity" asp-page="/PharmacyOrders" class="provider-action-card"><i class="bi bi-capsule"></i><h5>Online order worklist</h5><p class="text-muted small mb-0">Review prescriptions, prepare approved items and confirm collection</p></a></div><div class="col-md-3"><a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="provider-action-card"><i class="bi bi-person-lines-fill"></i><h5>Hospital pharmacy queue</h5><p class="text-muted small mb-0">Coordinate walk-in patient dispensing</p></a></div><div class="col-md-3"><a asp-area="Identity" asp-page="/Admin/Drugs" class="provider-action-card"><i class="bi bi-boxes"></i><h5>Manage stock</h5><p class="text-muted small mb-0">Update catalog, prices, prescription status and stock</p></a></div><div class="col-md-3"><a asp-area="" asp-page="/Pharmacy/Index" class="provider-action-card"><i class="bi bi-shop"></i><h5>Patient catalog</h5><p class="text-muted small mb-0">View the public pharmacy catalog and ordering experience</p></a></div></div>
+ </div>
 </div>

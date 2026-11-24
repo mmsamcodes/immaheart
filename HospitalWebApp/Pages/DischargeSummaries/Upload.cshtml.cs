@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HospitalWebApp.Pages.DischargeSummaries
 {
-    [Authorize(Roles = "Admin,Doctor,Nurse,Accounts,Cashier")]
+    [Authorize(Roles = "Admin,Doctor,Nurse")]
     public class UploadModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -43,10 +43,8 @@ namespace HospitalWebApp.Pages.DischargeSummaries
 
         public async Task<IActionResult> OnGetAsync()
         {
-            PatientList = new SelectList(await _context.Users
-                .Where(u => !string.IsNullOrEmpty(u.Email) && u.Email != "")
-                .OrderBy(u => u.FullName)
-                .ToListAsync(), "Id", "FullName");
+            var patients = await _userManager.GetUsersInRoleAsync("Patient");
+            PatientList = new SelectList(patients.OrderBy(patient => patient.FullName), "Id", "FullName");
             return Page();
         }
 
@@ -73,6 +71,10 @@ namespace HospitalWebApp.Pages.DischargeSummaries
             if (patient == null || uploader == null)
             {
                 return NotFound();
+            }
+            if (!await _userManager.IsInRoleAsync(patient, "Patient"))
+            {
+                return Forbid();
             }
 
             var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "discharge-summaries");

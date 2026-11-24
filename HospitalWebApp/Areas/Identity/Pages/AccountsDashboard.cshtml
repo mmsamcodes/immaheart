@@ -1,129 +1,33 @@
 @page
 @model HospitalWebApp.Areas.Identity.Pages.AccountsDashboardModel
 @{
-    ViewData["Title"] = "Accounts Dashboard";
+    ViewData["Title"] = "Accounts";
+    var unpaid = Model.Invoices.Count(i => i.Status != "Paid");
+    var paid = Model.Invoices.Count(i => i.Status == "Paid");
+    var balance = Model.Invoices.Sum(i => i.TotalAmount - i.PaidAmount);
 }
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="fw-bold">Accounts / Cashier Dashboard</h2>
-            <p class="text-muted">Log payments, reconcile invoices, and mark consultations as paid.</p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5 class="mb-3">Invoices</h5>
-                    @if (Model.Invoices.Any())
-                    {
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Invoice</th>
-                                    <th>Patient</th>
-                                    <th>Issued</th>
-                                    <th>Total</th>
-                                    <th>Paid</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var inv in Model.Invoices)
-                                {
-                                    <tr>
-                                        <td>@inv.Id</td>
-                                        <td>@inv.InvoiceNumber</td>
-                                        <td>@inv.Patient?.FullName</td>
-                                        <td>@inv.IssuedAt.ToShortDateString()</td>
-                                        <td>@inv.TotalAmount</td>
-                                        <td>@inv.PaidAmount</td>
-                                        <td>@inv.Status</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#payModal" data-invoiceid="@inv.Id" data-total="@inv.TotalAmount" data-paid="@inv.PaidAmount">Log payment</button>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                    else
-                    {
-                        <p class="text-muted">No invoices found.</p>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Quick actions</h5>
-                </div>
-                <div class="card-body">
-                    <p class="small text-muted">Use the payment modal to record MPesa or Visa transactions. Admins can see and review all records.</p>
-                    <a asp-page="/Reception/Intake" class="btn btn-outline-primary w-100 mb-2">Patient Intake</a>
-                    <a asp-page="/Billing/Index" class="btn btn-outline-primary w-100 mb-2">Open Billing Center</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Payment modal -->
-    <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" asp-page-handler="MarkPaid">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Log Payment</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="InvoiceId" name="InvoiceId" />
-                        <div class="mb-3">
-                            <label class="form-label">Amount</label>
-                            <input type="number" step="0.01" class="form-control" id="Amount" name="Amount" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Method</label>
-                            <select class="form-select" id="Method" name="Method">
-                                <option>MPesa</option>
-                                <option>Visa</option>
-                                <option>Cash</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Reference</label>
-                            <input type="text" class="form-control" id="Reference" name="Reference" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save payment</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="dashboard-shell">
+ <div class="container">
+  <div class="dashboard-header"><div><div class="dashboard-kicker">Finance and cashier operations</div><h1>Accounts desk</h1><p>Reconcile invoices, record payments and maintain a clear audit trail.</p></div><a asp-area="" asp-page="/Billing/Index" class="btn btn-primary"><i class="bi bi-receipt me-2"></i>Billing records</a></div>
+  @if (!string.IsNullOrEmpty(Model.Message)){<div class="alert alert-success">@Model.Message</div>}
+  <div class="metric-grid">
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-receipt"></i></span></div><div class="metric-value">@Model.Invoices.Count</div><div class="metric-label">Total invoices</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-check2-circle"></i></span></div><div class="metric-value">@paid</div><div class="metric-label">Paid invoices</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-hourglass-split"></i></span><span class="status-pill warning">Action</span></div><div class="metric-value">@unpaid</div><div class="metric-label">Unpaid or partial</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-cash-stack"></i></span></div><div class="metric-value">KSh @balance.ToString("N0")</div><div class="metric-label">Outstanding balance</div></div>
+  </div>
+  <div class="dashboard-panel"><div class="dashboard-panel-header"><h2>Invoice register</h2><a asp-area="" asp-page="/Billing/Index" class="btn btn-sm btn-outline-primary">Detailed billing</a></div><div class="table-responsive"><table class="dashboard-table"><thead><tr><th>Invoice</th><th>Patient</th><th>Issued</th><th>Total</th><th>Paid</th><th>Status</th><th></th></tr></thead><tbody>@if (Model.Invoices.Any()){foreach(var inv in Model.Invoices){<tr><td><strong>@inv.InvoiceNumber</strong></td><td>@inv.Patient?.FullName</td><td>@inv.IssuedAt.ToString("MMM dd, yyyy")</td><td>KSh @inv.TotalAmount.ToString("N0")</td><td>KSh @inv.PaidAmount.ToString("N0")</td><td><span class="status-pill @(inv.Status=="Paid"?"success":inv.Status=="Partial"?"warning":"danger")">@inv.Status</span></td><td><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#payModal" data-invoiceid="@inv.Id" data-total="@inv.TotalAmount" data-paid="@inv.PaidAmount">Log payment</button></td></tr>}}else{<tr><td colspan="7" class="text-muted">No invoices found.</td></tr>}</tbody></table></div></div>
+ </div>
 </div>
-
+<div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><form method="post" asp-page-handler="MarkPaid"><div class="modal-header"><h5 class="modal-title">Log payment</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><input type="hidden" id="InvoiceId" name="InvoiceId"><div class="mb-3"><label class="form-label">Amount</label><input type="number" step="0.01" class="form-control" id="Amount" name="Amount" required></div><div class="mb-3"><label class="form-label">Method</label><select class="form-select" id="Method" name="Method"><option>MPesa</option><option>Visa</option><option>Cash</option></select></div><div class="mb-3"><label class="form-label">Reference</label><input type="text" class="form-control" id="Reference" name="Reference"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save payment</button></div></form></div></div></div>
 @section Scripts {
-    <script>
-        var payModal = document.getElementById('payModal')
-        payModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget
-            var invoiceId = button.getAttribute('data-invoiceid')
-            var total = button.getAttribute('data-total')
-            var paid = button.getAttribute('data-paid')
-            var modal = this
-            modal.querySelector('#InvoiceId').value = invoiceId
-            modal.querySelector('#Amount').value = (parseFloat(total) - parseFloat(paid)).toFixed(2)
-        })
-    </script>
+<script>
+document.getElementById('payModal').addEventListener('show.bs.modal', function(event){
+ const button=event.relatedTarget;
+ const total=parseFloat(button.dataset.total||0);
+ const paid=parseFloat(button.dataset.paid||0);
+ this.querySelector('#InvoiceId').value=button.dataset.invoiceid;
+ this.querySelector('#Amount').value=Math.max(total-paid,0).toFixed(2);
+});
+</script>
 }

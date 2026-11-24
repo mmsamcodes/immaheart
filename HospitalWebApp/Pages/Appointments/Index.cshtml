@@ -1,74 +1,55 @@
 @page
 @model HospitalWebApp.Pages_Appointments.IndexModel
-
 @{
-    Layout = null;
+    ViewData["Title"] = "Appointments";
+    var canManage = User.IsInRole("Admin") || User.IsInRole("Reception");
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 }
 
-<!DOCTYPE html>
+<div class="dashboard-shell"><div class="container">
+    <div class="dashboard-header">
+        <div><div class="dashboard-kicker">Care schedule</div><h1>Appointments</h1><p>Review upcoming visits and their current status.</p></div>
+        @if (Model.CanCreate)
+        {
+            <a asp-area="" asp-page="/Appointments/Create" class="btn btn-primary"><i class="bi bi-calendar-plus me-2"></i>Book an appointment</a>
+        }
+    </div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].Patient)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].Doctor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].AppointmentDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].SymptomsSummary)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].IsVirtual)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Appointment) {
-        <tr>
-            <td>
-                @item.Patient?.FullName ?? item.PatientId
-            </td>
-            <td>
-                @item.Doctor?.FullName ?? item.DoctorId
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AppointmentDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SymptomsSummary)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsVirtual)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
-</body>
-</html>
+    <div class="dashboard-panel">
+        @if (!Model.Appointment.Any())
+        {
+            <div class="pharmacy-empty"><i class="bi bi-calendar2-check"></i><h2>No appointments yet</h2><p>Appointments will appear here after they are booked.</p></div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="dashboard-table">
+                    <thead><tr><th>Patient</th><th>Clinician</th><th>Date and time</th><th>Visit</th><th>Status</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.Appointment)
+                        {
+                            <tr>
+                                <td>@item.Patient?.FullName</td>
+                                <td>@item.Doctor?.FullName</td>
+                                <td>@item.AppointmentDate.ToString("MMM d, yyyy h:mm tt")</td>
+                                <td>@(item.IsVirtual ? "Virtual" : "In person")</td>
+                                <td><span class="status-pill @(item.Status == "Confirmed" ? "success" : item.Status == "Cancelled" ? "danger" : "warning")">@item.Status</span></td>
+                                <td class="text-nowrap">
+                                    <a asp-area="" asp-page="/Appointments/Details" asp-route-id="@item.Id">Details</a>
+                                    @if (canManage)
+                                    {
+                                        <span> · </span><a asp-area="" asp-page="/Appointments/Edit" asp-route-id="@item.Id">Edit</a>
+                                    }
+                                    @if ((canManage || item.PatientId == userId) && item.Status != "Completed" && item.Status != "Cancelled")
+                                    {
+                                        <span> · </span><a asp-area="" asp-page="/Appointments/Delete" asp-route-id="@item.Id">Cancel</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div></div>

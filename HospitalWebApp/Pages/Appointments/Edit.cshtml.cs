@@ -8,16 +8,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HospitalWebApp.Data;
 using HospitalWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace HospitalWebApp.Pages_Appointments
 {
+    [Authorize(Roles = "Admin,Reception")]
     public class EditModel : PageModel
     {
         private readonly HospitalWebApp.Data.ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public EditModel(HospitalWebApp.Data.ApplicationDbContext context)
+        public EditModel(HospitalWebApp.Data.ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -30,14 +35,13 @@ namespace HospitalWebApp.Pages_Appointments
                 return NotFound();
             }
 
-            var appointment =  await _context.Appointments.FirstOrDefaultAsync(m => m.Id == id);
+            var appointment = await _context.Appointments.FirstOrDefaultAsync(item => item.Id == id);
             if (appointment == null)
             {
                 return NotFound();
             }
             Appointment = appointment;
-           ViewData["DoctorId"] = new SelectList(_context.Users, "Id", "Id");
-           ViewData["PatientId"] = new SelectList(_context.Users, "Id", "Id");
+           await LoadChoicesAsync();
             return Page();
         }
 
@@ -47,33 +51,45 @@ namespace HospitalWebApp.Pages_Appointments
         {
             if (!ModelState.IsValid)
             {
+                await LoadChoicesAsync();
                 return Page();
             }
 
-            _context.Attach(Appointment).State = EntityState.Modified;
+            var current = await _context.Appointments.FindAsync(Appointment.Id);
+            if (current == null)
+            {
+                return NotFound();
+            }
 
-            try
+            var doctor = await _userManager.FindByIdAsync(Appointment.DoctorId);
+            var patient = await _userManager.FindByIdAsync(Appointment.PatientId);
+            var allowedStatuses = new[] { "Pending", "Confirmed", "Completed", "Cancelled" };
+            if (doctor == null || !await _userManager.IsInRoleAsync(doctor, "Doctor") ||
+                patient == null || !await _userManager.IsInRoleAsync(patient, "Patient") ||
+                !allowedStatuses.Contains(Appointment.Status))
             {
-                await _context.SaveChangesAsync();
+                ModelState.AddModelError(string.Empty, "Select a valid patient, doctor and appointment status.");
+                await LoadChoicesAsync();
+                return Page();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AppointmentExists(Appointment.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+
+            current.PatientId = Appointment.PatientId;
+            current.DoctorId = Appointment.DoctorId;
+            current.AppointmentDate = Appointment.AppointmentDate;
+            current.SymptomsSummary = Appointment.SymptomsSummary;
+            current.Status = Appointment.Status;
+            current.IsVirtual = Appointment.IsVirtual;
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }
 
-        private bool AppointmentExists(int id)
+        private async Task LoadChoicesAsync()
         {
-            return _context.Appointments.Any(e => e.Id == id);
+            var doctors = await _userManager.GetUsersInRoleAsync("Doctor");
+            var patients = await _userManager.GetUsersInRoleAsync("Patient");
+            ViewData["DoctorId"] = new SelectList(doctors.OrderBy(user => user.FullName), "Id", "FullName");
+            ViewData["PatientId"] = new SelectList(patients.OrderBy(user => user.FullName), "Id", "FullName");
         }
     }
 }

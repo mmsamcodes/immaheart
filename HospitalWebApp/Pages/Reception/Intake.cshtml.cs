@@ -19,12 +19,14 @@ namespace HospitalWebApp.Pages.Reception
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
 
-        public IntakeModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public IntakeModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
+            _roleManager = roleManager;
             _emailSender = emailSender;
         }
 
@@ -63,6 +65,16 @@ namespace HospitalWebApp.Pages.Reception
                 return Page();
             }
 
+            if (!await _roleManager.RoleExistsAsync("Patient"))
+            {
+                var roleResult = await _roleManager.CreateAsync(new IdentityRole("Patient"));
+                if (!roleResult.Succeeded)
+                {
+                    Message = string.Join(" ", roleResult.Errors.Select(error => error.Description));
+                    return Page();
+                }
+            }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -95,11 +107,23 @@ namespace HospitalWebApp.Pages.Reception
                     return Page();
                 }
 
-                await _userManager.AddToRoleAsync(patient, "Patient");
+                var patientRoleResult = await _userManager.AddToRoleAsync(patient, "Patient");
+                if (!patientRoleResult.Succeeded)
+                {
+                    Message = $"Patient account was created but could not be assigned the Patient role: {string.Join(" ", patientRoleResult.Errors.Select(error => error.Description))}";
+                    return Page();
+                }
                 isNewPatient = true;
             }
             else
             {
+                var existingRoles = await _userManager.GetRolesAsync(patient);
+                if (existingRoles.Any(role => role != "Patient"))
+                {
+                    Message = "That email belongs to a staff account and cannot be registered as a patient.";
+                    return Page();
+                }
+
                 if (string.IsNullOrWhiteSpace(patient.FullName))
                     patient.FullName = Input.FullName;
                 if (string.IsNullOrWhiteSpace(patient.PhoneNumber))
@@ -111,7 +135,12 @@ namespace HospitalWebApp.Pages.Reception
                 await _userManager.UpdateAsync(patient);
                 if (!await _userManager.IsInRoleAsync(patient, "Patient"))
                 {
-                    await _userManager.AddToRoleAsync(patient, "Patient");
+                    var patientRoleResult = await _userManager.AddToRoleAsync(patient, "Patient");
+                    if (!patientRoleResult.Succeeded)
+                    {
+                        Message = $"Patient profile could not be assigned: {string.Join(" ", patientRoleResult.Errors.Select(error => error.Description))}";
+                        return Page();
+                    }
                 }
             }
 

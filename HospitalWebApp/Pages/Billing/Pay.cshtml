@@ -18,8 +18,8 @@
                     {
                         <p>Invoice: <strong>@Model.Invoice.InvoiceNumber</strong></p>
                         <p>Patient: <strong>@Model.Invoice.Patient?.FullName</strong></p>
-                        <p>Total: <strong>@Model.Invoice.TotalAmount.ToString("C")</strong></p>
-                        <p>Outstanding: <strong>@(Model.Amount.ToString("C"))</strong></p>
+                        <p>Total: <strong>KSh @Model.Invoice.TotalAmount.ToString("N2")</strong></p>
+                        <p>Outstanding: <strong>KSh @Model.Amount.ToString("N2")</strong></p>
 
                         <form method="post">
                             @if (!string.IsNullOrEmpty(Model.ErrorMessage))

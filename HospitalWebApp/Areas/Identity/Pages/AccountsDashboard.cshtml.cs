@@ -8,17 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HospitalWebApp.Areas.Identity.Pages
 {
-    [Authorize(Roles = "Accounts,Cashier,Reception,Admin")]
+    [Authorize(Roles = "Accounts,Cashier,Admin")]
     public class AccountsDashboardModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
 
-        public AccountsDashboardModel(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
+        public AccountsDashboardModel(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _context = context;
         }
 
@@ -40,11 +38,6 @@ namespace HospitalWebApp.Areas.Identity.Pages
             if (user == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             // Allow accounts, admin, cashier, or reception users to access this page.
-            if (!await _userManager.IsInRoleAsync(user, "Accounts") && !await _userManager.IsInRoleAsync(user, "Admin") && !await _userManager.IsInRoleAsync(user, "Cashier") && !await _userManager.IsInRoleAsync(user, "Reception"))
-            {
-                return RedirectToPage("/Dashboard");
-            }
-
             Invoices = await _context.BillingInvoices
                 .Include(i => i.Patient)
                 .Include(i => i.Appointment)
@@ -58,11 +51,6 @@ namespace HospitalWebApp.Areas.Identity.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToPage("/Account/Login", new { area = "Identity" });
-            if (!await _userManager.IsInRoleAsync(user, "Accounts") && !await _userManager.IsInRoleAsync(user, "Admin") && !await _userManager.IsInRoleAsync(user, "Cashier") && !await _userManager.IsInRoleAsync(user, "Reception"))
-            {
-                return RedirectToPage("/Dashboard");
-            }
-
             var invoice = await _context.BillingInvoices.FindAsync(InvoiceId);
             if (invoice == null)
             {
@@ -70,16 +58,20 @@ namespace HospitalWebApp.Areas.Identity.Pages
                 return await OnGetAsync();
             }
 
-            // Update the invoice with the payment amount and status.
+            if (Amount <= 0 || Amount > invoice.TotalAmount - invoice.PaidAmount ||
+                string.IsNullOrWhiteSpace(Method) || Method.Length > 50 || Reference?.Length > 100)
+            {
+                Message = "Enter a valid payment amount, method and reference. The amount cannot exceed the remaining balance.";
+                return await OnGetAsync();
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             invoice.PaidAmount += Amount;
             invoice.Status = invoice.PaidAmount >= invoice.TotalAmount ? "Paid" : "Partial";
 
             // Append a payment note for audit and tracking.
             invoice.Notes += $"\nPayment logged {DateTime.Now}: {Amount} via {Method} ref:{Reference} by {user.Email}";
 
-            await _context.SaveChangesAsync();
-
-            // If the invoice is linked to an appointment, mark that appointment as paid.
             if (invoice.AppointmentId.HasValue)
             {
                 var appt = await _context.Appointments.FindAsync(invoice.AppointmentId.Value);
@@ -88,10 +80,11 @@ namespace HospitalWebApp.Areas.Identity.Pages
                     appt.PaymentConfirmed = true;
                     appt.PaymentMethod = Method;
                     appt.PaymentReference = Reference;
-                    await _context.SaveChangesAsync();
                 }
             }
 
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
             Message = "Payment logged successfully.";
             return RedirectToPage();
         }

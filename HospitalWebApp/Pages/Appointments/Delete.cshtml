@@ -1,67 +1,22 @@
 @page
 @model HospitalWebApp.Pages_Appointments.DeleteModel
-
 @{
-    Layout = null;
+    ViewData["Title"] = "Cancel appointment";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Delete</title>
-</head>
-<body>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Appointment</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Patient)
-        </dt>
-        <dd class="col-sm-10">
-            @(Model.Appointment.Patient?.Id ?? "Unknown")
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Doctor)
-        </dt>
-        <dd class="col-sm-10">
-            @(Model.Appointment.Doctor?.Id ?? "Unknown")
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.AppointmentDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.AppointmentDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.SymptomsSummary)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.SymptomsSummary)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Status)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Status)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.IsVirtual)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.IsVirtual)
-        </dd>
-    </dl>
-    
-    <form method="post">
-        <input type="hidden" asp-for="Appointment.Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-page="./Index">Back to List</a>
-    </form>
-</div>
-</body>
-</html>
+<div class="dashboard-shell"><div class="container" style="max-width:760px">
+    <div class="dashboard-header"><div><div class="dashboard-kicker">Care schedule</div><h1>Cancel appointment</h1><p>The record will be kept for care and billing history, with its status changed to Cancelled.</p></div></div>
+    <div class="dashboard-panel dashboard-panel-body">
+        <dl class="row">
+            <dt class="col-sm-4">Patient</dt><dd class="col-sm-8">@Model.Appointment.Patient?.FullName</dd>
+            <dt class="col-sm-4">Clinician</dt><dd class="col-sm-8">@Model.Appointment.Doctor?.FullName</dd>
+            <dt class="col-sm-4">Date and time</dt><dd class="col-sm-8">@Model.Appointment.AppointmentDate.ToString("dddd, MMM d, yyyy h:mm tt")</dd>
+            <dt class="col-sm-4">Current status</dt><dd class="col-sm-8">@Model.Appointment.Status</dd>
+        </dl>
+        <form method="post" class="d-flex justify-content-end gap-2">
+            <input type="hidden" name="id" value="@Model.Appointment.Id" />
+            <a asp-area="" asp-page="/Appointments/Index" class="btn btn-outline-secondary">Keep appointment</a>
+            <button type="submit" class="btn btn-danger">Cancel appointment</button>
+        </form>
+    </div>
+</div></div>

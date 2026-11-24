@@ -1,49 +1,20 @@
 @page
 @model HospitalWebApp.Areas.Identity.Pages.NurseDashboardModel
-@{
-    ViewData["Title"] = "Nurse Dashboard";
-}
-
-<div class="container py-4">
-    <h1 class="mb-4">Nurse Dashboard</h1>
-    <p class="lead">Welcome back, @Model.FullName.</p>
-
-    <div class="row g-4">
-        <div class="col-md-3">
-            <div class="card border-primary bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Pending Admissions</h5>
-                    <p class="display-6">@Model.PendingAdmissions</p>
-                    <a asp-page="/Admissions/Index" class="btn btn-primary btn-sm">View admissions</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-success bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Doctor Queue</h5>
-                    <p class="display-6">@Model.DoctorQueueCount</p>
-                    <a asp-page="/Queue/Index" asp-route-queueType="Doctor" class="btn btn-success btn-sm">Open queue</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-warning bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Lab Queue</h5>
-                    <p class="display-6">@Model.LabQueueCount</p>
-                    <a asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-warning btn-sm">Open queue</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-info bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Pharmacy Queue</h5>
-                    <p class="display-6">@Model.PharmacyQueueCount</p>
-                    <a asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-info btn-sm">Open queue</a>
-                </div>
-            </div>
-        </div>
-    </div>
+@{ ViewData["Title"] = "Nursing Dashboard"; }
+<div class="dashboard-shell">
+ <div class="container">
+  <div class="dashboard-header"><div><div class="dashboard-kicker">Inpatient and clinical support</div><h1>Good to see you, @Model.FullName</h1><p>Coordinate admissions and move patients safely through care queues.</p></div><a asp-area="" asp-page="/Admissions/Index" class="btn btn-primary"><i class="bi bi-hospital me-2"></i>Review admissions</a></div>
+  <div class="metric-grid">
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-hospital"></i></span></div><div class="metric-value">@Model.PendingAdmissions</div><div class="metric-label">Active admissions</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-person-check"></i></span></div><div class="metric-value">@Model.DoctorQueueCount</div><div class="metric-label">Doctor queue</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-droplet"></i></span></div><div class="metric-value">@Model.LabQueueCount</div><div class="metric-label">Lab queue</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-capsule"></i></span></div><div class="metric-value">@Model.PharmacyQueueCount</div><div class="metric-label">Pharmacy queue</div></div>
+  </div>
+  <div class="row g-3">
+   <div class="col-lg-3 col-md-6"><a asp-area="" asp-page="/Admissions/Index" class="provider-action-card"><i class="bi bi-hospital"></i><h5>Admissions</h5><p class="text-muted small mb-0">Ward assignments and admission status</p></a></div>
+   <div class="col-lg-3 col-md-6"><a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Doctor" class="provider-action-card"><i class="bi bi-person-lines-fill"></i><h5>Doctor queue</h5><p class="text-muted small mb-0">Prepare patients for assessment</p></a></div>
+   <div class="col-lg-3 col-md-6"><a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Lab" class="provider-action-card"><i class="bi bi-droplet"></i><h5>Laboratory queue</h5><p class="text-muted small mb-0">Track specimens and pending tests</p></a></div>
+   <div class="col-lg-3 col-md-6"><a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="provider-action-card"><i class="bi bi-capsule"></i><h5>Pharmacy queue</h5><p class="text-muted small mb-0">Coordinate medication collection</p></a></div>
+  </div>
+ </div>
 </div>

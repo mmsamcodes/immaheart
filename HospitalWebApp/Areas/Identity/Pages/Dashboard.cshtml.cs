@@ -64,15 +64,20 @@ namespace HospitalWebApp.Areas.Identity.Pages
             }
             if (await _userManager.IsInRoleAsync(user, "Reception"))
             {
+                return RedirectToPage("/Reception/Intake", new { area = "" });
+            }
+            if (await _userManager.IsInRoleAsync(user, "Accounts") ||
+                await _userManager.IsInRoleAsync(user, "Cashier"))
+            {
                 return RedirectToPage("/AccountsDashboard");
             }
 
             FullName = user.FullName;
             
-            // Calculate BMI from the user's height and weight.
-            if (user.Height > 0)
+            var heightInMeters = user.Height / 100d;
+            if (heightInMeters > 0)
             {
-                BMI = user.Weight / (user.Height * user.Height);
+                BMI = user.Weight / (heightInMeters * heightInMeters);
                 BMICategory = BMI switch {
                     < 18.5 => "Underweight",
                     < 25 => "Healthy",
@@ -89,9 +94,7 @@ namespace HospitalWebApp.Areas.Identity.Pages
             PaidAmount = invoices.Sum(i => i.PaidAmount);
             TotalAmount = invoices.Sum(i => i.TotalAmount);
 
-            // Set a sample cycle phase for the dashboard display.
-            DayOfCycle = 14; 
-            CyclePhase = "Ovulation Window";
+            CyclePhase = "Not tracked";
 
             // Populate the nutrition tips list.
             LoadNutritionTips();

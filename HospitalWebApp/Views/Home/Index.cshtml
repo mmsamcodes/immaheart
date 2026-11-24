@@ -5,152 +5,122 @@
     ViewData["OgImage"] = "https://immaculatehearthospitalkereita.org/images/compound.JPG";
 }
 
-<section class="hero-banner text-white d-flex align-items-center">
-    <div class="container py-5">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <span class="badge badge-level4 mb-3 px-3 py-2 fw-bold text-uppercase">Level 4 Mission Hospital</span>
-                <h1 class="display-4 fw-bold mb-3">Compassionate care for Kereita and beyond</h1>
-                <p class="lead text-white-75 mb-4">Delivering trustworthy, modern health services with a focus on comfort, dignity, and quick clinical support.</p>
-                <div class="d-flex flex-wrap gap-3">
-                    <a asp-controller="Home" asp-action="Services" class="btn btn-primary btn-lg">Our Services</a>
-                    <a asp-controller="Home" asp-action="About" class="btn btn-outline-light btn-lg">About Us</a>
-                </div>
+<section class="hospital-hero">
+    <div class="hero-shade"></div>
+    <div class="container hero-inner">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="fas fa-shield-heart" aria-hidden="true"></i> Level 4 Mission Hospital</span>
+            <h1>Trusted care, close to home.</h1>
+            <p>Compassionate emergency, maternity, diagnostic and everyday healthcare for Kereita and the wider community.</p>
+            <div class="hero-actions">
+                <a asp-controller="Home" asp-action="Contact" class="btn hero-primary"><i class="fas fa-calendar-check" aria-hidden="true"></i> Book a visit</a>
+                <a href="tel:+254110361550" class="btn hero-emergency"><i class="fas fa-phone-volume" aria-hidden="true"></i> Emergency call</a>
             </div>
-            <div class="col-lg-6 mt-4 mt-lg-0">
-                <div class="card shadow-lg rounded-4 border-0 overflow-hidden hero-image-wrapper">
-                    <img src="~/images/compound.JPG" alt="Immaculate Heart Hospital campus" class="home-image" />
-                </div>
+            <div class="hero-trust" aria-label="Hospital assurances">
+                <span><i class="fas fa-circle-check" aria-hidden="true"></i> 24/7 emergency</span>
+                <span><i class="fas fa-circle-check" aria-hidden="true"></i> Qualified clinical team</span>
             </div>
         </div>
     </div>
 </section>
 
-<section class="spotlight-card shadow-sm bg-white rounded-4 mx-auto px-4 py-4 mt-n5" style="max-width: 92%;">
+<section class="quick-care" aria-label="Quick care options">
     <div class="container">
-        <div class="row text-center g-3">
-            <div class="col-md-3">
-                <h5 class="fw-bold text-primary">24/7 Emergency</h5>
-                <p class="text-white small mb-0">On-site emergency care and urgent triage around the clock.</p>
-            </div>
-            <div class="col-md-3">
-                <h5 class="fw-bold text-primary">Ambulance Dispatch</h5>
-                <p class="text-white small mb-0">Rapid ambulance response and reliable patient transfer when every minute counts.</p>
-            </div>
-            <div class="col-md-3">
-                <h5 class="fw-bold text-primary">Laboratory Services</h5>
-                <p class="text-white small mb-0">In-house diagnostics and faster clinical decision support.</p>
-            </div>
-            <div class="col-md-3">
-                <h5 class="fw-bold text-primary">Quality Patient Care</h5>
-                <p class="text-white small mb-0">Comfort-first care for outpatient, inpatient, and maternity services.</p>
-            </div>
+        <div class="quick-care-grid">
+            <a asp-controller="Services" asp-action="EmergencyOutpatient" class="quick-care-card emergency-card">
+                <span class="quick-icon"><i class="fas fa-heart-pulse" aria-hidden="true"></i></span>
+                <span><small>Urgent help</small><strong>Emergency care</strong></span>
+                <i class="fas fa-arrow-right quick-arrow" aria-hidden="true"></i>
+            </a>
+            <a asp-controller="Home" asp-action="Contact" class="quick-care-card">
+                <span class="quick-icon"><i class="fas fa-calendar-days" aria-hidden="true"></i></span>
+                <span><small>Plan ahead</small><strong>Appointments</strong></span>
+                <i class="fas fa-arrow-right quick-arrow" aria-hidden="true"></i>
+            </a>
+            <a asp-controller="Services" asp-action="DiagnosticsLab" class="quick-care-card">
+                <span class="quick-icon"><i class="fas fa-vials" aria-hidden="true"></i></span>
+                <span><small>Fast answers</small><strong>Laboratory</strong></span>
+                <i class="fas fa-arrow-right quick-arrow" aria-hidden="true"></i>
+            </a>
+            <a asp-controller="Services" asp-action="AmbulanceTransport" class="quick-care-card">
+                <span class="quick-icon"><i class="fas fa-truck-medical" aria-hidden="true"></i></span>
+                <span><small>Rapid response</small><strong>Ambulance</strong></span>
+                <i class="fas fa-arrow-right quick-arrow" aria-hidden="true"></i>
+            </a>
         </div>
     </div>
 </section>
 
-<section class="section-soft py-5">
+<section class="care-services section-pad">
     <div class="container">
-        <div class="row g-4 align-items-center">
-            <div class="col-lg-6">
-                <h2 class="fw-bold mb-3">A trusted medical partner for the community</h2>
-                <p class="text-white mb-4">Our mission is to provide responsive, respectful healthcare with strong community support and simple navigation for patients and families.</p>
-                <ul class="list-unstyled text-white">
-                    <li class="mb-3"><strong class="text-dark">Timely care:</strong> Well-organized appointments, referrals, and follow-ups.</li>
-                    <li class="mb-3"><strong class="text-dark">Modern diagnostics:</strong> Lab tests, imaging and clinical reviews in one place.</li>
-                    <li class="mb-3"><strong class="text-dark">Patient comfort:</strong> Clear communication, safe wards, and compassionate support.</li>
-                </ul>
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">Our specialties</span>
+                <h2>Care for every stage of life</h2>
             </div>
-            <div class="col-lg-6">
-                <div class="card p-4 card-quiet">
-                    <h3 class="fw-bold">Helpful services at every visit</h3>
-                    <p class="text-white mb-4">From consults to billing assistance, we work to keep every visit calm and easy to navigate.</p>
-                    <div class="row g-3">
-                        <div class="col-6"><div class="small-card">Emergency care</div></div>
-                        <div class="col-6"><div class="small-card">Laboratory tests</div></div>
-                        <div class="col-6"><div class="small-card">Clinic appointments</div></div>
-                        <div class="col-6"><div class="small-card">Billing support</div></div>
-                    </div>
-                </div>
-            </div>
+            <a asp-controller="Home" asp-action="Services" class="text-link">View all services <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <div class="service-grid">
+            <a asp-controller="Services" asp-action="EmergencyOutpatient" class="care-card">
+                <span class="care-icon coral"><i class="fas fa-kit-medical" aria-hidden="true"></i></span>
+                <h3>Emergency & Outpatient</h3>
+                <p>Urgent care, triage and clinical reviews when you need answers quickly.</p>
+                <span class="card-link">Learn more <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a asp-controller="Services" asp-action="MaternityChildHealth" class="care-card">
+                <span class="care-icon rose"><i class="fas fa-baby" aria-hidden="true"></i></span>
+                <h3>Maternity & Child Health</h3>
+                <p>Supportive antenatal, delivery and newborn care for growing families.</p>
+                <span class="card-link">Learn more <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a asp-controller="Services" asp-action="DiagnosticsLab" class="care-card">
+                <span class="care-icon teal"><i class="fas fa-microscope" aria-hidden="true"></i></span>
+                <h3>Diagnostics & Laboratory</h3>
+                <p>Reliable testing and imaging to guide clear, timely treatment decisions.</p>
+                <span class="card-link">Learn more <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a asp-controller="Services" asp-action="ChronicDisease" class="care-card">
+                <span class="care-icon blue"><i class="fas fa-heart-circle-check" aria-hidden="true"></i></span>
+                <h3>Chronic Disease Care</h3>
+                <p>Consistent follow-up for diabetes, hypertension, TB and other conditions.</p>
+                <span class="card-link">Learn more <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
         </div>
     </div>
 </section>
 
-<section class="container my-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold">Services designed around people</h2>
-        <p class="text-white mx-auto" style="max-width: 700px;">Care packages for maternity, general medicine, diagnostics and sustained wellness.</p>
-    </div>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card p-4 card-quiet h-100">
-                <h5 class="fw-bold mb-3">Maternity & Child Health</h5>
-                <p class="text-white small mb-0">Antenatal care, safe delivery planning and newborn follow-up.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 card-quiet h-100">
-                <h5 class="fw-bold mb-3">General Clinic</h5>
-                <p class="text-white small mb-0">Consistent outpatient reviews for families and chronic conditions.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 card-quiet h-100">
-                <h5 class="fw-bold mb-3">Laboratory & Diagnostics</h5>
-                <p class="text-white small mb-0">Faster, reliable lab results to support clear treatment planning.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 card-quiet h-100">
-                <h5 class="fw-bold mb-3">Ambulance & Transport</h5>
-                <p class="text-white small mb-0">Rapid ambulance response and patient transport for urgent care needs.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 card-quiet h-100">
-                <h5 class="fw-bold mb-3">TB Clinic</h5>
-                <p class="text-white small mb-0">Specialized tuberculosis screening, treatment, and follow-up care.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 card-quiet h-100">
-                <h5 class="fw-bold mb-3">Dental Services</h5>
-                <p class="text-white small mb-0">Restorative dental care, hygiene services, and oral health education.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="section-soft py-5">
+<section class="patient-story section-pad">
     <div class="container">
-        <div class="row g-4 align-items-center">
-            <div class="col-lg-6">
-                <div class="card border-0 rounded-4 overflow-hidden shadow">
-                    <img src="~/images/ambulance.JPG" alt="Immaculate Heart Hospital ambulance" class="img-fluid" />
-                </div>
+        <div class="story-grid">
+            <div class="story-image">
+                <img src="~/images/inside.JPG" alt="A bright and welcoming clinical area at Immaculate Heart Hospital" />
+                <div class="story-badge"><strong>24/7</strong><span>care available</span></div>
             </div>
-            <div class="col-lg-6">
-                <h2 class="fw-bold mb-3">Rapid Emergency Response</h2>
-                <p class="text-white mb-4">Our dedicated ambulance service ensures fast, professional response to emergency calls across Kereita and surrounding areas.</p>
-                <ul class="list-unstyled text-white">
-                    <li class="mb-3"><strong class="text-dark">24/7 Availability:</strong> Always ready to respond, day or night.</li>
-                    <li class="mb-3"><strong class="text-dark">Professional crew:</strong> Trained paramedics and drivers for safe patient transport.</li>
-                    <li class="mb-3"><strong class="text-dark">Fast dispatch:</strong> Quick response times with GPS-equipped vehicles.</li>
-                </ul>
+            <div class="story-copy">
+                <span class="section-kicker">Why patients choose us</span>
+                <h2>Clinical confidence with a human touch</h2>
+                <p>We combine practical hospital expertise with respectful, family-centered care. Every patient receives clear communication and a coordinated path to treatment.</p>
+                <div class="trust-list">
+                    <div><span><i class="fas fa-user-doctor" aria-hidden="true"></i></span><p><strong>Experienced team</strong><small>Dedicated clinicians and support staff</small></p></div>
+                    <div><span><i class="fas fa-clipboard-check" aria-hidden="true"></i></span><p><strong>Connected care</strong><small>Consultation, labs and treatment in one place</small></p></div>
+                    <div><span><i class="fas fa-person-circle-check" aria-hidden="true"></i></span><p><strong>Patient first</strong><small>Dignity, comfort and clear next steps</small></p></div>
+                </div>
+                <a asp-controller="Home" asp-action="About" class="btn story-button">About our hospital</a>
             </div>
         </div>
     </div>
 </section>
 
-<section class="container my-5 py-5 bg-primary text-white rounded shadow-sm">
-    <div class="row align-items-center">
-        <div class="col-md-8">
-            <h2 class="fw-bold mb-3">A kinder, safer hospital experience</h2>
-            <p class="mb-0 text-white-75">Trusted health services for the whole family, delivered with respect, clarity and fast support.</p>
+<section class="emergency-band">
+    <div class="container emergency-inner">
+        <div>
+            <span class="emergency-label"><i class="fas fa-truck-medical" aria-hidden="true"></i> Emergency response</span>
+            <h2>Need urgent help?</h2>
+            <p>Call our round-the-clock team or request ambulance support.</p>
         </div>
-        <div class="col-md-4 text-md-end">
-            <a asp-controller="Home" asp-action="Contact" class="btn btn-light btn-lg text-primary">Contact Us</a>
+        <div class="emergency-actions">
+            <a href="tel:+254110361550" class="btn emergency-phone"><i class="fas fa-phone" aria-hidden="true"></i> +254 110 361 550</a>
+            <a asp-controller="Services" asp-action="AmbulanceTransport" class="btn emergency-ambulance">Request ambulance <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div>
 </section>

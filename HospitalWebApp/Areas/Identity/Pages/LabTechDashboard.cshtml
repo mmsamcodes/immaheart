@@ -1,40 +1,17 @@
 @page
 @model HospitalWebApp.Areas.Identity.Pages.LabTechDashboardModel
-@{
-    ViewData["Title"] = "Lab Technician Dashboard";
-}
-
-<div class="container py-4">
-    <h1 class="mb-4">Lab Tech Dashboard</h1>
-    <p class="lead">Welcome back, @Model.FullName.</p>
-
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card border-warning bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Pending Lab Orders</h5>
-                    <p class="display-6">@Model.PendingLabOrders</p>
-                    <a asp-page="/Labs/Index" class="btn btn-warning btn-sm">View lab orders</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-success bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Completed Lab Orders</h5>
-                    <p class="display-6">@Model.CompletedLabOrders</p>
-                    <a asp-page="/Labs/Index" class="btn btn-success btn-sm">Review completed</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-info bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Lab Queue</h5>
-                    <p class="display-6">@Model.LabQueueCount</p>
-                    <a asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-info btn-sm">Open queue</a>
-                </div>
-            </div>
-        </div>
-    </div>
+@{ ViewData["Title"] = "Laboratory Dashboard"; }
+<div class="dashboard-shell">
+ <div class="container">
+  <div class="dashboard-header"><div><div class="dashboard-kicker">Diagnostics workspace</div><h1>Laboratory operations</h1><p>Welcome back, @Model.FullName. Prioritize active orders and validate result delivery.</p></div><a asp-area="" asp-page="/Labs/Index" class="btn btn-primary"><i class="bi bi-clipboard2-pulse me-2"></i>Open all orders</a></div>
+  <div class="metric-grid">
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-hourglass-split"></i></span><span class="status-pill warning">Action required</span></div><div class="metric-value">@Model.PendingLabOrders</div><div class="metric-label">Pending orders</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-check2-circle"></i></span></div><div class="metric-value">@Model.CompletedLabOrders</div><div class="metric-label">Completed orders</div></div>
+   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-person-lines-fill"></i></span></div><div class="metric-value">@Model.LabQueueCount</div><div class="metric-label">Patients in lab queue</div></div>
+  </div>
+  <div class="dashboard-grid">
+   <div class="dashboard-panel"><div class="dashboard-panel-header"><h2>Laboratory worklist</h2></div><div class="dashboard-panel-body"><p>Open the worklist to filter pending and completed specimens, upload result files and add summaries.</p><a asp-area="" asp-page="/Labs/Index" class="btn btn-primary">Review lab orders</a></div></div>
+   <aside><div class="dashboard-panel"><div class="dashboard-panel-header"><h2>Safety checklist</h2></div><div class="dashboard-panel-body"><p class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Confirm patient identity</p><p class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Verify specimen labeling</p><p class="mb-0"><i class="bi bi-check2 text-success me-2"></i>Upload final reports only</p></div></div></aside>
+  </div>
+ </div>
 </div>

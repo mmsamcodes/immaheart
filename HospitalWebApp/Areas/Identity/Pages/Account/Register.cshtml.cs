@@ -26,6 +26,7 @@ namespace HospitalWebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -33,12 +34,14 @@ namespace HospitalWebApp.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -135,6 +138,31 @@ namespace HospitalWebApp.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    if (!await _roleManager.RoleExistsAsync("Patient"))
+                    {
+                        var roleResult = await _roleManager.CreateAsync(new IdentityRole("Patient"));
+                        if (!roleResult.Succeeded)
+                        {
+                            foreach (var error in roleResult.Errors)
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                            await _userManager.DeleteAsync(user);
+                            return Page();
+                        }
+                    }
+
+                    var patientRoleResult = await _userManager.AddToRoleAsync(user, "Patient");
+                    if (!patientRoleResult.Succeeded)
+                    {
+                        foreach (var error in patientRoleResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        await _userManager.DeleteAsync(user);
+                        return Page();
+                    }
+
                     _logger.LogInformation("User created a new account with triage data.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

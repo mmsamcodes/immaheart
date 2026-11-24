@@ -3,7 +3,6 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<div class="nav-links">
 @if (SignInManager.IsSignedIn(User))
 {
     @if (User.IsInRole("Admin"))
@@ -14,7 +13,11 @@
     {
         <a asp-area="Identity" asp-page="/DoctorDashboard">Doctor Dashboard</a>
     }
-    else if (User.IsInRole("Accounts") || User.IsInRole("Cashier") || User.IsInRole("Reception"))
+    else if (User.IsInRole("Reception"))
+    {
+        <a asp-area="" asp-page="/Reception/Intake">Reception</a>
+    }
+    else if (User.IsInRole("Accounts") || User.IsInRole("Cashier"))
     {
         <a asp-area="Identity" asp-page="/AccountsDashboard">Accounts Dashboard</a>
     }
@@ -35,12 +38,11 @@
         <a asp-area="Identity" asp-page="/Dashboard">My Dashboard</a>
     }
     
-    <form class="d-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-        <button type="submit" class="logout-btn" style="background:none; border:none; color:inherit; cursor:pointer; font-family:inherit; font-size:inherit;">Logout</button>
+    <form class="nav-auth-form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button type="submit" class="logout-btn nav-login">Log out</button>
     </form>
 }
 else
 {
-    <a asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <a asp-area="Identity" asp-page="/Account/Login" class="nav-login">Log in</a>
 }
-</div>

@@ -4,21 +4,35 @@
     ViewData["Title"] = string.IsNullOrEmpty(Model.QueueType) ? "Patient Queues" : $"{Model.QueueType} Queue";
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="dashboard-shell"><div class="container">
+    <div class="dashboard-header">
         <div>
+            <div class="dashboard-kicker">Live care workflow</div>
             <h1>@ViewData["Title"]</h1>
             <p class="text-muted">Review and manage queued patients across hospital workflows.</p>
         </div>
-        <div class="btn-group">
-            <a asp-page="/Queue/Index" class="btn btn-outline-secondary btn-sm">All</a>
-            <a asp-page="/Queue/Index" asp-route-queueType="Doctor" class="btn btn-outline-primary btn-sm">Doctor</a>
-            <a asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-outline-warning btn-sm">Lab</a>
-            <a asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-outline-info btn-sm">Pharmacy</a>
-        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="btn-group">
+                <a asp-area="" asp-page="/Queue/Index" class="btn btn-outline-secondary btn-sm">All</a>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Doctor" class="btn btn-outline-primary btn-sm">Doctor</a>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Triage" class="btn btn-outline-success btn-sm">Triage</a>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-outline-warning btn-sm">Lab</a>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-outline-info btn-sm">Pharmacy</a>
+            </div>
+        }
+        else if (User.IsInRole("Nurse"))
+        {
+            <div class="btn-group">
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Doctor" class="btn btn-outline-primary btn-sm">Doctor</a>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Triage" class="btn btn-outline-success btn-sm">Triage</a>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Lab" class="btn btn-outline-warning btn-sm">Lab</a>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Pharmacy" class="btn btn-outline-info btn-sm">Pharmacy</a>
+            </div>
+        }
     </div>
 
-    <table class="table table-striped">
+    <div class="dashboard-panel"><div class="table-responsive"><table class="dashboard-table">
         <thead>
             <tr>
                 <th>#</th>
@@ -44,5 +58,5 @@
                 </tr>
             }
         </tbody>
-    </table>
-</div>
+    </table></div></div>
+</div></div>

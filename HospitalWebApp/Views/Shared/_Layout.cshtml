@@ -86,49 +86,83 @@
     <link rel="stylesheet" href="~/HospitalWebApp.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header>
+        <div class="utility-bar">
+            <div class="utility-inner">
+                <span><i class="fas fa-clock" aria-hidden="true"></i> Open 24 hours</span>
+                <a href="tel:+254110361550"><i class="fas fa-phone" aria-hidden="true"></i> Emergency: +254 110 361 550</a>
+            </div>
+        </div>
         <nav class="navbar-custom">
             <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center gap-2 text-white text-decoration-none" aria-label="Go to home page" title="Home">
                 <img src="~/images/logo.jpg" alt="Immaculate Heart Hospital logo" class="navbar-logo" />
-                <span class="ms-2">Immaculate Heart Hospital Kereita</span>
+                <span class="brand-copy"><strong>Immaculate Heart</strong><small>Hospital Kereita</small></span>
             </a>
-            
+            <button class="nav-toggle" type="button" aria-controls="navLinks" aria-expanded="false" aria-label="Open navigation">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
             <div class="nav-links" id="navLinks">
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="@(IsNavActive("Home", "Index") ? "active" : string.Empty)">Home</a>
                 <a asp-area="" asp-controller="Home" asp-action="About" class="@(IsNavActive("Home", "About") ? "active" : string.Empty)">About</a>
                 <a asp-area="" asp-controller="Home" asp-action="Services" class="@(IsNavActive("Home", "Services") ? "active" : string.Empty)">Services</a>
                 <a asp-area="" asp-controller="Home" asp-action="Contact" class="@(IsNavActive("Home", "Contact") ? "active" : string.Empty)">Contact</a>
-                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="@(IsNavActive("Home", "Privacy") ? "active" : string.Empty)">Privacy</a>
+                <a asp-area="" asp-page="/Pharmacy/Index" class="@(IsPageActive("/Pharmacy/Index") ? "active" : string.Empty)">Pharmacy</a>
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <a asp-page="/HealthRecords/Index" class="@(IsPageActive("/HealthRecords/Index") ? "active" : string.Empty)">Medical Records</a>
                     @if (User.IsInRole("Doctor"))
                     {
-                        <a asp-page="/Video/Sessions" class="@(IsPageActive("/Video/Sessions") ? "active" : string.Empty)">Telehealth</a>
+                        <a asp-area="" asp-page="/Video/Sessions" class="@(IsPageActive("/Video/Sessions") ? "active" : string.Empty)">Telehealth</a>
                     }
                 }
                 <partial name="_LoginPartial" />
+                @if (!SignInManager.IsSignedIn(User) || User.IsInRole("Patient") || User.IsInRole("Admin") || User.IsInRole("Reception"))
+                {
+                    <a asp-area="" asp-page="/Appointments/Create" class="nav-appointment">Book a visit</a>
+                }
             </div>
         </nav>
     </header>
 
     <div class="container-fluid p-0">
-        <main role="main" class="pb-3">
+        <main id="main-content" role="main">
             @RenderBody()
         </main>
     </div>
 
     <footer>
-        <div class="container text-center">
-            <p class="mb-1">&copy; 2026 - Immaculate Heart Hospital Kereita - All Rights Reserved</p>
-            <p class="mb-0">
-                <a asp-controller="Home" asp-action="Privacy" class="footer-policy-link">Privacy Policy</a>
-            </p>
-            <div class="footer-social mt-3">
-                <a href="https://www.google.com/search?q=Immaculate+Heart+Hospital+Kereita" target="_blank" rel="noopener noreferrer"><i class="fab fa-google"></i> Google Business</a>
-                <a href="https://www.facebook.com/search/top?q=Immaculate%20Heart%20Hospital%20Kereita" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i> Facebook</a>
-                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
+        <div class="container footer-grid">
+            <div class="footer-about">
+                <div class="footer-brand">
+                    <img src="~/images/logo.jpg" alt="" />
+                    <div><strong>Immaculate Heart</strong><small>Hospital Kereita</small></div>
+                </div>
+                <p>Compassionate, practical healthcare for Kereita and surrounding communities.</p>
             </div>
+            <div>
+                <h2>Quick links</h2>
+                <a asp-area="" asp-controller="Home" asp-action="About">About us</a>
+                <a asp-area="" asp-controller="Home" asp-action="Services">Our services</a>
+                <a asp-area="" asp-controller="Home" asp-action="Contact">Contact & appointments</a>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy policy</a>
+            </div>
+            <div>
+                <h2>Contact</h2>
+                <p>Near Kimende Town, Lari Sub-County, Kiambu</p>
+                <a href="tel:+254110361550">+254 110 361 550</a>
+                <a href="mailto:info@immaculatehearthospitalkereita.org">Send us an email</a>
+            </div>
+            <div>
+                <h2>Follow us</h2>
+                <div class="footer-social">
+                    <a href="https://www.google.com/search?q=Immaculate+Heart+Hospital+Kereita" target="_blank" rel="noopener noreferrer" aria-label="Google Business"><i class="fab fa-google"></i></a>
+                    <a href="https://www.facebook.com/search/top?q=Immaculate%20Heart%20Hospital%20Kereita" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 Immaculate Heart Hospital Kereita. All rights reserved.</p>
         </div>
     </footer>
 

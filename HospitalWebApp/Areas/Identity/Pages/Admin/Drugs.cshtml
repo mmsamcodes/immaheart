@@ -8,14 +8,22 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1>Drug Catalog</h1>
-            <p class="text-muted">Add and manage drugs for pharmacy billing.</p>
+            <p class="text-muted">Manage the patient-facing pharmacy catalog, stock and prescription requirements.</p>
         </div>
-        <a asp-area="Identity" asp-page="/Admin/AdminDashboard" class="btn btn-secondary">Back to dashboard</a>
+        @if (User.IsInRole("Pharmacy"))
+        {
+            <a asp-area="Identity" asp-page="/PharmacyDashboard" class="btn btn-secondary">Back to pharmacy</a>
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/AdminDashboard" class="btn btn-secondary">Back to dashboard</a>
+        }
     </div>
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label asp-for="InputDrug.Name" class="form-label">Name</label>
@@ -45,6 +53,16 @@
                     <div class="col-md-8">
                         <label asp-for="InputDrug.Description" class="form-label">Description</label>
                         <input asp-for="InputDrug.Description" class="form-control" />
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-4 mt-3">
+                    <div class="form-check">
+                        <input asp-for="InputDrug.RequiresPrescription" class="form-check-input" />
+                        <label asp-for="InputDrug.RequiresPrescription" class="form-check-label">Prescription required</label>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="InputDrug.IsActive" class="form-check-input" />
+                        <label asp-for="InputDrug.IsActive" class="form-check-label">Available in patient catalog</label>
                     </div>
                 </div>
                 <div class="mt-3 d-flex gap-2">
@@ -78,6 +96,9 @@
                                 <th>Unit</th>
                                 <th>Stock</th>
                                 <th>Category</th>
+                                <th>Prescription</th>
+                                <th>Catalog</th>
+                                <th>Manage</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,15 +107,48 @@
                                 <tr>
                                     <td>@drug.Name</td>
                                     <td>@drug.Code</td>
-                                    <td>@drug.UnitPrice.ToString("C")</td>
+                                    <td>KSh @drug.UnitPrice.ToString("N2")</td>
                                     <td>@drug.Unit</td>
                                     <td>@drug.StockQuantity</td>
                                     <td>@drug.Category</td>
+                                    <td>@(drug.RequiresPrescription ? "Required" : "Not required")</td>
+                                    <td>@(drug.IsActive ? "Available" : "Hidden")</td>
+                                    <td><button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editDrug-@drug.Id">Edit</button></td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
+                @foreach (var drug in Model.Drugs)
+                {
+                    <div class="modal fade" id="editDrug-@drug.Id" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <form method="post" asp-page-handler="Update">
+                                    <div class="modal-header"><h2 class="modal-title fs-5">Update @drug.Name</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="id" value="@drug.Id" />
+                                        <input type="hidden" name="InputDrug.Id" value="@drug.Id" />
+                                        <div class="row g-3">
+                                            <div class="col-md-6"><label for="drug-name-@drug.Id" class="form-label">Name</label><input id="drug-name-@drug.Id" name="InputDrug.Name" value="@drug.Name" class="form-control" required /></div>
+                                            <div class="col-md-6"><label for="drug-code-@drug.Id" class="form-label">Code</label><input id="drug-code-@drug.Id" name="InputDrug.Code" value="@drug.Code" class="form-control" /></div>
+                                            <div class="col-md-4"><label for="drug-price-@drug.Id" class="form-label">Unit price (KSh)</label><input id="drug-price-@drug.Id" name="InputDrug.UnitPrice" type="number" value="@drug.UnitPrice" class="form-control" min="0" max="10000000" step="0.01" /></div>
+                                            <div class="col-md-4"><label for="drug-stock-@drug.Id" class="form-label">Stock quantity</label><input id="drug-stock-@drug.Id" name="InputDrug.StockQuantity" type="number" value="@drug.StockQuantity" class="form-control" min="0" step="1" /></div>
+                                            <div class="col-md-4"><label for="drug-unit-@drug.Id" class="form-label">Unit</label><input id="drug-unit-@drug.Id" name="InputDrug.Unit" value="@drug.Unit" class="form-control" /></div>
+                                            <div class="col-md-5"><label for="drug-category-@drug.Id" class="form-label">Category</label><input id="drug-category-@drug.Id" name="InputDrug.Category" value="@drug.Category" class="form-control" /></div>
+                                            <div class="col-md-7"><label for="drug-description-@drug.Id" class="form-label">Description</label><input id="drug-description-@drug.Id" name="InputDrug.Description" value="@drug.Description" class="form-control" /></div>
+                                        </div>
+                                        <div class="d-flex flex-wrap gap-4 mt-3">
+                                            <div class="form-check"><input id="drug-rx-@drug.Id" name="InputDrug.RequiresPrescription" type="checkbox" value="true" checked="@(drug.RequiresPrescription ? "checked" : null)" class="form-check-input" /><input name="InputDrug.RequiresPrescription" type="hidden" value="false" /><label for="drug-rx-@drug.Id" class="form-check-label">Prescription required</label></div>
+                                            <div class="form-check"><input id="drug-active-@drug.Id" name="InputDrug.IsActive" type="checkbox" value="true" checked="@(drug.IsActive ? "checked" : null)" class="form-check-input" /><input name="InputDrug.IsActive" type="hidden" value="false" /><label for="drug-active-@drug.Id" class="form-check-label">Available in patient catalog</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save changes</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
             }
         </div>
     </div>

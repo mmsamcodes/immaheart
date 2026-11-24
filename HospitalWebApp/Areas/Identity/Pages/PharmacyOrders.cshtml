@@ -1,0 +1,75 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.PharmacyOrdersModel
+@{
+    ViewData["Title"] = "Pharmacy Order Worklist";
+}
+
+<div class="dashboard-shell"><div class="container">
+    <div class="dashboard-header">
+        <div><div class="dashboard-kicker">Pharmacist review and dispensing</div><h1>Online order worklist</h1><p>Review every request before approval. Confirm prescriptions and patient details before preparing medicines.</p></div>
+        <a asp-area="Identity" asp-page="/PharmacyDashboard" class="btn btn-outline-primary">Back to pharmacy</a>
+    </div>
+
+    @if (TempData["PharmacyOrderMessage"] is string message)
+    {
+        <div class="alert alert-success" role="status">@message</div>
+    }
+    @if (TempData["PharmacyOrderError"] is string error)
+    {
+        <div class="alert alert-danger" role="alert">@error</div>
+    }
+
+    @if (Model.Orders.Count == 0)
+    {
+        <div class="pharmacy-empty"><i class="bi bi-clipboard2-check"></i><h2>Worklist is clear</h2><p>New patient requests will appear here for pharmacist review.</p></div>
+    }
+    else
+    {
+        <div class="pharmacy-worklist">
+            @foreach (var order in Model.Orders)
+            {
+                <article class="pharmacy-work-item">
+                    <div class="pharmacy-work-header">
+                        <div><span class="dashboard-kicker">Request @order.OrderNumber</span><h2>@order.Patient?.FullName</h2><p class="text-muted mb-0">@order.Patient?.PhoneNumber · @order.PlacedAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")</p></div>
+                        <span class="status-pill @(order.Status == PharmacyOrder.ReadyForCollection ? "success" : "warning")">@order.Status</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="dashboard-table">
+                            <thead><tr><th>Requested item</th><th>Quantity</th><th>Price at request</th></tr></thead>
+                            <tbody>
+                                @foreach (var item in order.Items)
+                                {
+                                    <tr><td>@item.DrugName</td><td>@item.Quantity</td><td>KSh @item.UnitPrice.ToString("N2")</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(order.PatientNote))
+                    {
+                        <p class="pharmacy-patient-note"><strong>Collection note:</strong> @order.PatientNote</p>
+                    }
+                    <div class="pharmacy-work-actions">
+                        @if (order.PrescriptionContentType != null)
+                        {
+                            <a asp-area="Identity" asp-page="/PharmacyOrders" asp-page-handler="Prescription" asp-route-orderId="@order.Id" class="btn btn-outline-primary"><i class="bi bi-file-earmark-medical me-1"></i>View prescription</a>
+                        }
+                        @if (order.Status == PharmacyOrder.PendingReview)
+                        {
+                            <span class="pharmacy-review-prompt">Review the request and verify any prescription before approval.</span>
+                            <form method="post" asp-page-handler="Review"><input type="hidden" name="orderId" value="@order.Id" /><input type="hidden" name="decision" value="reject" /><button type="submit" class="btn btn-outline-danger">Decline</button></form>
+                            <form method="post" asp-page-handler="Review"><input type="hidden" name="orderId" value="@order.Id" /><input type="hidden" name="decision" value="approve" /><button type="submit" class="btn btn-primary">Approve after review</button></form>
+                        }
+                        else if (order.Status == PharmacyOrder.Approved)
+                        {
+                            <form method="post" asp-page-handler="Ready"><input type="hidden" name="orderId" value="@order.Id" /><button type="submit" class="btn btn-primary">Prepare and mark ready</button></form>
+                        }
+                        else if (order.Status == PharmacyOrder.ReadyForCollection)
+                        {
+                            <form method="post" asp-page-handler="Collected"><input type="hidden" name="orderId" value="@order.Id" /><button type="submit" class="btn btn-success">Confirm collection</button></form>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div></div>

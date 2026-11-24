@@ -79,7 +79,7 @@ app.Use(async (context, next) =>
     context.Response.Headers["X-Frame-Options"] = "DENY";
     context.Response.Headers["Referrer-Policy"] = "no-referrer";
     context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
-    context.Response.Headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://immaculatehearthospitalkereita.org https://cdn-icons-png.flaticon.com; connect-src 'self'; frame-ancestors 'none';";
+    context.Response.Headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https://immaculatehearthospitalkereita.org https://cdn-icons-png.flaticon.com; connect-src 'self'; frame-src 'self' https://www.google.com; frame-ancestors 'none';";
     await next();
 });
 app.UseStaticFiles(); // Serve static files from wwwroot
@@ -104,6 +104,7 @@ if (app.Environment.IsDevelopment())
 
     // dbContext.Database.EnsureDeleted(); // UNCOMMENT to wipe DB every time you restart
     dbContext.Database.EnsureCreated();
+    await EnsurePharmacySchemaAsync(dbContext);
 
     async Task EnsureRoleAsync(string roleName)
     {
@@ -115,8 +116,17 @@ if (app.Environment.IsDevelopment())
 
     async Task EnsureUserAsync(string email, string password, string? role = null, string? fullName = null)
     {
-        if (await userManager.FindByEmailAsync(email) != null)
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser != null)
         {
+            if (role != null && !await userManager.IsInRoleAsync(existingUser, role))
+            {
+                var existingRoleResult = await userManager.AddToRoleAsync(existingUser, role);
+                if (!existingRoleResult.Succeeded)
+                {
+                    Console.WriteLine($"Failed to assign {role} to {email}: {string.Join(", ", existingRoleResult.Errors.Select(e => e.Description))}");
+                }
+            }
             return;
         }
 
@@ -131,7 +141,11 @@ if (app.Environment.IsDevelopment())
         var result = await userManager.CreateAsync(user, password);
         if (result.Succeeded && role != null)
         {
-            await userManager.AddToRoleAsync(user, role);
+            var roleResult = await userManager.AddToRoleAsync(user, role);
+            if (!roleResult.Succeeded)
+            {
+                Console.WriteLine($"Failed to assign {role} to {email}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            }
         }
 
         if (!result.Succeeded)
@@ -156,8 +170,92 @@ if (app.Environment.IsDevelopment())
     await EnsureUserAsync("labtech1@immaculateheart.org", "LabTech@2025!", "LabTech", "Lab Technician James");
     await EnsureUserAsync("pharmacy1@immaculateheart.org", "Pharmacy@2025!", "Pharmacy", "Pharmacy Manager Jane");
     await EnsureUserAsync("reception@immaculateheart.org", "Reception@2025!", "Reception", "Reception Desk");
-    await EnsureUserAsync("patient1@immaculateheart.org", "Patient@2025!", null, "Jane Mwangi");
+    await EnsureUserAsync("patient1@immaculateheart.org", "Patient@2025!", "Patient", "Jane Mwangi");
     await EnsureUserAsync("accounts@immaculateheart.org", "Accounts@2025!", "Accounts", "Sarah Accounts Manager");
+}
+
+static async Task EnsurePharmacySchemaAsync(ApplicationDbContext dbContext)
+{
+    var connection = dbContext.Database.GetDbConnection();
+    var closeConnection = connection.State != System.Data.ConnectionState.Open;
+    if (closeConnection)
+    {
+        await connection.OpenAsync();
+    }
+
+    try
+    {
+        await EnsureColumnAsync(connection, "Drugs", "RequiresPrescription", "INTEGER NOT NULL DEFAULT 0");
+
+        await using var schemaCommand = connection.CreateCommand();
+        schemaCommand.CommandText = """
+            CREATE TABLE IF NOT EXISTS PharmacyOrders (
+                Id INTEGER NOT NULL CONSTRAINT PK_PharmacyOrders PRIMARY KEY AUTOINCREMENT,
+                OrderNumber TEXT NOT NULL,
+                PatientId TEXT NOT NULL,
+                PlacedAt TEXT NOT NULL,
+                Status TEXT NOT NULL,
+                PatientNote TEXT NOT NULL,
+                PrescriptionDocument BLOB NULL,
+                PrescriptionContentType TEXT NULL,
+                CONSTRAINT FK_PharmacyOrders_AspNetUsers_PatientId
+                    FOREIGN KEY (PatientId) REFERENCES AspNetUsers (Id) ON DELETE RESTRICT
+            );
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_PharmacyOrders_OrderNumber ON PharmacyOrders (OrderNumber);
+            CREATE INDEX IF NOT EXISTS IX_PharmacyOrders_PatientId ON PharmacyOrders (PatientId);
+            CREATE INDEX IF NOT EXISTS IX_PharmacyOrders_Status ON PharmacyOrders (Status);
+            CREATE TABLE IF NOT EXISTS PharmacyOrderItems (
+                Id INTEGER NOT NULL CONSTRAINT PK_PharmacyOrderItems PRIMARY KEY AUTOINCREMENT,
+                PharmacyOrderId INTEGER NOT NULL,
+                DrugId INTEGER NOT NULL,
+                DrugName TEXT NOT NULL,
+                Quantity INTEGER NOT NULL,
+                UnitPrice TEXT NOT NULL,
+                RequiresPrescription INTEGER NOT NULL DEFAULT 0,
+                CONSTRAINT FK_PharmacyOrderItems_PharmacyOrders_PharmacyOrderId
+                    FOREIGN KEY (PharmacyOrderId) REFERENCES PharmacyOrders (Id) ON DELETE CASCADE
+            );
+            CREATE INDEX IF NOT EXISTS IX_PharmacyOrderItems_PharmacyOrderId
+                ON PharmacyOrderItems (PharmacyOrderId);
+            """;
+        await schemaCommand.ExecuteNonQueryAsync();
+        await EnsureColumnAsync(connection, "PharmacyOrderItems", "RequiresPrescription", "INTEGER NOT NULL DEFAULT 0");
+    }
+    finally
+    {
+        if (closeConnection)
+        {
+            await connection.CloseAsync();
+        }
+    }
+}
+
+static async Task EnsureColumnAsync(
+    System.Data.Common.DbConnection connection,
+    string table,
+    string column,
+    string definition)
+{
+    await using var command = connection.CreateCommand();
+    command.CommandText = $"PRAGMA table_info('{table}');";
+    await using var reader = await command.ExecuteReaderAsync();
+    var columnExists = false;
+    while (await reader.ReadAsync())
+    {
+        if (string.Equals(reader.GetString(1), column, StringComparison.OrdinalIgnoreCase))
+        {
+            columnExists = true;
+            break;
+        }
+    }
+
+    await reader.DisposeAsync();
+    if (!columnExists)
+    {
+        await using var alterCommand = connection.CreateCommand();
+        alterCommand.CommandText = $"ALTER TABLE \"{table}\" ADD COLUMN \"{column}\" {definition};";
+        await alterCommand.ExecuteNonQueryAsync();
+    }
 }
 
 app.Run();

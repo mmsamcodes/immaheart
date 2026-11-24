@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HospitalWebApp.Pages.DischargeSummaries
 {
-    [Authorize(Roles = "Admin,Doctor,Nurse,Accounts,Cashier,Patient")]
+    [Authorize(Roles = "Admin,Doctor,Nurse,Patient")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;

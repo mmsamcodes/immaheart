@@ -1,0 +1,154 @@
+@page
+@model HospitalWebApp.Pages.Pharmacy.IndexModel
+@{
+    ViewData["Title"] = "Online Pharmacy";
+    ViewData["Description"] = "Browse the hospital pharmacy catalog and submit medication requests for pharmacist review.";
+    var selectedSearch = Request.Query["search"].ToString();
+    var selectedCategory = Request.Query["category"].ToString();
+}
+
+<section class="pharmacy-hero">
+    <div class="container">
+        <div class="pharmacy-hero-copy">
+            <span class="pharmacy-eyebrow"><i class="bi bi-heart-pulse"></i> Immaculate Heart Hospital</span>
+            <h1>Hospital pharmacy</h1>
+            <p>Browse available items and request hospital collection. Every request is checked by our pharmacy team before it is prepared.</p>
+            <div class="pharmacy-safety-note"><i class="bi bi-shield-check"></i><span>Prescription medicines require a valid prescription and pharmacist approval. This service does not provide medical advice or online payment.</span></div>
+        </div>
+        <div class="pharmacy-hero-icon" aria-hidden="true"><i class="bi bi-capsule-pill"></i></div>
+    </div>
+</section>
+
+<div class="container py-5 pharmacy-page">
+    @if (TempData["PharmacyOrderMessage"] is string orderMessage)
+    {
+        <div class="alert alert-success" role="status">@orderMessage</div>
+    }
+
+    <div class="pharmacy-toolbar">
+        <div>
+            <div class="dashboard-kicker">Hospital collection</div>
+            <h2 class="mb-1">Available catalog</h2>
+            <p class="text-muted mb-0">Prices and stock are confirmed by the pharmacist when your request is reviewed.</p>
+        </div>
+        <form method="get" class="pharmacy-filter" role="search">
+            <label class="visually-hidden" for="pharmacy-search">Search medicines and supplies</label>
+            <input id="pharmacy-search" class="form-control" type="search" name="search" value="@selectedSearch" placeholder="Search catalog" />
+            <label class="visually-hidden" for="pharmacy-category">Filter by category</label>
+            <select id="pharmacy-category" class="form-select" name="category">
+                <option value="">All categories</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category" selected="@(selectedCategory == category)">@category</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    @if (Model.CanPlaceOrders)
+    {
+        <form method="post" asp-page-handler="SubmitOrder" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            <div class="row g-3">
+                @foreach (var product in Model.Products)
+                {
+                    <div class="col-md-6 col-xl-4">
+                        <article class="pharmacy-product-card">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <span class="pharmacy-category">@product.Category</span>
+                                @if (product.RequiresPrescription)
+                                {
+                                    <span class="pharmacy-rx-badge"><i class="bi bi-file-earmark-medical"></i> Prescription required</span>
+                                }
+                                else
+                                {
+                                    <span class="pharmacy-otc-badge">Pharmacist review</span>
+                                }
+                            </div>
+                            <h3>@product.Name</h3>
+                            @if (!string.IsNullOrWhiteSpace(product.Description))
+                            {
+                                <p>@product.Description</p>
+                            }
+                            <div class="pharmacy-product-bottom">
+                                <div><strong>KSh @product.UnitPrice.ToString("N2")</strong><small>@product.Unit · @product.StockQuantity available</small></div>
+                                <label class="pharmacy-quantity">
+                                    <span>Qty</span>
+                                    <input type="number" name="Quantities[@product.Id]" value="@(Model.Quantities.TryGetValue(product.Id, out var quantity) ? quantity : 0)" min="0" max="@product.StockQuantity" class="form-control" aria-label="Quantity for @product.Name" />
+                                </label>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+
+            @if (Model.Products.Count == 0)
+            {
+                <div class="pharmacy-empty"><i class="bi bi-search"></i><h3>No matching items</h3><p>Try a different search or category. The pharmacy team can confirm availability by phone.</p></div>
+            }
+
+            @if (Model.Products.Count > 0)
+            {
+                <section class="pharmacy-order-form mt-4">
+                    <div>
+                        <span class="dashboard-kicker">Submit a request</span>
+                        <h2>Pharmacist review before collection</h2>
+                        <p class="text-muted">Prescription documents are kept with your private order record and accessible only to pharmacy staff. Maximum file size: 5 MB (PDF, PNG, or JPEG).</p>
+                    </div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-5">
+                            <label for="prescription-file" class="form-label">Prescription (required for marked items)</label>
+                            <input id="prescription-file" type="file" name="PrescriptionFile" class="form-control" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" />
+                            <span asp-validation-for="PrescriptionFile" class="text-danger"></span>
+                        </div>
+                        <div class="col-lg-5">
+                            <label asp-for="PatientNote" class="form-label">Collection note <span class="text-muted">(optional)</span></label>
+                            <input asp-for="PatientNote" class="form-control" maxlength="500" placeholder="Please avoid entering medical details here" />
+                            <span asp-validation-for="PatientNote" class="text-danger"></span>
+                        </div>
+                        <div class="col-lg-2 d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Request items</button>
+                        </div>
+                    </div>
+                </section>
+            }
+        </form>
+    }
+    else if (User.Identity?.IsAuthenticated != true)
+    {
+        <div class="pharmacy-signin-note"><i class="bi bi-person-lock"></i><div><strong>Sign in to request items</strong><p class="mb-0">You can browse the catalog without an account. Sign in with your patient account to submit a collection request.</p></div><a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("/Pharmacy/Index")" class="btn btn-primary">Sign in</a></div>
+    }
+
+    @if (Model.CanPlaceOrders)
+    {
+        <section class="pharmacy-history mt-5">
+            <div class="d-flex justify-content-between align-items-end mb-3">
+                <div><div class="dashboard-kicker">Your requests</div><h2 class="mb-0">Recent pharmacy orders</h2></div>
+            </div>
+            @if (Model.MyOrders.Count == 0)
+            {
+                <div class="pharmacy-empty"><i class="bi bi-bag-check"></i><h3>No requests yet</h3><p>Submitted requests and their review status will appear here.</p></div>
+            }
+            else
+            {
+                <div class="table-responsive dashboard-panel">
+                    <table class="dashboard-table">
+                        <thead><tr><th>Request</th><th>Placed</th><th>Items</th><th>Status</th></tr></thead>
+                        <tbody>
+                            @foreach (var order in Model.MyOrders)
+                            {
+                                <tr>
+                                    <td><strong>@order.OrderNumber</strong></td>
+                                    <td>@order.PlacedAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")</td>
+                                    <td>@string.Join(", ", order.Items.Select(item => $"{item.DrugName} x {item.Quantity}"))</td>
+                                    <td><span class="status-pill @(order.Status == PharmacyOrder.Completed ? "success" : order.Status == PharmacyOrder.Rejected ? "danger" : "warning")">@order.Status</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+    }
+</div>
