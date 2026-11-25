@@ -28,6 +28,9 @@ namespace HospitalWebApp.Data // Ensure the data namespace matches the project s
         public DbSet<Drug> Drugs { get; set; }
         public DbSet<PharmacyOrder> PharmacyOrders { get; set; }
         public DbSet<PharmacyOrderItem> PharmacyOrderItems { get; set; }
+        public DbSet<PatientEncounter> PatientEncounters { get; set; }
+        public DbSet<PatientEncounterEvent> PatientEncounterEvents { get; set; }
+        public DbSet<BillingPayment> BillingPayments { get; set; }
         public DbSet<ServiceCatalog> ServiceCatalogs { get; set; }
         public DbSet<PatientService> PatientServices { get; set; }
         public DbSet<CareNote> CareNotes { get; set; }
@@ -52,6 +55,37 @@ namespace HospitalWebApp.Data // Ensure the data namespace matches the project s
             modelBuilder.Entity<PharmacyOrderItem>()
                 .Property(item => item.RequiresPrescription)
                 .HasDefaultValue(false);
+            modelBuilder.Entity<PatientEncounter>()
+                .HasIndex(encounter => encounter.VisitNumber)
+                .IsUnique();
+            modelBuilder.Entity<PatientEncounter>()
+                .HasIndex(encounter => encounter.PatientId)
+                .IsUnique()
+                .HasFilter("\"ClosedAt\" IS NULL AND \"Status\" <> 'Cancelled'");
+            modelBuilder.Entity<PatientEncounterEvent>()
+                .HasOne(encounterEvent => encounterEvent.Encounter)
+                .WithMany(encounter => encounter.Events)
+                .HasForeignKey(encounterEvent => encounterEvent.PatientEncounterId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<BillingPayment>()
+                .HasIndex(payment => payment.ReceiptNumber)
+                .IsUnique();
+            modelBuilder.Entity<BillingPayment>()
+                .HasIndex(payment => payment.GatewayReference)
+                .IsUnique()
+                .HasFilter("\"GatewayReference\" IS NOT NULL");
+            modelBuilder.Entity<BillingPayment>()
+                .HasIndex(payment => payment.RequestKey)
+                .IsUnique()
+                .HasFilter("\"RequestKey\" IS NOT NULL");
+            modelBuilder.Entity<BillingItem>()
+                .HasIndex(item => item.PatientServiceId)
+                .IsUnique()
+                .HasFilter("\"PatientServiceId\" IS NOT NULL");
+            modelBuilder.Entity<BillingItem>()
+                .HasIndex(item => item.LabOrderId)
+                .IsUnique()
+                .HasFilter("\"LabOrderId\" IS NOT NULL");
         }
     }
 }

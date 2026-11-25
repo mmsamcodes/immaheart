@@ -1,33 +1,203 @@
 @page
 @model HospitalWebApp.Areas.Identity.Pages.AccountsDashboardModel
 @{
-    ViewData["Title"] = "Accounts";
-    var unpaid = Model.Invoices.Count(i => i.Status != "Paid");
-    var paid = Model.Invoices.Count(i => i.Status == "Paid");
-    var balance = Model.Invoices.Sum(i => i.TotalAmount - i.PaidAmount);
+    ViewData["Title"] = User.IsInRole("Cashier") ? "Cashier POS" : "Accounts";
 }
+
 <div class="dashboard-shell">
- <div class="container">
-  <div class="dashboard-header"><div><div class="dashboard-kicker">Finance and cashier operations</div><h1>Accounts desk</h1><p>Reconcile invoices, record payments and maintain a clear audit trail.</p></div><a asp-area="" asp-page="/Billing/Index" class="btn btn-primary"><i class="bi bi-receipt me-2"></i>Billing records</a></div>
-  @if (!string.IsNullOrEmpty(Model.Message)){<div class="alert alert-success">@Model.Message</div>}
-  <div class="metric-grid">
-   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-receipt"></i></span></div><div class="metric-value">@Model.Invoices.Count</div><div class="metric-label">Total invoices</div></div>
-   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-check2-circle"></i></span></div><div class="metric-value">@paid</div><div class="metric-label">Paid invoices</div></div>
-   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-hourglass-split"></i></span><span class="status-pill warning">Action</span></div><div class="metric-value">@unpaid</div><div class="metric-label">Unpaid or partial</div></div>
-   <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-cash-stack"></i></span></div><div class="metric-value">KSh @balance.ToString("N0")</div><div class="metric-label">Outstanding balance</div></div>
-  </div>
-  <div class="dashboard-panel"><div class="dashboard-panel-header"><h2>Invoice register</h2><a asp-area="" asp-page="/Billing/Index" class="btn btn-sm btn-outline-primary">Detailed billing</a></div><div class="table-responsive"><table class="dashboard-table"><thead><tr><th>Invoice</th><th>Patient</th><th>Issued</th><th>Total</th><th>Paid</th><th>Status</th><th></th></tr></thead><tbody>@if (Model.Invoices.Any()){foreach(var inv in Model.Invoices){<tr><td><strong>@inv.InvoiceNumber</strong></td><td>@inv.Patient?.FullName</td><td>@inv.IssuedAt.ToString("MMM dd, yyyy")</td><td>KSh @inv.TotalAmount.ToString("N0")</td><td>KSh @inv.PaidAmount.ToString("N0")</td><td><span class="status-pill @(inv.Status=="Paid"?"success":inv.Status=="Partial"?"warning":"danger")">@inv.Status</span></td><td><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#payModal" data-invoiceid="@inv.Id" data-total="@inv.TotalAmount" data-paid="@inv.PaidAmount">Log payment</button></td></tr>}}else{<tr><td colspan="7" class="text-muted">No invoices found.</td></tr>}</tbody></table></div></div>
- </div>
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <div class="dashboard-kicker">Finance and cashier operations</div>
+                <h1>@(User.IsInRole("Cashier") ? "Cashier point of sale" : "Accounts desk")</h1>
+                <p>@(Model.CanViewPatientInvoices
+                    ? "Collect payments, issue receipts and close visits after charges are settled."
+                    : "Review aggregate receivables and payment totals. Patient-level bills are restricted to the patient, cashier and administrator.")</p>
+            </div>
+            @if (Model.CanViewPatientInvoices)
+            {
+                <a asp-area="" asp-page="/Billing/Index" class="btn btn-primary"><i class="bi bi-receipt me-2"></i>Billing records</a>
+            }
+        </div>
+
+        @if (TempData["PaymentMessage"] is string paymentMessage)
+        {
+            <div class="alert alert-success" role="status">@paymentMessage</div>
+        }
+        @if (TempData["PaymentError"] is string paymentError)
+        {
+            <div class="alert alert-danger" role="alert">@paymentError</div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="alert alert-danger" role="alert">@Model.Message</div>
+        }
+
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-card-head"><span class="metric-icon"><i class="bi bi-receipt"></i></span></div>
+                <div class="metric-value">@Model.TotalInvoicesCount</div>
+                <div class="metric-label">Invoices processed</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-card-head"><span class="metric-icon"><i class="bi bi-check2-circle"></i></span></div>
+                <div class="metric-value">@Model.PaidInvoicesCount</div>
+                <div class="metric-label">Paid invoices</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-card-head"><span class="metric-icon"><i class="bi bi-hourglass-split"></i></span><span class="status-pill warning">Action</span></div>
+                <div class="metric-value">@Model.OutstandingInvoicesCount</div>
+                <div class="metric-label">Unpaid or partial</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-card-head"><span class="metric-icon"><i class="bi bi-cash-stack"></i></span></div>
+                <div class="metric-value">KSh @Model.OutstandingBalance.ToString("N2")</div>
+                <div class="metric-label">Outstanding balance</div>
+            </div>
+        </div>
+
+        @if (Model.CanViewPatientInvoices)
+        {
+            <div class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <h2>Visits ready for cashier</h2>
+                    <a asp-area="" asp-page="/PatientTracking/Index" class="btn btn-sm btn-outline-primary">Patient flow</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead><tr><th>Visit</th><th>Patient</th><th>Last updated</th><th>Discharge</th></tr></thead>
+                        <tbody>
+                            @if (Model.ReadyToLeaveEncounters.Count == 0)
+                            {
+                                <tr><td colspan="4" class="text-muted">No visits are waiting for cashier discharge.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var encounter in Model.ReadyToLeaveEncounters)
+                                {
+                                    <tr>
+                                        <td><strong>@encounter.VisitNumber</strong></td>
+                                        <td>@encounter.Patient?.FullName</td>
+                                        <td>@encounter.LastUpdatedAt.ToLocalTime().ToString("MMM d, h:mm tt")</td>
+                                        <td>
+                                            <form method="post" asp-page-handler="CompleteVisit">
+                                                <input type="hidden" name="encounterId" value="@encounter.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-success">Close visit</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="dashboard-panel-body">
+                    <p class="small text-muted mb-0">Visits with an unpaid invoice cannot be closed. Review the invoice register below before discharge.</p>
+                </div>
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="dashboard-panel-header"><h2>Cashier invoice register</h2></div>
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead><tr><th>Invoice</th><th>Patient</th><th>Issued</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Receipt history</th><th></th></tr></thead>
+                        <tbody>
+                            @if (Model.Invoices.Count == 0)
+                            {
+                                <tr><td colspan="9" class="text-muted">No invoices found.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var invoice in Model.Invoices)
+                                {
+                                    <tr>
+                                        <td><strong>@invoice.InvoiceNumber</strong></td>
+                                        <td>@invoice.Patient?.FullName</td>
+                                        <td>@invoice.IssuedAt.ToLocalTime().ToString("MMM d, yyyy")</td>
+                                        <td>KSh @invoice.TotalAmount.ToString("N2")</td>
+                                        <td>KSh @invoice.PaidAmount.ToString("N2")</td>
+                                        <td>KSh @Math.Max(0, invoice.TotalAmount - invoice.PaidAmount).ToString("N2")</td>
+                                        <td><span class="status-pill @(invoice.Status == "Paid" ? "success" : invoice.Status == "Partial" ? "warning" : "danger")">@invoice.Status</span></td>
+                                        <td>
+                                            @if (invoice.Payments.Any())
+                                            {
+                                                @foreach (var payment in invoice.Payments.OrderByDescending(item => item.ReceivedAt).Take(2))
+                                                {
+                                                    <div class="small"><a asp-area="" asp-page="/Billing/Receipt" asp-route-id="@payment.Id"><strong>@payment.ReceiptNumber</strong></a><br />KSh @payment.Amount.ToString("N2") · @payment.Method</div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">No payments</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <a asp-area="" asp-page="/Billing/Details" asp-route-id="@invoice.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                                                @if (invoice.Status != "Paid")
+                                                {
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#payModal" data-invoiceid="@invoice.Id" data-total="@invoice.TotalAmount" data-paid="@invoice.PaidAmount">Collect payment</button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-panel dashboard-panel-body">
+                <h2 class="h4">Finance overview</h2>
+                <p class="text-muted mb-0">This account is limited to aggregate financial reporting. Use a Cashier account to access patient invoices, collect payments or issue receipts.</p>
+            </div>
+        }
+    </div>
 </div>
-<div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><form method="post" asp-page-handler="MarkPaid"><div class="modal-header"><h5 class="modal-title">Log payment</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><input type="hidden" id="InvoiceId" name="InvoiceId"><div class="mb-3"><label class="form-label">Amount</label><input type="number" step="0.01" class="form-control" id="Amount" name="Amount" required></div><div class="mb-3"><label class="form-label">Method</label><select class="form-select" id="Method" name="Method"><option>MPesa</option><option>Visa</option><option>Cash</option></select></div><div class="mb-3"><label class="form-label">Reference</label><input type="text" class="form-control" id="Reference" name="Reference"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save payment</button></div></form></div></div></div>
+
+@if (Model.CanViewPatientInvoices)
+{
+    <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" asp-page-handler="MarkPaid">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Record POS payment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="InvoiceId" name="InvoiceId" />
+                        <input type="hidden" name="RequestKey" value="@(Guid.NewGuid().ToString("N"))" />
+                        <div class="mb-3"><label class="form-label" for="Amount">Amount received</label><input type="number" step="0.01" min="0.01" class="form-control" id="Amount" name="Amount" required /></div>
+                        <div class="mb-3">
+                            <label class="form-label" for="Method">Payment method</label>
+                            <select class="form-select" id="Method" name="Method" required>
+                                <option value="Cash">Cash</option><option value="MPesa">M-Pesa</option><option value="Visa">Card</option><option value="Insurance">Insurance</option>
+                            </select>
+                        </div>
+                        <div class="mb-3"><label class="form-label" for="Reference">Payment reference (optional)</label><input type="text" maxlength="100" class="form-control" id="Reference" name="Reference" /></div>
+                    </div>
+                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Record and issue receipt</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
 @section Scripts {
-<script>
-document.getElementById('payModal').addEventListener('show.bs.modal', function(event){
- const button=event.relatedTarget;
- const total=parseFloat(button.dataset.total||0);
- const paid=parseFloat(button.dataset.paid||0);
- this.querySelector('#InvoiceId').value=button.dataset.invoiceid;
- this.querySelector('#Amount').value=Math.max(total-paid,0).toFixed(2);
-});
-</script>
+    @if (Model.CanViewPatientInvoices)
+    {
+        <script>
+            document.getElementById('payModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const total = parseFloat(button.dataset.total || 0);
+                const paid = parseFloat(button.dataset.paid || 0);
+                this.querySelector('#InvoiceId').value = button.dataset.invoiceid;
+                this.querySelector('#Amount').value = Math.max(total - paid, 0).toFixed(2);
+            });
+        </script>
+    }
 }

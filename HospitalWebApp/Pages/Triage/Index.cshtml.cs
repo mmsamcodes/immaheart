@@ -27,10 +27,18 @@ namespace HospitalWebApp.Pages.Triage
 
         public async Task OnGetAsync()
         {
-            TriageEntries = await _context.TriageEntries
+            var query = _context.TriageEntries
                 .Include(t => t.Patient)
                 .Include(t => t.Nurse)
                 .Include(t => t.AssignedDoctor)
+                .AsQueryable();
+            if (User.IsInRole("Doctor"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                query = query.Where(entry => entry.AssignedDoctorId == null || entry.AssignedDoctorId == userId);
+            }
+
+            TriageEntries = await query
                 .OrderByDescending(t => t.TriageDate)
                 .ToListAsync();
 

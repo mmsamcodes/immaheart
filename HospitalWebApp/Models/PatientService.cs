@@ -18,6 +18,10 @@ namespace HospitalWebApp.Models
         [ForeignKey("ServiceCatalogId")]
         public virtual ServiceCatalog? Service { get; set; }
 
+        public int? PatientEncounterId { get; set; }
+        [ForeignKey(nameof(PatientEncounterId))]
+        public virtual PatientEncounter? PatientEncounter { get; set; }
+
         [Required]
         public string AssignedById { get; set; } = string.Empty;
         [ForeignKey("AssignedById")]
@@ -28,5 +32,6 @@ namespace HospitalWebApp.Models
         public string Notes { get; set; } = string.Empty;
         public DateTime? ScheduledDate { get; set; }
         public DateTime? CompletedDate { get; set; }
+        public decimal UnitPriceAtOrder { get; set; }
     }
 }

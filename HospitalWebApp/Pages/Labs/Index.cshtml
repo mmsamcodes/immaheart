@@ -1,49 +1,100 @@
 @page
 @model HospitalWebApp.Pages_Labs.IndexModel
 @{
-    ViewData["Title"] = "Lab Orders";
+    ViewData["Title"] = User.IsInRole("LabTech") ? "Laboratory Worklist" : "Lab Results";
 }
 
-<div class="dashboard-shell"><div class="container">
-<div class="dashboard-header"><div><div class="dashboard-kicker">Diagnostics</div><h1>Lab Orders</h1><p>Track testing status and result availability.</p></div></div>
-<div class="dashboard-panel"><div class="table-responsive"><table class="dashboard-table">
-    <thead>
-        <tr>
-            <th>Order</th>
-            <th>Test</th>
-            <th>Patient</th>
-            <th>Doctor</th>
-            <th>Status</th>
-            <th>Ordered</th>
-            <th>Result</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model.LabOrders)
+<div class="dashboard-shell">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <div class="dashboard-kicker">Diagnostics</div>
+                <h1>@ViewData["Title"]</h1>
+                <p>@(User.IsInRole("Patient")
+                    ? "Review the status and released results for your tests."
+                    : "Track requested tests, record specimen collection and publish verified results.")</p>
+            </div>
+            @if (User.IsInRole("LabTech"))
+            {
+                <a asp-area="Identity" asp-page="/LabTechDashboard" class="btn btn-outline-primary">Back to laboratory dashboard</a>
+            }
+        </div>
+
+        @if (TempData["LabWorkMessage"] is string message)
         {
-            <tr>
-                <td>@order.Id</td>
-                <td>@order.TestName</td>
-                <td>@order.Patient?.FullName ?? order.PatientId</td>
-                <td>@order.Doctor?.FullName ?? order.DoctorId</td>
-                <td>@order.Status</td>
-                <td>@order.OrderedAt.ToString("yyyy-MM-dd")</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(order.ResultFileName))
-                    {
-                        <a href="/labs/download/@order.Id" class="btn btn-sm btn-outline-primary">Download</a>
-                    }
-                    else if (!string.IsNullOrEmpty(order.ResultSummary))
-                    {
-                        <span class="text-success">Summary available</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">Pending</span>
-                    }
-                </td>
-            </tr>
+            <div class="alert alert-success" role="status">@message</div>
         }
-    </tbody>
-</table></div></div>
-</div></div>
+        @if (TempData["LabWorkError"] is string error)
+        {
+            <div class="alert alert-danger" role="alert">@error</div>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="dashboard-panel">
+            <div class="table-responsive">
+                <table class="dashboard-table">
+                    <thead><tr><th>Order</th><th>Test</th><th>Patient</th><th>Doctor</th><th>Status</th><th>Ordered</th><th>Result</th><th>Worklist action</th></tr></thead>
+                    <tbody>
+                        @if (Model.LabOrders.Count == 0)
+                        {
+                            <tr><td colspan="8" class="text-muted">No test orders are available.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var order in Model.LabOrders)
+                            {
+                                <tr>
+                                    <td>@order.Id</td>
+                                    <td><strong>@order.TestName</strong></td>
+                                    <td>@(User.IsInRole("Patient") ? "My account" : order.Patient?.FullName ?? order.PatientId)</td>
+                                    <td>@(User.IsInRole("Patient") ? "Care team" : order.Doctor?.FullName ?? order.DoctorId)</td>
+                                    <td><span class="status-pill @(order.Status == "Completed" ? "success" : "warning")">@order.Status</span></td>
+                                    <td>@order.OrderedAt.ToLocalTime().ToString("MMM d, yyyy")</td>
+                                    <td>
+                                        @if (order.Status == "Completed" && !string.IsNullOrWhiteSpace(order.ResultSummary))
+                                        {
+                                            <details>
+                                                <summary class="text-primary">View result summary</summary>
+                                                <p class="mt-2 mb-0">@order.ResultSummary</p>
+                                            </details>
+                                            @if (!string.IsNullOrEmpty(order.ResultFileName))
+                                            {
+                                                <a asp-controller="LabResults" asp-action="Download" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary mt-2">Download report</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not released</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if ((User.IsInRole("LabTech") || User.IsInRole("Admin")) && order.Status == "Ordered")
+                                        {
+                                            <form method="post" asp-page-handler="Collect">
+                                                <input type="hidden" name="id" value="@order.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-primary">Record collection</button>
+                                            </form>
+                                        }
+                                        else if ((User.IsInRole("LabTech") || User.IsInRole("Admin")) && order.Status == "Collected")
+                                        {
+                                            <form method="post" asp-page-handler="Complete">
+                                                <input type="hidden" name="id" value="@order.Id" />
+                                                <label class="form-label small" for="result-@order.Id">Verified result summary</label>
+                                                <textarea id="result-@order.Id" name="Input.ResultSummary" class="form-control form-control-sm mb-2" rows="2" maxlength="4000" required></textarea>
+                                                <button type="submit" class="btn btn-sm btn-primary">Complete and release</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

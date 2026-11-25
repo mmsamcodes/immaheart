@@ -11,10 +11,12 @@ namespace HospitalWebApp.Services;
 public interface IPaymentService
 {
     Task<string> CreateMpesaStkPushAsync(string phoneNumber, decimal amount, string accountReference, string transactionDesc);
-    Task<string> CreateStripeCheckoutSessionAsync(decimal amount, string invoiceNumber, string successUrl, string cancelUrl);
+    Task<StripeCheckoutSession> CreateStripeCheckoutSessionAsync(decimal amount, string invoiceNumber, string successUrl, string cancelUrl);
     bool IsMpesaConfigured { get; }
     bool IsStripeConfigured { get; }
 }
+
+public sealed record StripeCheckoutSession(string Url, string SessionId);
 
 public class PaymentService : IPaymentService
 {
@@ -96,7 +98,7 @@ public class PaymentService : IPaymentService
         throw new InvalidOperationException("MPesa STK push returned no CheckoutRequestID.");
     }
 
-    public async Task<string> CreateStripeCheckoutSessionAsync(decimal amount, string invoiceNumber, string successUrl, string cancelUrl)
+    public async Task<StripeCheckoutSession> CreateStripeCheckoutSessionAsync(decimal amount, string invoiceNumber, string successUrl, string cancelUrl)
     {
         if (!IsStripeConfigured)
         {
@@ -113,13 +115,15 @@ public class PaymentService : IPaymentService
         var options = new SessionCreateOptions
         {
             PaymentMethodTypes = new List<string> { "card" },
+            ClientReferenceId = invoiceNumber,
+            Metadata = new Dictionary<string, string> { ["InvoiceNumber"] = invoiceNumber },
             LineItems = new List<SessionLineItemOptions>
             {
                 new SessionLineItemOptions
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmountDecimal = amount,
+                        UnitAmountDecimal = amount * 100m,
                         Currency = _stripe.Currency ?? "kes",
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
@@ -138,7 +142,8 @@ public class PaymentService : IPaymentService
         var service = new SessionService();
         var session = await service.CreateAsync(options);
 
-        return session.Url ?? throw new InvalidOperationException("Stripe checkout session did not return a URL.");
+        var checkoutUrl = session.Url ?? throw new InvalidOperationException("Stripe checkout session did not return a URL.");
+        return new StripeCheckoutSession(checkoutUrl, session.Id);
     }
 
     private async Task<string> GetMpesaAccessTokenAsync()

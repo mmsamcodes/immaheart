@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HospitalWebApp.Pages_Billing
 {
-    [Authorize]
+    [Authorize(Roles = "Patient,Cashier,Admin")]
     public class DetailsModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -48,6 +48,7 @@ namespace HospitalWebApp.Pages_Billing
             Invoice = await _context.BillingInvoices
                 .Include(i => i.Patient)
                 .Include(i => i.Items)
+                .Include(i => i.Payments)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
             if (Invoice == null)
@@ -113,6 +114,7 @@ namespace HospitalWebApp.Pages_Billing
             Invoice.Status = Invoice.PaidAmount >= Invoice.TotalAmount
                 ? "Paid"
                 : Invoice.PaidAmount > 0 ? "Partial" : "Unpaid";
+            Invoice.PaymentConfirmed = Invoice.Status == "Paid";
             await _context.SaveChangesAsync();
 
             return RedirectToPage();
@@ -139,12 +141,13 @@ namespace HospitalWebApp.Pages_Billing
         private bool CanAccessInvoice(BillingInvoice invoice)
         {
             return CanManageBilling() ||
+                   User.IsInRole("Patient") &&
                    invoice.PatientId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         }
 
         private bool CanManageBilling()
         {
-            return User.IsInRole("Admin") || User.IsInRole("Accounts") || User.IsInRole("Cashier");
+            return User.IsInRole("Admin") || User.IsInRole("Cashier");
         }
     }
 }

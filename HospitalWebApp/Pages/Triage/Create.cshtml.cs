@@ -7,23 +7,36 @@ using HospitalWebApp.Data;
 using HospitalWebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using HospitalWebApp.Services;
 
 namespace HospitalWebApp.Pages.Triage
 {
+    [Authorize(Roles = "Nurse,Admin")]
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly PatientEncounterService _encounterService;
+        private readonly ILogger<CreateModel> _logger;
 
-        public CreateModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public CreateModel(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            IEmailSender emailSender,
+            PatientEncounterService encounterService,
+            ILogger<CreateModel> logger)
         {
             _context = context;
             _userManager = userManager;
             _emailSender = emailSender;
+            _encounterService = encounterService;
+            _logger = logger;
         }
 
         [BindProperty]
@@ -88,7 +101,9 @@ namespace HospitalWebApp.Pages.Triage
             }
 
             var nurse = await _userManager.GetUserAsync(User);
-            if (nurse == null || !await _userManager.IsInRoleAsync(nurse, "Nurse"))
+            if (nurse == null ||
+                !await _userManager.IsInRoleAsync(nurse, "Nurse") &&
+                !await _userManager.IsInRoleAsync(nurse, "Admin"))
             {
                 return Forbid();
             }
@@ -119,7 +134,13 @@ namespace HospitalWebApp.Pages.Triage
                     return Page();
                 }
 
-                await _userManager.AddToRoleAsync(patient, "Patient");
+                var addRoleResult = await _userManager.AddToRoleAsync(patient, "Patient");
+                if (!addRoleResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(patient);
+                    Message = $"Patient account could not be assigned: {string.Join(" ", addRoleResult.Errors.Select(error => error.Description))}";
+                    return Page();
+                }
                 isNewPatient = true;
             }
             else
@@ -135,13 +156,39 @@ namespace HospitalWebApp.Pages.Triage
                 await _userManager.UpdateAsync(patient);
                 if (!await _userManager.IsInRoleAsync(patient, "Patient"))
                 {
-                    await _userManager.AddToRoleAsync(patient, "Patient");
+                    var addRoleResult = await _userManager.AddToRoleAsync(patient, "Patient");
+                    if (!addRoleResult.Succeeded)
+                    {
+                        Message = $"Patient profile could not be assigned: {string.Join(" ", addRoleResult.Errors.Select(error => error.Description))}";
+                        return Page();
+                    }
                 }
+            }
+
+            var encounter = await _encounterService.FindActiveAsync(patient.Id);
+            if (encounter == null)
+            {
+                encounter = _encounterService.Start(
+                    patient.Id,
+                    nurse.Id,
+                    PatientEncounter.AwaitingClinician,
+                    "Consultation",
+                    "Your initial assessment is complete. Please wait for clinician review.");
+            }
+            else
+            {
+                _encounterService.Transition(
+                    encounter,
+                    PatientEncounter.AwaitingClinician,
+                    "Consultation",
+                    "Your initial assessment is complete. Please wait for clinician review.",
+                    nurse.Id);
             }
 
             var triage = new TriageEntry
             {
                 PatientId = patient.Id,
+                PatientEncounter = encounter,
                 PatientName = Input.FullName,
                 PatientEmail = Input.Email,
                 PatientPhone = Input.PhoneNumber,
@@ -165,6 +212,7 @@ namespace HospitalWebApp.Pages.Triage
             _context.QueueEntries.Add(new QueueEntry
             {
                 PatientId = patient.Id,
+                PatientEncounter = encounter,
                 AssignedById = nurse.Id,
                 QueueType = "Doctor",
                 Status = "Waiting",
@@ -216,6 +264,12 @@ namespace HospitalWebApp.Pages.Triage
 
         private async Task SendPatientWelcomeEmailAsync(ApplicationUser patient, string password)
         {
+            if (string.IsNullOrWhiteSpace(patient.Email))
+            {
+                _logger.LogWarning("Welcome email was not sent because patient {PatientId} has no email address.", patient.Id);
+                return;
+            }
+
             try
             {
                 var loginUrl = Url.Page("/Account/Login", null, null, Request.Scheme);
@@ -229,9 +283,9 @@ namespace HospitalWebApp.Pages.Triage
 
                 await _emailSender.SendEmailAsync(patient.Email, "Your patient portal account is ready", message);
             }
-            catch
+            catch (Exception exception)
             {
-                // Keep triage flow working even if email delivery fails.
+                _logger.LogError(exception, "Failed to send a welcome email to patient {PatientId}.", patient.Id);
             }
         }
     }

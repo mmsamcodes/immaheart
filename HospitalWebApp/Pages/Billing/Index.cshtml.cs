@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace HospitalWebApp.Pages_Billing
 {
-    [Authorize]
+    [Authorize(Roles = "Patient,Cashier,Admin")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -23,11 +23,19 @@ namespace HospitalWebApp.Pages_Billing
 
         public async Task OnGetAsync()
         {
-            var query = _context.BillingInvoices.Include(i => i.Patient).Include(i => i.Items).AsQueryable();
+            var query = _context.BillingInvoices
+                .Include(invoice => invoice.Patient)
+                .Include(invoice => invoice.Items)
+                .Include(invoice => invoice.Payments)
+                .AsQueryable();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!User.IsInRole("Admin") && !User.IsInRole("Accounts") && !User.IsInRole("Cashier"))
+            if (User.IsInRole("Patient"))
             {
                 query = query.Where(i => i.PatientId == userId);
+            }
+            else if (!User.IsInRole("Admin") && !User.IsInRole("Cashier"))
+            {
+                return;
             }
             Invoices = await query.OrderByDescending(i => i.IssuedAt).ToListAsync();
         }

@@ -10,6 +10,10 @@ namespace HospitalWebApp.Models
         [ForeignKey("PatientId")]
         public virtual ApplicationUser? Patient { get; set; }
 
+        public int? PatientEncounterId { get; set; }
+        [ForeignKey(nameof(PatientEncounterId))]
+        public virtual PatientEncounter? PatientEncounter { get; set; }
+
         public string PatientName { get; set; } = string.Empty;
         public string PatientEmail { get; set; } = string.Empty;
         public string PatientPhone { get; set; } = string.Empty;

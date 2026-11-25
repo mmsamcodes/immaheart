@@ -1,0 +1,119 @@
+@using HospitalWebApp.Models
+@{
+    var title = ViewData["Title"] as string ?? "Hospital Operations";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#172b45" />
+    <title>@title · Immaculate Heart Hospital</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HospitalWebApp.styles.css" asp-append-version="true" />
+</head>
+<body class="erp-body">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="erp-shell">
+        <header class="erp-topbar">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="erp-brand">
+                <img src="~/images/logo.jpg" alt="" />
+                <span><strong>Immaculate Heart</strong><small>Hospital Operations</small></span>
+            </a>
+            <div class="erp-topbar-tools">
+                <span class="erp-environment"><i class="bi bi-shield-check me-1"></i>Staff workspace</span>
+                <span class="erp-user">@User.Identity?.Name</span>
+                <partial name="_LoginPartial" />
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-light">Public site</a>
+            </div>
+        </header>
+
+        <div class="erp-frame">
+            <aside class="erp-sidebar" aria-label="Staff navigation">
+                <div class="erp-sidebar-heading">Workspace</div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-area="Identity" asp-page="/AdminDashboard"><i class="bi bi-speedometer2"></i>Administration</a>
+                    <a asp-area="Identity" asp-page="/Admin/ManageStaff"><i class="bi bi-person-gear"></i>Staff and roles</a>
+                    <a asp-area="" asp-page="/PatientTracking/Index"><i class="bi bi-diagram-3"></i>Patient flow</a>
+                    <a asp-area="Identity" asp-page="/AccountsDashboard"><i class="bi bi-cash-coin"></i>Finance and POS</a>
+                    <a asp-area="Identity" asp-page="/Admin/Drugs"><i class="bi bi-capsule"></i>Pharmacy catalog</a>
+                    <a asp-area="Identity" asp-page="/Admin/Services"><i class="bi bi-list-check"></i>Service catalog</a>
+                }
+                else if (User.IsInRole("Doctor"))
+                {
+                    <a asp-area="Identity" asp-page="/DoctorDashboard"><i class="bi bi-activity"></i>Clinical dashboard</a>
+                    <a asp-area="" asp-page="/Triage/Index"><i class="bi bi-person-vcard"></i>Clinician queue</a>
+                    <a asp-area="" asp-page="/Appointments/Index"><i class="bi bi-calendar-week"></i>Schedule</a>
+                    <a asp-area="Identity" asp-page="/AddService"><i class="bi bi-clipboard2-plus"></i>Assign services</a>
+                    <a asp-area="" asp-page="/PatientTracking/Index"><i class="bi bi-diagram-3"></i>Patient flow</a>
+                }
+                else if (User.IsInRole("Nurse"))
+                {
+                    <a asp-area="Identity" asp-page="/NurseDashboard"><i class="bi bi-heart-pulse"></i>Nursing dashboard</a>
+                    <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Triage"><i class="bi bi-list-task"></i>Triage queue</a>
+                    <a asp-area="" asp-page="/Triage/Create"><i class="bi bi-clipboard2-pulse"></i>Record triage</a>
+                    <a asp-area="" asp-page="/Admissions/Index"><i class="bi bi-hospital"></i>Admissions</a>
+                    <a asp-area="" asp-page="/PatientTracking/Index"><i class="bi bi-diagram-3"></i>Patient flow</a>
+                }
+                else if (User.IsInRole("Reception"))
+                {
+                    <a asp-area="Identity" asp-page="/ReceptionDashboard"><i class="bi bi-front"></i>Reception workbench</a>
+                    <a asp-area="" asp-page="/Reception/Intake"><i class="bi bi-person-plus"></i>Patient check-in</a>
+                    <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Triage"><i class="bi bi-list-task"></i>Triage queue</a>
+                    <a asp-area="" asp-page="/Appointments/Index"><i class="bi bi-calendar-week"></i>Appointments</a>
+                    <a asp-area="" asp-page="/PatientTracking/Index"><i class="bi bi-diagram-3"></i>Patient flow</a>
+                }
+                else if (User.IsInRole("LabTech"))
+                {
+                    <a asp-area="Identity" asp-page="/LabTechDashboard"><i class="bi bi-eyedropper"></i>Laboratory dashboard</a>
+                    <a asp-area="" asp-page="/Labs/Index"><i class="bi bi-clipboard2-pulse"></i>Lab worklist</a>
+                    <a asp-area="" asp-page="/PatientTracking/Index"><i class="bi bi-diagram-3"></i>Patient flow</a>
+                }
+                else if (User.IsInRole("Pharmacy"))
+                {
+                    <a asp-area="Identity" asp-page="/PharmacyDashboard"><i class="bi bi-capsule"></i>Pharmacy dashboard</a>
+                    <a asp-area="Identity" asp-page="/PharmacyOrders"><i class="bi bi-bag-check"></i>Order worklist</a>
+                    <a asp-area="Identity" asp-page="/Admin/Drugs"><i class="bi bi-box-seam"></i>Drug catalog</a>
+                    <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Pharmacy"><i class="bi bi-list-task"></i>Pharmacy queue</a>
+                }
+                else if (User.IsInRole("Cashier"))
+                {
+                    <a asp-area="Identity" asp-page="/AccountsDashboard"><i class="bi bi-cash-register"></i>Cashier POS</a>
+                    <a asp-area="" asp-page="/Billing/Index"><i class="bi bi-receipt"></i>Billing records</a>
+                    <a asp-area="" asp-page="/PatientTracking/Index"><i class="bi bi-diagram-3"></i>Patient flow</a>
+                }
+                else if (User.IsInRole("Accounts"))
+                {
+                    <a asp-area="Identity" asp-page="/AccountsDashboard"><i class="bi bi-bar-chart-line"></i>Finance overview</a>
+                }
+                else if (User.IsInRole("Patient"))
+                {
+                    <a asp-area="Identity" asp-page="/Dashboard"><i class="bi bi-house-heart"></i>Patient dashboard</a>
+                    <a asp-area="" asp-page="/PatientTracking/Index"><i class="bi bi-diagram-3"></i>My care journey</a>
+                    <a asp-area="" asp-page="/Billing/Index"><i class="bi bi-receipt"></i>My bills and receipts</a>
+                    <a asp-area="" asp-page="/Appointments/Create"><i class="bi bi-calendar-plus"></i>Book an appointment</a>
+                    <a asp-area="" asp-page="/Pharmacy/Index"><i class="bi bi-capsule"></i>Online pharmacy</a>
+                }
+                <div class="erp-sidebar-foot"><i class="bi bi-info-circle me-1"></i>Use only the patient information required for your role.</div>
+            </aside>
+
+            <main id="main-content" class="erp-main" role="main">
+                @RenderBody()
+                <footer class="erp-statusbar">
+                    <span><i class="bi bi-circle-fill me-1"></i>Hospital operations workspace</span>
+                    <span>Internal use · Protect patient information</span>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

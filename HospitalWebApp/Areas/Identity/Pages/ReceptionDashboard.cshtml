@@ -1,0 +1,57 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.ReceptionDashboardModel
+@{
+    ViewData["Title"] = "Reception Workbench";
+}
+
+<div class="dashboard-shell">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <div class="dashboard-kicker">Front desk operations</div>
+                <h1>Reception workbench</h1>
+                <p>Register arrivals, check today's schedule and follow active visits through their next department.</p>
+            </div>
+            <a asp-area="" asp-page="/Reception/Intake" class="btn btn-primary"><i class="bi bi-person-plus me-2"></i>Check in a patient</a>
+        </div>
+
+        <div class="metric-grid">
+            <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-person-walking"></i></span></div><div class="metric-value">@Model.ActiveVisits</div><div class="metric-label">Active visits</div></div>
+            <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-clipboard2-pulse"></i></span><span class="status-pill warning">Waiting</span></div><div class="metric-value">@Model.WaitingForTriage</div><div class="metric-label">Waiting for triage</div></div>
+            <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-calendar-check"></i></span></div><div class="metric-value">@Model.AppointmentsToday</div><div class="metric-label">Appointments today</div></div>
+            <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-diagram-3"></i></span></div><div class="metric-value"><a asp-area="" asp-page="/PatientTracking/Index" class="btn btn-sm btn-outline-primary">Open flow board</a></div><div class="metric-label">Patient tracking</div></div>
+        </div>
+
+        <div class="dashboard-panel">
+            <div class="dashboard-panel-header">
+                <h2>Active patient visits</h2>
+                <a asp-area="" asp-page="/Queue/Index" asp-route-queueType="Triage" class="btn btn-sm btn-outline-primary">Triage queue</a>
+            </div>
+            <div class="table-responsive">
+                <table class="dashboard-table">
+                    <thead><tr><th>Visit number</th><th>Patient</th><th>Department</th><th>Status</th><th>Priority</th><th>Checked in</th></tr></thead>
+                    <tbody>
+                        @if (Model.RecentVisits.Count == 0)
+                        {
+                            <tr><td colspan="6" class="text-muted">No active visits at this time.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var visit in Model.RecentVisits)
+                            {
+                                <tr>
+                                    <td><strong>@visit.VisitNumber</strong></td>
+                                    <td>@visit.Patient?.FullName</td>
+                                    <td>@visit.CurrentDepartment</td>
+                                    <td><span class="status-pill warning">@visit.Status</span></td>
+                                    <td>@visit.Priority</td>
+                                    <td>@visit.StartedAt.ToLocalTime().ToString("MMM d, h:mm tt")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

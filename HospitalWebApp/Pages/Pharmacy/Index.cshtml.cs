@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using HospitalWebApp.Services;
 
 namespace HospitalWebApp.Pages.Pharmacy;
 
@@ -21,11 +22,16 @@ public class IndexModel : PageModel
 
     private readonly ApplicationDbContext _context;
     private readonly IDataProtector _prescriptionProtector;
+    private readonly PatientEncounterService _encounterService;
 
-    public IndexModel(ApplicationDbContext context, IDataProtectionProvider dataProtectionProvider)
+    public IndexModel(
+        ApplicationDbContext context,
+        IDataProtectionProvider dataProtectionProvider,
+        PatientEncounterService encounterService)
     {
         _context = context;
         _prescriptionProtector = dataProtectionProvider.CreateProtector("HospitalWebApp.PharmacyPrescription.v1");
+        _encounterService = encounterService;
     }
 
     public IList<Drug> Products { get; private set; } = new List<Drug>();
@@ -111,9 +117,11 @@ public class IndexModel : PageModel
             return Page();
         }
 
+        var encounter = await _encounterService.FindActiveAsync(patientId);
         var order = new PharmacyOrder
         {
             PatientId = patientId,
+            PatientEncounter = encounter,
             Status = PharmacyOrder.PendingReview,
             PatientNote = (PatientNote ?? string.Empty).Trim(),
             PrescriptionDocument = prescription == null ? null : _prescriptionProtector.Protect(prescription.Value.Bytes),

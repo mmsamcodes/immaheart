@@ -12,6 +12,10 @@ namespace HospitalWebApp.Models
         [ForeignKey("PatientId")]
         public virtual ApplicationUser? Patient { get; set; }
 
+        public int? PatientEncounterId { get; set; }
+        [ForeignKey(nameof(PatientEncounterId))]
+        public virtual PatientEncounter? PatientEncounter { get; set; }
+
         public DateTime IssuedAt { get; set; } = DateTime.Now;
         public DateTime DueDate { get; set; } = DateTime.Now.AddDays(14);
         public decimal TotalAmount { get; set; }
@@ -22,6 +26,7 @@ namespace HospitalWebApp.Models
         public string Notes { get; set; } = string.Empty;
 
         public virtual ICollection<BillingItem> Items { get; set; } = new List<BillingItem>();
+        public virtual ICollection<BillingPayment> Payments { get; set; } = new List<BillingPayment>();
         
         // Optional link to an appointment when invoice is created for a consultation
         public int? AppointmentId { get; set; }

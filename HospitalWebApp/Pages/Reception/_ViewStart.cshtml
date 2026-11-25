@@ -1,0 +1,5 @@
+@{
+    Layout = Context.User.Identity?.IsAuthenticated == true
+        ? "/Views/Shared/_ErpLayout.cshtml"
+        : "/Views/Shared/_Layout.cshtml";
+}

@@ -1,0 +1,35 @@
+@page
+@model HospitalWebApp.Areas.Identity.Pages.Account.AcceptInvitationModel
+@{
+    ViewData["Title"] = "Accept Staff Invitation";
+}
+
+<div class="auth-container d-flex align-items-center justify-content-center py-5">
+    <div class="card shadow-sm w-100" style="max-width: 480px;">
+        <div class="card-body p-4">
+            <div class="dashboard-kicker">Staff account setup</div>
+            <h1 class="h3">Set your password</h1>
+            <p class="text-muted">Use a unique password for your hospital account. Do not share your sign-in details.</p>
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                <input asp-for="Input.UserId" type="hidden" />
+                <input asp-for="Input.Code" type="hidden" />
+                <div class="mb-3">
+                    <label asp-for="Input.Password" class="form-label">Password</label>
+                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.ConfirmPassword" class="form-label">Confirm password</label>
+                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Activate account</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

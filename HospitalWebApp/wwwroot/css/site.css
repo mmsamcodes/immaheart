@@ -1608,3 +1608,152 @@ main .bg-dark.text-white p {
     .pharmacy-review-prompt { width: 100%; }
 }
 
+/* ===== Internal hospital operations workspace ===== */
+.erp-body {
+    min-width: 320px;
+    background: #e9eef3;
+    color: #233446;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.erp-shell { min-height: 100vh; }
+
+.erp-topbar {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 8px 20px;
+    background: #172b45;
+    border-bottom: 3px solid #218a91;
+    color: #fff;
+}
+
+.erp-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.erp-brand img { width: 42px; height: 42px; object-fit: cover; border-radius: 4px; background: #fff; }
+.erp-brand span { display: flex; flex-direction: column; line-height: 1.15; }
+.erp-brand strong { font-size: 0.96rem; }
+.erp-brand small { margin-top: 3px; color: #c4d2e0; font-size: 0.72rem; }
+.erp-topbar-tools { display: flex; align-items: center; gap: 12px; }
+.erp-environment { color: #d3e2ef; font-size: 0.79rem; }
+.erp-user { color: #fff; font-size: 0.82rem; }
+.erp-topbar .nav-auth-form { display: inline-flex; margin: 0; }
+.erp-topbar .nav-login,
+.erp-topbar .logout-btn {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #8da1b7;
+    border-radius: 4px;
+    padding: 6px 10px;
+    background: transparent;
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.erp-frame { min-height: calc(100vh - 64px); display: grid; grid-template-columns: 228px minmax(0, 1fr); }
+.erp-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 18px 10px;
+    background: #f4f6f8;
+    border-right: 1px solid #cdd6df;
+}
+
+.erp-sidebar-heading {
+    padding: 4px 11px 10px;
+    color: #536578;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.erp-sidebar > a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 38px;
+    padding: 8px 11px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #2f4358;
+    font-size: 0.84rem;
+    text-decoration: none;
+}
+
+.erp-sidebar > a i { width: 17px; color: #386e83; text-align: center; }
+.erp-sidebar > a:hover { border-color: #c8d6df; background: #e8f0f3; color: #173a53; }
+.erp-sidebar-foot { margin-top: auto; padding: 18px 10px 4px; color: #607181; font-size: 0.72rem; line-height: 1.5; }
+.erp-main { min-width: 0; display: flex; flex-direction: column; overflow-x: hidden; }
+.erp-main > .dashboard-shell { width: 100%; flex: 1; background: #eef2f6; padding-top: 24px; }
+.erp-main > .container { flex: 1; }
+.erp-main .dashboard-panel,
+.erp-main .metric-card { border-radius: 6px; box-shadow: 0 2px 6px rgba(20, 42, 63, 0.06); }
+.erp-main .dashboard-header h1 { color: #1d344c; font-size: clamp(1.45rem, 2.4vw, 2rem); }
+.erp-main .dashboard-kicker { color: #526a7c; }
+.erp-statusbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: auto;
+    padding: 9px 18px;
+    background: #dfe6ec;
+    border-top: 1px solid #c3ced7;
+    color: #485d70;
+    font-size: 0.72rem;
+}
+
+.patient-encounter-list { display: grid; gap: 16px; }
+.patient-encounter-card .dashboard-panel-body > p { color: #34495e; }
+.encounter-timeline { display: grid; gap: 12px; margin: 0; padding: 0 0 0 18px; }
+.encounter-timeline li { padding-left: 4px; color: #34495e; }
+.encounter-timeline li strong,
+.encounter-timeline li span,
+.encounter-timeline li time { display: block; }
+.encounter-timeline li span { margin-top: 3px; }
+.encounter-timeline li time { margin-top: 4px; color: #596b7b; font-size: 0.78rem; }
+.receipt-paper { max-width: 820px; margin: 16px auto; padding: 34px; background: #fff; border: 1px solid #d6dee6; box-shadow: 0 5px 20px rgba(25, 45, 65, 0.08); }
+.receipt-details { margin: 22px 0 30px; }
+
+@media (max-width: 900px) {
+    .erp-frame { grid-template-columns: 1fr; }
+    .erp-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 4px;
+        padding: 8px 10px;
+        border-right: 0;
+        border-bottom: 1px solid #cdd6df;
+    }
+    .erp-sidebar-heading,
+    .erp-sidebar-foot { display: none; }
+    .erp-sidebar > a { flex: 0 0 auto; min-height: 36px; white-space: nowrap; }
+}
+
+@media (max-width: 576px) {
+    .erp-topbar { flex-wrap: wrap; padding: 8px 12px; }
+    .erp-topbar-tools { width: 100%; justify-content: space-between; gap: 6px; }
+    .erp-environment { display: none; }
+    .erp-user { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .erp-statusbar { flex-direction: column; gap: 4px; }
+    .receipt-paper { margin: 0; padding: 18px; border-left: 0; border-right: 0; }
+}
+
+@media print {
+    .erp-topbar,
+    .erp-sidebar,
+    .erp-statusbar,
+    .no-print { display: none !important; }
+    .erp-frame { display: block; }
+    .receipt-paper { max-width: none; margin: 0; padding: 0; border: 0; box-shadow: none; }
+}
+

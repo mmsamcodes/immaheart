@@ -11,5 +11,13 @@ namespace HospitalWebApp.Models
 
         public string Description { get; set; } = string.Empty;
         public decimal Amount { get; set; }
+
+        public int? PatientServiceId { get; set; }
+        [ForeignKey(nameof(PatientServiceId))]
+        public virtual PatientService? PatientService { get; set; }
+
+        public int? LabOrderId { get; set; }
+        [ForeignKey(nameof(LabOrderId))]
+        public virtual LabOrder? LabOrder { get; set; }
     }
 }

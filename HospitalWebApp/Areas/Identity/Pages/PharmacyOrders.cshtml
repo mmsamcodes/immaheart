@@ -35,11 +35,11 @@
                     </div>
                     <div class="table-responsive">
                         <table class="dashboard-table">
-                            <thead><tr><th>Requested item</th><th>Quantity</th><th>Price at request</th></tr></thead>
+                            <thead><tr><th>Requested item</th><th>Quantity</th></tr></thead>
                             <tbody>
                                 @foreach (var item in order.Items)
                                 {
-                                    <tr><td>@item.DrugName</td><td>@item.Quantity</td><td>KSh @item.UnitPrice.ToString("N2")</td></tr>
+                                    <tr><td>@item.DrugName</td><td>@item.Quantity</td></tr>
                                 }
                             </tbody>
                         </table>
@@ -47,6 +47,10 @@
                     @if (!string.IsNullOrWhiteSpace(order.PatientNote))
                     {
                         <p class="pharmacy-patient-note"><strong>Collection note:</strong> @order.PatientNote</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(order.PrescriptionText))
+                    {
+                        <p class="pharmacy-patient-note"><strong>Prescription from @order.Prescriber?.FullName:</strong> @order.PrescriptionText</p>
                     }
                     <div class="pharmacy-work-actions">
                         @if (order.PrescriptionContentType != null)
@@ -65,7 +69,14 @@
                         }
                         else if (order.Status == PharmacyOrder.ReadyForCollection)
                         {
-                            <form method="post" asp-page-handler="Collected"><input type="hidden" name="orderId" value="@order.Id" /><button type="submit" class="btn btn-success">Confirm collection</button></form>
+                            @if (order.BillingInvoice?.Status == "Paid")
+                            {
+                                <form method="post" asp-page-handler="Collected"><input type="hidden" name="orderId" value="@order.Id" /><button type="submit" class="btn btn-success">Confirm collection</button></form>
+                            }
+                            else
+                            {
+                                <span class="pharmacy-review-prompt">Awaiting cashier payment before collection.</span>
+                            }
                         }
                     </div>
                 </article>

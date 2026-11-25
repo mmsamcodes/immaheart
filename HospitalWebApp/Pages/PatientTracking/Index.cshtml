@@ -1,0 +1,96 @@
+@page
+@model HospitalWebApp.Pages.PatientTracking.IndexModel
+@{
+    ViewData["Title"] = Model.IsPatient ? "My Care Journey" : "Patient Flow";
+}
+
+<div class="dashboard-shell">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <div class="dashboard-kicker">Care operations</div>
+                <h1>@ViewData["Title"]</h1>
+                <p>@(Model.IsPatient
+                    ? "Follow the current status of your hospital visits. For urgent help, call the hospital directly."
+                    : "Track visits by their current department and handoff status. This worklist contains no billing amounts.")</p>
+            </div>
+            @if (User.IsInRole("Reception") || User.IsInRole("Admin"))
+            {
+                <a asp-area="" asp-page="/Reception/Intake" class="btn btn-primary">Check in a patient</a>
+            }
+        </div>
+
+        @if (Model.Encounters.Count == 0)
+        {
+            <div class="dashboard-panel dashboard-panel-body">
+                <h2 class="h4">No visits to show</h2>
+                <p class="text-muted mb-0">Visits will appear here after a patient is checked in at reception.</p>
+            </div>
+        }
+        else if (Model.IsPatient)
+        {
+            <div class="patient-encounter-list">
+                @foreach (var encounter in Model.Encounters)
+                {
+                    <article class="dashboard-panel patient-encounter-card">
+                        <div class="dashboard-panel-header">
+                            <div>
+                                <span class="dashboard-kicker">Visit @encounter.VisitNumber</span>
+                                <h2 class="h4 mb-0">@encounter.StartedAt.ToLocalTime().ToString("dddd, MMM d, yyyy · h:mm tt")</h2>
+                            </div>
+                            <span class="status-pill @(encounter.ClosedAt.HasValue ? "success" : "warning")">@encounter.Status</span>
+                        </div>
+                        <div class="dashboard-panel-body">
+                            <p><strong>Current department:</strong> @encounter.CurrentDepartment</p>
+                            <h3 class="h6">Visit updates</h3>
+                            <ol class="encounter-timeline">
+                                @foreach (var item in encounter.Events.OrderByDescending(item => item.OccurredAt))
+                                {
+                                    <li>
+                                        <strong>@item.Status</strong>
+                                        <span>@item.PatientMessage</span>
+                                        <time datetime="@item.OccurredAt.ToString("O")">@item.OccurredAt.ToLocalTime().ToString("MMM d · h:mm tt")</time>
+                                    </li>
+                                }
+                            </ol>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-panel">
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Visit</th>
+                                <th>Patient</th>
+                                <th>Department</th>
+                                <th>Current status</th>
+                                <th>Priority</th>
+                                <th>Checked in</th>
+                                <th>Last updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var encounter in Model.Encounters)
+                            {
+                                <tr>
+                                    <td><strong>@encounter.VisitNumber</strong></td>
+                                    <td>@encounter.Patient?.FullName</td>
+                                    <td>@encounter.CurrentDepartment</td>
+                                    <td><span class="status-pill @(encounter.ClosedAt.HasValue ? "success" : "warning")">@encounter.Status</span></td>
+                                    <td>@encounter.Priority</td>
+                                    <td>@encounter.StartedAt.ToLocalTime().ToString("MMM d, h:mm tt")</td>
+                                    <td>@encounter.LastUpdatedAt.ToLocalTime().ToString("h:mm tt")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</div>

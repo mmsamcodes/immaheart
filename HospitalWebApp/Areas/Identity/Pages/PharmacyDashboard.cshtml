@@ -3,7 +3,7 @@
 @{ ViewData["Title"] = "Pharmacy Dashboard"; }
 <div class="dashboard-shell">
  <div class="container">
-  <div class="dashboard-header"><div><div class="dashboard-kicker">Medication services</div><h1>Pharmacy operations</h1><p>Welcome back, @Model.FullName. Review requests, verify prescriptions and coordinate hospital collection.</p></div><a asp-area="Identity" asp-page="/PharmacyOrders" class="btn btn-primary"><i class="bi bi-list-check me-2"></i>Review order requests</a></div>
+  <div class="dashboard-header"><div><div class="dashboard-kicker">Medication services</div><h1>Pharmacy operations</h1><p>Welcome back, @Model.FullName. Review requests, verify prescriptions and coordinate hospital collection.</p></div><div class="d-flex flex-wrap gap-2"><a asp-area="Identity" asp-page="/Admin/Drugs" class="btn btn-outline-primary"><i class="bi bi-capsule me-2"></i>Manage drug catalog</a><a asp-area="Identity" asp-page="/PharmacyOrders" class="btn btn-primary"><i class="bi bi-list-check me-2"></i>Review order requests</a></div></div>
   <div class="metric-grid">
    <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-person-lines-fill"></i></span></div><div class="metric-value">@Model.PharmacyQueueCount</div><div class="metric-label">Hospital pharmacy queue</div></div>
    <div class="metric-card"><div class="metric-card-head"><span class="metric-icon"><i class="bi bi-clipboard2-pulse"></i></span><span class="status-pill warning">Review</span></div><div class="metric-value">@Model.PendingOrders</div><div class="metric-label">Requests awaiting pharmacist review</div></div>

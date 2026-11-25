@@ -1,0 +1,47 @@
+@page
+@model HospitalWebApp.Pages_Billing.ReceiptModel
+@{
+    ViewData["Title"] = "Payment Receipt";
+}
+
+<div class="container py-4">
+    @if (Model.Payment?.Invoice is { } invoice)
+    {
+        <div class="receipt-paper">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <div class="dashboard-kicker">Immaculate Heart Hospital Kereita</div>
+                    <h1 class="h3">Payment receipt</h1>
+                    <p class="text-muted mb-0">Near Kimende Town, Lari Sub-County, Kiambu</p>
+                    <p class="text-muted">+254 110 361 550</p>
+                </div>
+                <button type="button" class="btn btn-primary no-print" onclick="window.print()">Print receipt</button>
+            </div>
+
+            <dl class="row receipt-details">
+                <dt class="col-sm-4">Receipt number</dt><dd class="col-sm-8">@Model.Payment.ReceiptNumber</dd>
+                <dt class="col-sm-4">Date and time</dt><dd class="col-sm-8">@Model.Payment.ReceivedAt.ToLocalTime().ToString("dd MMM yyyy, h:mm tt")</dd>
+                <dt class="col-sm-4">Patient</dt><dd class="col-sm-8">@(User.IsInRole("Patient") ? "My account" : invoice.Patient?.FullName ?? "Patient")</dd>
+                <dt class="col-sm-4">Invoice</dt><dd class="col-sm-8">@invoice.InvoiceNumber</dd>
+                <dt class="col-sm-4">Payment method</dt><dd class="col-sm-8">@Model.Payment.Method</dd>
+                @if (User.IsInRole("Cashier") || User.IsInRole("Admin"))
+                {
+                    <dt class="col-sm-4">Reference</dt><dd class="col-sm-8">@Model.Payment.Reference</dd>
+                    <dt class="col-sm-4">Received by</dt><dd class="col-sm-8">@Model.Payment.ReceivedBy?.FullName</dd>
+                }
+            </dl>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead><tr><th>Description</th><th class="text-end">Amount</th></tr></thead>
+                    <tbody><tr><td>Payment applied to invoice @invoice.InvoiceNumber</td><td class="text-end">KSh @Model.Payment.Amount.ToString("N2")</td></tr></tbody>
+                    <tfoot>
+                        <tr><th>Amount received</th><th class="text-end">KSh @Model.Payment.Amount.ToString("N2")</th></tr>
+                        <tr><td>Balance after payment</td><td class="text-end">KSh @Model.Payment.BalanceAfter.ToString("N2")</td></tr>
+                    </tfoot>
+                </table>
+            </div>
+            <p class="small text-muted mb-0">Please retain this receipt for your records. This receipt confirms a recorded payment, not a medical diagnosis or discharge clearance.</p>
+        </div>
+    }
+</div>

@@ -59,6 +59,11 @@ namespace HospitalWebApp.Pages.Queue
                 }
 
                 query = query.Where(q => allowedQueues.Contains(q.QueueType));
+                if (User.IsInRole("Doctor"))
+                {
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    query = query.Where(q => q.AssignedDoctorId == null || q.AssignedDoctorId == userId);
+                }
                 if (!string.IsNullOrEmpty(QueueType))
                 {
                     query = query.Where(q => q.QueueType == QueueType);

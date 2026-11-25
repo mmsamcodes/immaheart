@@ -23,13 +23,21 @@
         {
             <tr>
                 <td>@invoice.InvoiceNumber</td>
-                <td>@invoice.Patient?.FullName ?? invoice.PatientId</td>
+                <td>@(User.IsInRole("Patient") ? "My account" : invoice.Patient?.FullName ?? invoice.PatientId)</td>
                 <td>KSh @invoice.TotalAmount.ToString("N2")</td>
                 <td>KSh @invoice.PaidAmount.ToString("N2")</td>
                 <td>@invoice.Status</td>
                 <td>@invoice.IssuedAt.ToString("yyyy-MM-dd")</td>
                 <td>
                     <a asp-page="/Billing/Details" asp-route-id="@invoice.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                    @if (invoice.Payments.OrderByDescending(payment => payment.ReceivedAt).FirstOrDefault() is { } latestPayment)
+                    {
+                        <a asp-page="/Billing/Receipt" asp-route-id="@latestPayment.Id" class="btn btn-sm btn-outline-primary">Receipt</a>
+                    }
+                    @if (User.IsInRole("Patient") && invoice.PaidAmount < invoice.TotalAmount)
+                    {
+                        <a asp-page="/Billing/Pay" asp-route-invoiceId="@invoice.Id" class="btn btn-sm btn-primary">Pay</a>
+                    }
                 </td>
             </tr>
         }

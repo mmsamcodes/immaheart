@@ -8,26 +8,38 @@ using HospitalWebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using HospitalWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HospitalWebApp.Pages.Reception
 {
-    [Authorize(Roles = "Admin,Accounts,Cashier,Reception")]
+    [Authorize(Roles = "Admin,Reception")]
     public class IntakeModel : PageModel
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
+        private readonly PatientEncounterService _encounterService;
+        private readonly ILogger<IntakeModel> _logger;
 
-        public IntakeModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender)
+        public IntakeModel(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IEmailSender emailSender,
+            PatientEncounterService encounterService,
+            ILogger<IntakeModel> logger)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
+            _encounterService = encounterService;
+            _logger = logger;
         }
 
         [BindProperty]
@@ -144,9 +156,24 @@ namespace HospitalWebApp.Pages.Reception
                 }
             }
 
+            var activeEncounter = await _encounterService.FindActiveAsync(patient.Id);
+            if (activeEncounter != null)
+            {
+                Message = $"This patient already has an open visit ({activeEncounter.VisitNumber}). Continue that visit instead of creating a duplicate check-in.";
+                return Page();
+            }
+
+            var encounter = _encounterService.Start(
+                patient.Id,
+                user.Id,
+                PatientEncounter.AwaitingTriage,
+                "Triage",
+                "You are checked in and waiting for an initial nursing assessment.");
+
             _context.QueueEntries.Add(new QueueEntry
             {
                 PatientId = patient.Id,
+                PatientEncounter = encounter,
                 AssignedById = user.Id,
                 QueueType = "Triage",
                 Status = "Waiting",
@@ -186,6 +213,12 @@ namespace HospitalWebApp.Pages.Reception
 
         private async Task SendPatientWelcomeEmailAsync(ApplicationUser patient, string password)
         {
+            if (string.IsNullOrWhiteSpace(patient.Email))
+            {
+                _logger.LogWarning("Welcome email was not sent because patient {PatientId} has no email address.", patient.Id);
+                return;
+            }
+
             try
             {
                 var loginUrl = Url.Page("/Account/Login", null, null, Request.Scheme);
@@ -199,9 +232,9 @@ namespace HospitalWebApp.Pages.Reception
 
                 await _emailSender.SendEmailAsync(patient.Email, "Your patient portal account is ready", message);
             }
-            catch
+            catch (Exception exception)
             {
-                // Keep the intake flow working even if email delivery fails.
+                _logger.LogError(exception, "Failed to send a welcome email to patient {PatientId}.", patient.Id);
             }
         }
     }

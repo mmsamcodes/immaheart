@@ -52,51 +52,56 @@ namespace HospitalWebApp.Areas.Identity.Pages
             var today = DateTime.Today;
             var doctorId = user.Id;
 
-            // Today's appointments (only show paid/confirmed appointments)
+            // Clinical work is not gated by payment confirmation.
             TodayAppointmentsCount = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.AppointmentDate.Date == today && a.PaymentConfirmed)
+                .Where(a => a.DoctorId == doctorId && a.AppointmentDate.Date == today && a.Status != "Cancelled")
                 .CountAsync();
 
-            // Total patients (unique patients with paid appointments)
+            // Total patients assigned to the clinician.
             TotalPatientsCount = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.PaymentConfirmed)
+                .Where(a => a.DoctorId == doctorId)
                 .Select(a => a.PatientId)
                 .Distinct()
                 .CountAsync();
 
             // Pending appointments (awaiting doctor confirmation or action)
             PendingAppointmentsCount = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.Status == "Pending" && a.PaymentConfirmed)
+                .Where(a => a.DoctorId == doctorId && a.Status == "Pending")
                 .CountAsync();
 
             DoctorQueueEntries = await _context.QueueEntries
                 .Include(q => q.Patient)
                 .Include(q => q.AssignedBy)
-                .Where(q => q.QueueType == "Doctor" && q.Status == "Waiting")
+                .Where(q => q.QueueType == "Doctor" &&
+                            q.Status == "Waiting" &&
+                            (q.AssignedDoctorId == null || q.AssignedDoctorId == doctorId))
                 .OrderBy(q => q.CreatedAt)
                 .ToListAsync();
 
             QueuedPatientsCount = DoctorQueueEntries.Count;
             VirtualAppointmentsCount = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.IsVirtual && a.PaymentConfirmed)
+                .Where(a => a.DoctorId == doctorId && a.IsVirtual && a.Status != "Cancelled")
                 .CountAsync();
 
             InPersonAppointmentsCount = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && !a.IsVirtual && a.PaymentConfirmed)
+                .Where(a => a.DoctorId == doctorId && !a.IsVirtual && a.Status != "Cancelled")
                 .CountAsync();
 
-            // Upcoming appointments (next 7 days, only paid)
+            // Upcoming clinical appointments (next 7 days).
             var nextWeek = today.AddDays(7);
             UpcomingAppointments = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.AppointmentDate >= today && a.AppointmentDate <= nextWeek && a.PaymentConfirmed)
+                .Where(a => a.DoctorId == doctorId &&
+                            a.AppointmentDate >= today &&
+                            a.AppointmentDate <= nextWeek &&
+                            a.Status != "Cancelled")
                 .Include(a => a.Patient)
                 .OrderBy(a => a.AppointmentDate)
                 .ToListAsync();
 
-            // Recent patients (patients with recent paid appointments)
+            // Recent patients assigned to the clinician.
             var recentDate = today.AddDays(-30);
             var recentPatientIds = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.AppointmentDate >= recentDate && a.PaymentConfirmed)
+                .Where(a => a.DoctorId == doctorId && a.AppointmentDate >= recentDate)
                 .Select(a => a.PatientId)
                 .Distinct()
                 .Take(10)

@@ -1,4 +1,8 @@
 
 @{
-    Layout = "/Views/Shared/_Layout.cshtml";
+    var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+    var isPublicAccountPage = page is "/Account/Login" or "/Account/Register" or "/Account/AcceptInvitation";
+    Layout = Context.User.Identity?.IsAuthenticated == true && !isPublicAccountPage
+        ? "/Views/Shared/_ErpLayout.cshtml"
+        : "/Views/Shared/_Layout.cshtml";
 }

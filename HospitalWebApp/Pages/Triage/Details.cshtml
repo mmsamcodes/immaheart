@@ -135,16 +135,34 @@
                     }
                 </div>
                 <div class="d-flex gap-2">
-                    @if (Model.Entry.Status == "PendingDoctor")
+                    @if ((User.IsInRole("Doctor") || User.IsInRole("Admin")) && Model.Entry.Status == "PendingDoctor")
                     {
                         <form method="post" asp-page-handler="UpdateStatus">
                             <input type="hidden" name="id" value="@Model.Entry.Id" />
                             <input type="hidden" name="actionType" value="SendToLab" />
+                            <label class="form-label" for="LabServiceCatalogId">Diagnostic test</label>
+                            <select id="LabServiceCatalogId" name="LabServiceCatalogId" class="form-select mb-2" required>
+                                <option value="">Select a test</option>
+                                @foreach (var service in Model.LabServices)
+                                {
+                                    <option value="@service.Id">@service.Name</option>
+                                }
+                            </select>
                             <button type="submit" class="btn btn-warning">Send to Lab</button>
                         </form>
                         <form method="post" asp-page-handler="UpdateStatus">
                             <input type="hidden" name="id" value="@Model.Entry.Id" />
                             <input type="hidden" name="actionType" value="SendToPharmacy" />
+                            <label class="form-label" for="PharmacyDrugId">Medicine</label>
+                            <select id="PharmacyDrugId" name="PharmacyDrugId" class="form-select mb-2" required>
+                                <option value="">Select a medicine</option>
+                                @foreach (var drug in Model.PharmacyDrugs)
+                                {
+                                    <option value="@drug.Id">@drug.Name@(drug.RequiresPrescription ? " · Prescription required" : string.Empty)</option>
+                                }
+                            </select>
+                            <label class="form-label" for="PharmacyQuantity">Quantity</label>
+                            <input id="PharmacyQuantity" name="PharmacyQuantity" type="number" min="1" max="100" value="1" class="form-control mb-2" required />
                             <button type="submit" class="btn btn-info">Send to Pharmacy</button>
                         </form>
                         <form method="post" asp-page-handler="UpdateStatus">
@@ -153,7 +171,8 @@
                             <button type="submit" class="btn btn-success">Mark Complete</button>
                         </form>
                     }
-                    else if (Model.Entry.Status == "PendingLab" || Model.Entry.Status == "PendingPharmacy")
+                    else if ((User.IsInRole("Doctor") || User.IsInRole("Admin")) &&
+                             (Model.Entry.Status == "PendingLab" || Model.Entry.Status == "PendingPharmacy"))
                     {
                         <form method="post" asp-page-handler="UpdateStatus">
                             <input type="hidden" name="id" value="@Model.Entry.Id" />

@@ -64,7 +64,7 @@ namespace HospitalWebApp.Areas.Identity.Pages
             }
             if (await _userManager.IsInRoleAsync(user, "Reception"))
             {
-                return RedirectToPage("/Reception/Intake", new { area = "" });
+                return RedirectToPage("/ReceptionDashboard");
             }
             if (await _userManager.IsInRoleAsync(user, "Accounts") ||
                 await _userManager.IsInRoleAsync(user, "Cashier"))

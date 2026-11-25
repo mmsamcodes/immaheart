@@ -62,6 +62,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddScoped<PatientEncounterService>();
 
 var app = builder.Build();
 
@@ -105,6 +106,7 @@ if (app.Environment.IsDevelopment())
     // dbContext.Database.EnsureDeleted(); // UNCOMMENT to wipe DB every time you restart
     dbContext.Database.EnsureCreated();
     await EnsurePharmacySchemaAsync(dbContext);
+    await EnsureErpSchemaAsync(dbContext);
 
     async Task EnsureRoleAsync(string roleName)
     {
@@ -198,8 +200,18 @@ static async Task EnsurePharmacySchemaAsync(ApplicationDbContext dbContext)
                 PatientNote TEXT NOT NULL,
                 PrescriptionDocument BLOB NULL,
                 PrescriptionContentType TEXT NULL,
+                PatientEncounterId INTEGER NULL,
+                BillingInvoiceId INTEGER NULL,
+                PrescriberId TEXT NULL,
+                PrescriptionText TEXT NULL,
                 CONSTRAINT FK_PharmacyOrders_AspNetUsers_PatientId
-                    FOREIGN KEY (PatientId) REFERENCES AspNetUsers (Id) ON DELETE RESTRICT
+                    FOREIGN KEY (PatientId) REFERENCES AspNetUsers (Id) ON DELETE RESTRICT,
+                CONSTRAINT FK_PharmacyOrders_PatientEncounters_PatientEncounterId
+                    FOREIGN KEY (PatientEncounterId) REFERENCES PatientEncounters (Id) ON DELETE SET NULL,
+                CONSTRAINT FK_PharmacyOrders_BillingInvoices_BillingInvoiceId
+                    FOREIGN KEY (BillingInvoiceId) REFERENCES BillingInvoices (Id) ON DELETE SET NULL,
+                CONSTRAINT FK_PharmacyOrders_AspNetUsers_PrescriberId
+                    FOREIGN KEY (PrescriberId) REFERENCES AspNetUsers (Id) ON DELETE SET NULL
             );
             CREATE UNIQUE INDEX IF NOT EXISTS IX_PharmacyOrders_OrderNumber ON PharmacyOrders (OrderNumber);
             CREATE INDEX IF NOT EXISTS IX_PharmacyOrders_PatientId ON PharmacyOrders (PatientId);
@@ -220,6 +232,188 @@ static async Task EnsurePharmacySchemaAsync(ApplicationDbContext dbContext)
             """;
         await schemaCommand.ExecuteNonQueryAsync();
         await EnsureColumnAsync(connection, "PharmacyOrderItems", "RequiresPrescription", "INTEGER NOT NULL DEFAULT 0");
+    }
+    finally
+    {
+        if (closeConnection)
+        {
+            await connection.CloseAsync();
+        }
+    }
+}
+
+static async Task EnsureErpSchemaAsync(ApplicationDbContext dbContext)
+{
+    var connection = dbContext.Database.GetDbConnection();
+    var closeConnection = connection.State != System.Data.ConnectionState.Open;
+    if (closeConnection)
+    {
+        await connection.OpenAsync();
+    }
+
+    try
+    {
+        await EnsureColumnAsync(connection, "BillingInvoices", "PatientEncounterId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "BillingItems", "PatientServiceId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "BillingItems", "LabOrderId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "LabOrders", "PatientEncounterId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "QueueEntries", "PatientEncounterId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "TriageEntries", "PatientEncounterId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "PharmacyOrders", "PatientEncounterId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "PharmacyOrders", "BillingInvoiceId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "PharmacyOrders", "PrescriberId", "TEXT NULL");
+        await EnsureColumnAsync(connection, "PharmacyOrders", "PrescriptionText", "TEXT NULL");
+
+        await using var schemaCommand = connection.CreateCommand();
+        schemaCommand.CommandText = """
+            CREATE TABLE IF NOT EXISTS PatientEncounters (
+                Id INTEGER NOT NULL CONSTRAINT PK_PatientEncounters PRIMARY KEY AUTOINCREMENT,
+                VisitNumber TEXT NOT NULL,
+                PatientId TEXT NOT NULL,
+                Status TEXT NOT NULL,
+                CurrentDepartment TEXT NOT NULL,
+                Priority TEXT NOT NULL,
+                StartedAt TEXT NOT NULL,
+                LastUpdatedAt TEXT NOT NULL,
+                ClosedAt TEXT NULL,
+                AssignedClinicianId TEXT NULL,
+                CONSTRAINT FK_PatientEncounters_AspNetUsers_PatientId
+                    FOREIGN KEY (PatientId) REFERENCES AspNetUsers (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_PatientEncounters_AspNetUsers_AssignedClinicianId
+                    FOREIGN KEY (AssignedClinicianId) REFERENCES AspNetUsers (Id) ON DELETE SET NULL
+            );
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_PatientEncounters_VisitNumber
+                ON PatientEncounters (VisitNumber);
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_PatientEncounters_PatientId
+                ON PatientEncounters (PatientId)
+                WHERE ClosedAt IS NULL AND Status <> 'Cancelled';
+            CREATE TABLE IF NOT EXISTS PatientEncounterEvents (
+                Id INTEGER NOT NULL CONSTRAINT PK_PatientEncounterEvents PRIMARY KEY AUTOINCREMENT,
+                PatientEncounterId INTEGER NOT NULL,
+                Status TEXT NOT NULL,
+                Department TEXT NOT NULL,
+                PatientMessage TEXT NOT NULL,
+                OccurredAt TEXT NOT NULL,
+                ChangedById TEXT NULL,
+                CONSTRAINT FK_PatientEncounterEvents_PatientEncounters_PatientEncounterId
+                    FOREIGN KEY (PatientEncounterId) REFERENCES PatientEncounters (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_PatientEncounterEvents_AspNetUsers_ChangedById
+                    FOREIGN KEY (ChangedById) REFERENCES AspNetUsers (Id) ON DELETE SET NULL
+            );
+            CREATE INDEX IF NOT EXISTS IX_PatientEncounterEvents_PatientEncounterId
+                ON PatientEncounterEvents (PatientEncounterId);
+            CREATE INDEX IF NOT EXISTS IX_PatientEncounterEvents_ChangedById
+                ON PatientEncounterEvents (ChangedById);
+            CREATE TABLE IF NOT EXISTS CareNotes (
+                Id INTEGER NOT NULL CONSTRAINT PK_CareNotes PRIMARY KEY AUTOINCREMENT,
+                PatientId TEXT NOT NULL,
+                AddedById TEXT NOT NULL,
+                CreatedAt TEXT NOT NULL,
+                Title TEXT NOT NULL,
+                Content TEXT NOT NULL,
+                Category TEXT NOT NULL,
+                Priority TEXT NOT NULL,
+                IsUrgent INTEGER NOT NULL,
+                CONSTRAINT FK_CareNotes_AspNetUsers_PatientId
+                    FOREIGN KEY (PatientId) REFERENCES AspNetUsers (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_CareNotes_AspNetUsers_AddedById
+                    FOREIGN KEY (AddedById) REFERENCES AspNetUsers (Id) ON DELETE CASCADE
+            );
+            CREATE INDEX IF NOT EXISTS IX_CareNotes_PatientId
+                ON CareNotes (PatientId);
+            CREATE INDEX IF NOT EXISTS IX_CareNotes_AddedById
+                ON CareNotes (AddedById);
+            CREATE TABLE IF NOT EXISTS PatientServices (
+                Id INTEGER NOT NULL CONSTRAINT PK_PatientServices PRIMARY KEY AUTOINCREMENT,
+                PatientId TEXT NOT NULL,
+                ServiceCatalogId INTEGER NOT NULL,
+                PatientEncounterId INTEGER NULL,
+                AssignedById TEXT NOT NULL,
+                AssignedAt TEXT NOT NULL,
+                Status TEXT NOT NULL,
+                Notes TEXT NOT NULL,
+                ScheduledDate TEXT NULL,
+                CompletedDate TEXT NULL,
+                UnitPriceAtOrder TEXT NOT NULL,
+                CONSTRAINT FK_PatientServices_AspNetUsers_PatientId
+                    FOREIGN KEY (PatientId) REFERENCES AspNetUsers (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_PatientServices_AspNetUsers_AssignedById
+                    FOREIGN KEY (AssignedById) REFERENCES AspNetUsers (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_PatientServices_ServiceCatalogs_ServiceCatalogId
+                    FOREIGN KEY (ServiceCatalogId) REFERENCES ServiceCatalogs (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_PatientServices_PatientEncounters_PatientEncounterId
+                    FOREIGN KEY (PatientEncounterId) REFERENCES PatientEncounters (Id)
+            );
+            CREATE INDEX IF NOT EXISTS IX_PatientServices_PatientId
+                ON PatientServices (PatientId);
+            CREATE INDEX IF NOT EXISTS IX_PatientServices_AssignedById
+                ON PatientServices (AssignedById);
+            CREATE INDEX IF NOT EXISTS IX_PatientServices_ServiceCatalogId
+                ON PatientServices (ServiceCatalogId);
+            CREATE INDEX IF NOT EXISTS IX_PatientServices_PatientEncounterId
+                ON PatientServices (PatientEncounterId);
+            CREATE TABLE IF NOT EXISTS BillingPayments (
+                Id INTEGER NOT NULL CONSTRAINT PK_BillingPayments PRIMARY KEY AUTOINCREMENT,
+                InvoiceId INTEGER NOT NULL,
+                ReceiptNumber TEXT NOT NULL,
+                Amount TEXT NOT NULL,
+                BalanceAfter TEXT NOT NULL,
+                Method TEXT NOT NULL,
+                Reference TEXT NOT NULL,
+                GatewayReference TEXT NULL,
+                RequestKey TEXT NULL,
+                Status TEXT NOT NULL,
+                ReceivedAt TEXT NOT NULL,
+                ReceivedById TEXT NULL,
+                CONSTRAINT FK_BillingPayments_BillingInvoices_InvoiceId
+                    FOREIGN KEY (InvoiceId) REFERENCES BillingInvoices (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_BillingPayments_AspNetUsers_ReceivedById
+                    FOREIGN KEY (ReceivedById) REFERENCES AspNetUsers (Id) ON DELETE SET NULL
+            );
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_BillingPayments_ReceiptNumber
+                ON BillingPayments (ReceiptNumber);
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_BillingPayments_GatewayReference
+                ON BillingPayments (GatewayReference)
+                WHERE GatewayReference IS NOT NULL;
+            CREATE INDEX IF NOT EXISTS IX_BillingPayments_InvoiceId
+                ON BillingPayments (InvoiceId);
+            CREATE INDEX IF NOT EXISTS IX_BillingPayments_ReceivedById
+                ON BillingPayments (ReceivedById);
+            CREATE INDEX IF NOT EXISTS IX_BillingInvoices_PatientEncounterId
+                ON BillingInvoices (PatientEncounterId);
+            DROP INDEX IF EXISTS IX_BillingItems_PatientServiceId;
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_BillingItems_PatientServiceId
+                ON BillingItems (PatientServiceId)
+                WHERE PatientServiceId IS NOT NULL;
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_BillingItems_LabOrderId
+                ON BillingItems (LabOrderId)
+                WHERE LabOrderId IS NOT NULL;
+            CREATE INDEX IF NOT EXISTS IX_LabOrders_PatientEncounterId
+                ON LabOrders (PatientEncounterId);
+            CREATE INDEX IF NOT EXISTS IX_PatientServices_PatientEncounterId
+                ON PatientServices (PatientEncounterId);
+            CREATE INDEX IF NOT EXISTS IX_QueueEntries_PatientEncounterId
+                ON QueueEntries (PatientEncounterId);
+            CREATE INDEX IF NOT EXISTS IX_TriageEntries_PatientEncounterId
+                ON TriageEntries (PatientEncounterId);
+            CREATE INDEX IF NOT EXISTS IX_PharmacyOrders_PatientEncounterId
+                ON PharmacyOrders (PatientEncounterId);
+            CREATE INDEX IF NOT EXISTS IX_PharmacyOrders_BillingInvoiceId
+                ON PharmacyOrders (BillingInvoiceId);
+            CREATE INDEX IF NOT EXISTS IX_PharmacyOrders_PrescriberId
+                ON PharmacyOrders (PrescriberId);
+            """;
+        await schemaCommand.ExecuteNonQueryAsync();
+        await EnsureColumnAsync(connection, "PatientServices", "PatientEncounterId", "INTEGER NULL");
+        await EnsureColumnAsync(connection, "PatientServices", "UnitPriceAtOrder", "TEXT NOT NULL DEFAULT '0'");
+        await EnsureColumnAsync(connection, "BillingPayments", "RequestKey", "TEXT NULL");
+        await using var paymentKeyIndexCommand = connection.CreateCommand();
+        paymentKeyIndexCommand.CommandText = """
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_BillingPayments_RequestKey
+                ON BillingPayments (RequestKey)
+                WHERE RequestKey IS NOT NULL;
+            """;
+        await paymentKeyIndexCommand.ExecuteNonQueryAsync();
     }
     finally
     {

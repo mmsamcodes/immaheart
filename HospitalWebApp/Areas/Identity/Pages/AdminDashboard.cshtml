@@ -18,6 +18,7 @@
         <div class="row g-3 mb-4">
             <div class="col-lg-3 col-md-6"><a asp-area="" asp-page="/Admissions/Index" class="provider-action-card"><i class="bi bi-hospital"></i><h5>Admissions</h5><p class="text-muted small mb-0">Beds, wards and patient status</p></a></div>
             <div class="col-lg-3 col-md-6"><a asp-area="" asp-page="/Billing/Index" class="provider-action-card"><i class="bi bi-cash-stack"></i><h5>Billing</h5><p class="text-muted small mb-0">Invoices, balances and revenue</p></a></div>
+            <div class="col-lg-3 col-md-6"><a asp-area="" asp-page="/PatientTracking/Index" class="provider-action-card"><i class="bi bi-diagram-3"></i><h5>Patient flow</h5><p class="text-muted small mb-0">Active visits and department handoffs</p></a></div>
             <div class="col-lg-3 col-md-6"><a asp-area="Identity" asp-page="/Admin/Drugs" class="provider-action-card"><i class="bi bi-capsule"></i><h5>Drug catalog</h5><p class="text-muted small mb-0">@Model.DrugCatalogCount catalog items</p></a></div>
             <div class="col-lg-3 col-md-6"><a asp-area="Identity" asp-page="/Admin/Services" class="provider-action-card"><i class="bi bi-briefcase-medical"></i><h5>Service catalog</h5><p class="text-muted small mb-0">@Model.ServiceCatalogCount configured services</p></a></div>
         </div>

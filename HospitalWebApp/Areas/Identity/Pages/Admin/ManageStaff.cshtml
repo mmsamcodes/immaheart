@@ -5,13 +5,50 @@
 }
 
 <div class="container py-5">
-    <h1>Manage Staff Roles</h1>
-    <p class="text-muted">Assign a primary role to staff users during onboarding.</p>
+    <h1>Staff access</h1>
+    <p class="text-muted">Invite new staff with a least-privilege role or update the primary role of an existing account.</p>
     @if (!string.IsNullOrEmpty(Model.StatusMessage))
     {
         <div class="alert alert-info" role="status">@Model.StatusMessage</div>
     }
 
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h4">Invite a staff member</h2>
+            <p class="text-muted">The staff member receives a one-time link to activate the account and set their own password.</p>
+            <form method="post" asp-page-handler="Invite">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label asp-for="Invite.FullName" class="form-label">Full name</label>
+                        <input asp-for="Invite.FullName" class="form-control" autocomplete="name" />
+                        <span asp-validation-for="Invite.FullName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Invite.Email" class="form-label">Work email</label>
+                        <input asp-for="Invite.Email" class="form-control" autocomplete="email" />
+                        <span asp-validation-for="Invite.Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="Invite.Role" class="form-label">Primary role</label>
+                        <select asp-for="Invite.Role" class="form-select" required>
+                            <option value="">Choose role</option>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role">@role</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Invite.Role" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-primary">Send invitation</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h2 class="h4">Existing accounts</h2>
     <table class="table table-hover mt-3">
         <thead>
             <tr>
